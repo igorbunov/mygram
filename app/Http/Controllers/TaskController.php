@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\account;
 use App\Task;
+use App\TaskList;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -13,10 +14,31 @@ class TaskController extends Controller
     public function getTasks(int $accountId) {
         $res = account::find($accountId);
 
-        foreach($res->directTasks as $task) {
-            $task->taskReports->toArray();
+        $activeDirectTasks = [];
+
+        foreach($res->directTasks as $i => $task) {
+            $res->directTasks[$i]->taskList = $task->taskList;
+//            $res->directTasks[$i]['taskList'] = $task->taskList->toArray();
+//            $activeDirectTasks[$task->taskList->id] = $task->taskList->toArray();
         }
 
+//        dd($res->directTasks[0]->taskList);
+//        dd($activeDirectTasks);
+
+//        $taskTypeList = TaskList::all()->toArray();
+//
+//        dd($taskTypeList);
+
+        return view('account_task', [
+            'title' => 'Задачи',
+            'activePage' => 'tasks',
+            'tasks' => $res->directTasks,
+            'account' => $res
+        ]);
+
+
+        dd($res->directTasks->toArray());
+//        dd($activeDirectTasks);
         dd($res->toArray(), $res->user->toArray(),  $res->user->tariffs->toArray(), $res->directTasks->toArray());
     }
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Tariff;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -181,19 +182,15 @@ class UserController extends Controller
             return view('auth.login', ['error' => 'Пользователь не найден']);
         }
 
-//        dd($user);
+        $userTariff = Tariff::getUserCurrentTariff($user['id']);
+//dd($userTariff);
         session(['user_id' => $user['id']]);
         session(['user_email' => $user['email']]);
-//        "id" => 1
-//        "email" => "igorbunov.ua@gmail.com"
-//        "password" => "0f207e64825524efbecd25a25ed5378f"
-//        "picture" => ""
-//        "is_confirmed" => 1
-//        "confirm_code" => ""
-//        "is_forgot_password" => 0
-//        "forgot_code" => ""
-//        "created_at" => "2018-10-16 16:37:06"
-//        "updated_at" => "2018-10-16 16:37:21"
+
+        if ($userTariff) {
+            session(['user_tariff' => $userTariff->toArray()]);
+            session(['user_tariff_list' => $userTariff->tariffList->toArray()]);
+        }
 
         return redirect('/');
     }

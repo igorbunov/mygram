@@ -53,7 +53,28 @@ $(document).ready(function() {
     });
     $('.account').click(function () {
         var id = $(this).data('accountId');
-//debugger;
+
         location.href = 'account/' + id;
     });
+
+    $('.tariff-account-count-selection').change(function () {
+        var val = $(this).val(),
+            id = $(this).data('listId'),
+            price = $('#tariff-list-' + id + '-beginer-price');
+
+        switch(val) {
+            case '1':
+                price.text($(this).data('tariffPrice1'));
+                break;
+            case '3':
+                price.text($(this).data('tariffPrice3'));
+                break;
+            case '5':
+                price.text($(this).data('tariffPrice5'));
+                break;
+            case '10':
+                price.text($(this).data('tariffPrice10'));
+                break;
+        }
+    })
 });

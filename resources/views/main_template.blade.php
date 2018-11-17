@@ -16,7 +16,8 @@
                     <div class="col-lg-3">
                         {{ session('user_email') }}<br/>
                         <a href="{{ url('logout') }}">Выйти</a><br/>
-                        Тариф: бесплатный<br/>
+                        Тариф: {{ session('user_tariff_list')['name'] }}<br/>
+                        Действует до: {{ session('user_tariff')['dt_end'] }}<br/>
                     </div>
                     <div class="col-lg-1"></div>
                 </div>
@@ -44,6 +45,9 @@
                             <ul class="menu-bottom">
                                 <li class="menu-bottom__item">
                                     <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
+                                </li>
+                                <li class="menu-bottom__item">
+                                    <a href="{{ url('limits') }}" @if($activePage == 'limits') class="active_link" @endif>Лимиты</a>
                                 </li>
                                 <li class="menu-bottom__item">
                                     <a href="{{ url('about') }}" @if($activePage == 'about') class="active_link" @endif>О компании</a>

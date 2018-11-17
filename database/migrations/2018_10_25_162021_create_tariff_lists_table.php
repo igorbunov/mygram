@@ -22,7 +22,7 @@ class CreateTariffListsTable extends Migration
             $table->decimal('price_three_uah')->default(0);
             $table->decimal('price_five_uah')->default(0);
             $table->decimal('price_ten_uah')->default(0);
-            $table->integer('length_in_days')->default(0);
+            $table->string('length')->default('month');
             $table->tinyInteger('is_active')->default(1);
             $table->tinyInteger('is_trial')->default(0);
             $table->timestamps();
@@ -30,19 +30,18 @@ class CreateTariffListsTable extends Migration
 
         DB::table('tariff_lists')->insert([
             'name' => 'Пробный',
-            'description' => 'Приветственное сообщение в директ новым подписчикам',
-            'length_in_days' => 3,
+            'description' => 'Директ подписавшимся',
             'is_trial' => 1
         ]);
 
         DB::table('tariff_lists')->insert([
-            'name' => 'Директ подписавшимся',
-            'description' => 'Приветственное сообщение в директ новым подписчикам',
-            'length_in_days' => 31,
-            'price_one_uah' => 450,
-            'price_three_uah' => 1200,
-            'price_five_uah' => 1500,
-            'price_ten_uah' => 2500
+            'name' => 'Начальный',
+            'description' => 'Директ подписавшимся',
+            'length' => 'month',
+            'price_one_uah' => 300,
+            'price_three_uah' => 750,
+            'price_five_uah' => 1000,
+            'price_ten_uah' => 1500
         ]);
     }
 

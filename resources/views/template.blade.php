@@ -12,6 +12,7 @@
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ asset('css/main.css') }}" rel="stylesheet" media="screen">
     <script src="http://code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
 
