@@ -6,3 +6,5 @@
         <a href="{{ url('register') }}">Регистрация</a>
     </div>
 @stop
+
+<h3>hello</h3>

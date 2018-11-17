@@ -1,5 +1,6 @@
 <?php
 ///usr/local/bin/php /home/fhsjewrv/mygram.in.ua/cron/email.php >/dev/null 2>&1
+///usr/local/bin/php /home/fhsjewrv/mygram.in.ua/cron/deploy.php -f -v >/dev/null 2>&1
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
