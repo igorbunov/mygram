@@ -46,10 +46,10 @@ function local_repo_exists() {
     return is_dir(LOCAL_REPO . '/.git');
 }
 
-function clone_repo() {
-    system_message('Cloning repo: '.sprintf("%s clone %s %s", GIT_COMMAND, REMOTE_REPO, LOCAL_REPO));
-    run_command(sprintf("%s clone %s %s", GIT_COMMAND, REMOTE_REPO, LOCAL_REPO));
-}
+//function clone_repo() {
+//    system_message('Cloning repo: '.sprintf("%s clone %s %s", GIT_COMMAND, REMOTE_REPO, LOCAL_REPO));
+//    run_command(sprintf("%s clone %s %s", GIT_COMMAND, REMOTE_REPO, LOCAL_REPO));
+//}
 function update_repo() {
     system_message('Updating repo');
     $old_dir = getcwd();
@@ -133,14 +133,15 @@ if (option_exists('f')) {
     exit();
 }
 
-if (!local_repo_exists()) {
-    clone_repo();
-} else {
-    update_repo();
-}
+//if (!local_repo_exists()) {
+//    clone_repo();
+//} else {
+//    update_repo();
+//}
 
-
-deploy();
+update_repo();
+//pull();
+//deploy();
 //post_deploy();
 //install();
 //build();
