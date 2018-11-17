@@ -1,8 +1,8 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    RewriteCond %{HTTP_HOST} ^mygram.in.ua [NC,OR]
-    RewriteCond %{HTTP_HOST} ^www.mygram.in.ua$
+    RewriteCond %{HTTP_HOST} ^myinst [NC,OR]
+    RewriteCond %{HTTP_HOST} ^www.myinst$
     RewriteCond %{REQUEST_URI} !public/
     RewriteRule (.*) /public/$1 [L]
 
