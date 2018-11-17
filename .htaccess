@@ -1,15 +1,32 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
+#test host
+  defined('LOCALHOST') ? NULL : define('LOCALHOST', in_array($_SERVER['SERVER_NAME'], array('localhost', '127.0.0.1', 'myinst') ));
 
-    RewriteCond %{HTTP_HOST} ^myinst [NC,OR]
-    RewriteCond %{HTTP_HOST} ^www.myinst$
-    RewriteCond %{REQUEST_URI} !public/
-    RewriteRule (.*) /public/$1 [L]
+# condition for specific host
+  if( LOCALHOST )
+  {
+    include 'htaccess-for-localhost.php';
+   # Read somewhere that not availalble in Apache
+  }
+  else # if( ! LOCALHOST )
+  {
+    include 'htaccess-for-mygram.php';
+  }
 
-    #В данном случае можно в папке /public_html/ создать файл .htaccess  с содержимым вида
-    #где domain-name.com  - имя Вашего сайта
+#Common stuff
+  ErrorDocument 404 /404.php
 
-</IfModule>
+#<IfModule mod_rewrite.c>
+#    RewriteEngine On
+#
+#    RewriteCond %{HTTP_HOST} ^myinst [NC,OR]
+#    RewriteCond %{HTTP_HOST} ^www.myinst$
+#    RewriteCond %{REQUEST_URI} !public/
+#    RewriteRule (.*) /public/$1 [L]
+#
+#    #В данном случае можно в папке /public_html/ создать файл .htaccess  с содержимым вида
+#    #где domain-name.com  - имя Вашего сайта
+#
+#</IfModule>
 
 #<IfModule mod_rewrite.c>
 #    RewriteEngine On
