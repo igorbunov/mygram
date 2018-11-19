@@ -16,8 +16,9 @@
                     <div class="col-lg-3">
                         {{ session('user_email') }}<br/>
                         <a href="{{ url('logout') }}">Выйти</a><br/>
-                        Тариф: {{ session('user_tariff_list')['name'] }}<br/>
-                        Действует до: {{ session('user_tariff')['dt_end'] }}<br/>
+                        Тариф: {{ $currentTariff['name'] }}<br/>
+                        Аккаунтов: {{ $currentTariff['accounts_count'] }}<br/>
+                        Действует до: {{ $currentTariff['dt_end'] }}<br/>
                     </div>
                     <div class="col-lg-1"></div>
                 </div>

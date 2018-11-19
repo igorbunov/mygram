@@ -21,12 +21,12 @@ class TariffController extends Controller
     public function index()
     {
         $list = TariffList::getActiveTariffList();
-//dd($list);
 
         return view('tariffs', [
             'title' => 'Тарифы',
             'activePage' => 'tariffs',
-            'tariffList' => $list
+            'tariffList' => $list,
+            'currentTariff' => Tariff::getUserCurrentTariffForMainView()
         ]);
     }
 
@@ -55,7 +55,8 @@ class TariffController extends Controller
                 'title' => 'Тарифы',
                 'activePage' => 'tariffs',
                 'tariffList' => [],
-                'isError' => false
+                'isError' => false,
+                'currentTariff' => Tariff::getUserCurrentTariffForMainView()
             ]);
         }
 
@@ -91,7 +92,8 @@ class TariffController extends Controller
             'activePage' => 'tariffs',
             'selectedTariff' => $selectedTariff,
             'accountsCount' => $accountsCount,
-            'payButton' => $this->getPayButton($userId, $amount, $selectedTariff->name, $accountsCount)
+            'payButton' => $this->getPayButton($userId, $amount, $selectedTariff->name, $accountsCount),
+            'currentTariff' => Tariff::getUserCurrentTariffForMainView()
         ]);
     }
 
@@ -145,6 +147,8 @@ class TariffController extends Controller
             $order = json_decode($payResponse['order_id'], true);
 
             if (!$this->checkActivation($payResponse['payment_id'])) {
+                $dates = $this->getActiveDatesForNewTariff($order['userId']);
+
                 $ac = new Tariff();
                 $ac->tariff_list_id = $order['tariffListId'];
                 $ac->user_id = $order['userId'];
@@ -157,8 +161,8 @@ class TariffController extends Controller
                 $ac->accounts_count = $order['accountsCount'];
                 $ac->payment_response = $result['payData'];
                 $ac->payment_message = $message;
-                $ac->dt_start = $order['dt'];
-                $ac->dt_end = $order['dt'];
+                $ac->dt_start = $dates->dt_start;
+                $ac->dt_end = $dates->dt_end;
                 $ac->save();
             }
 
@@ -166,7 +170,8 @@ class TariffController extends Controller
                 'title' => 'Тарифы',
                 'activePage' => 'tariffs',
                 'tariffList' => [],
-                'isError' => false
+                'isError' => false,
+                'currentTariff' => Tariff::getUserCurrentTariffForMainView($order['userId'])
             ]);
         }
 
@@ -175,7 +180,8 @@ class TariffController extends Controller
             'activePage' => 'tariffs',
             'tariffList' => [],
             'isError' => true,
-            'message' => 'Ошибка оплаты тарифа'
+            'message' => 'Ошибка оплаты тарифа',
+            'currentTariff' => Tariff::getUserCurrentTariffForMainView()
         ]);
 
 //        {
@@ -210,6 +216,23 @@ class TariffController extends Controller
 //            ,"end_date":1538773341103
 //            ,"transaction_id":833777845
 //        }
+    }
+
+    private function getActiveDatesForNewTariff($userId)
+    {
+        $res = DB::select("SELECT 
+                  dt_end + interval 1 day as dt_start,
+                  (dt_end + interval 1 day) + interval 1 month as dt_end
+                FROM tariffs
+            WHERE user_id = ? AND is_active = 1 AND is_payed = 1 AND DATE(dt_end) > CURDATE()
+            ORDER BY dt_end DESC
+            LIMIT 1", [$userId]);
+
+        if (is_null($res) or count($res) == 0) {
+            $res = DB::select('select now() as dt_start, now() + interval 1 month as dt_end');
+        }
+
+        return $res[0];
     }
 
     private function getPayButton(int $userId, string $amount, string $tariffName, int $accoutsCount)

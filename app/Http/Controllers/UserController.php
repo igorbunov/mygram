@@ -182,15 +182,8 @@ class UserController extends Controller
             return view('auth.login', ['error' => 'Пользователь не найден']);
         }
 
-        $userTariff = Tariff::getUserCurrentTariff($user['id']);
-//dd($userTariff);
         session(['user_id' => $user['id']]);
         session(['user_email' => $user['email']]);
-
-        if ($userTariff) {
-            session(['user_tariff' => $userTariff->toArray()]);
-            session(['user_tariff_list' => $userTariff->tariffList->toArray()]);
-        }
 
         return redirect('/');
     }

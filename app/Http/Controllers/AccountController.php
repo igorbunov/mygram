@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\account;
+use App\Tariff;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,8 @@ class AccountController extends Controller
             $res['error'] = $error;
         }
 
+        $res['currentTariff'] = Tariff::getUserCurrentTariffForMainView($userId);
+
         return view('accounts', $res);
     }
 
@@ -64,57 +67,6 @@ class AccountController extends Controller
         return redirect('accounts');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\account  $account
-     * @return \Illuminate\Http\Response
-     */
-    public function show(account $account)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\account  $account
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(account $account)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\account  $account
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, account $account)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\account  $account
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Request $req)
     {
         $userId = (int) session('user_id', 0);

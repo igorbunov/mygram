@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\TariffController;
+use App\Http\Controllers\TaskController;
+use App\Tariff;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,6 +29,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->call(function() {
+            Tariff::tariffTick();
+        })->daily();
     }
 
     /**

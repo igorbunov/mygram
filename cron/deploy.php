@@ -1,6 +1,5 @@
 <?php
 ///usr/local/bin/php /home/fhsjewrv/mygram.in.ua/cron/email.php >/dev/null 2>&1
-///usr/local/bin/php /home/fhsjewrv/mygram.in.ua/cron/deploy.php -f -v >/dev/null 2>&1
 //cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php cron/deploy.php -f -v >/dev/null 2>&1
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -44,14 +43,6 @@ function run_command($command) {
     }
 }
 
-function local_repo_exists() {
-    return is_dir(LOCAL_REPO . '/.git');
-}
-
-//function clone_repo() {
-//    system_message('Cloning repo: '.sprintf("%s clone %s %s", GIT_COMMAND, REMOTE_REPO, LOCAL_REPO));
-//    run_command(sprintf("%s clone %s %s", GIT_COMMAND, REMOTE_REPO, LOCAL_REPO));
-//}
 function update_repo() {
     system_message('Updating repo');
     $old_dir = getcwd();
@@ -87,26 +78,19 @@ function deploy() {
     // for dry run add -n
     // FF - means look into .rsync-filter in each dir and do not touch it itself
     run_command(sprintf("rsync -av --delete --delete-excluded --filter='. $local_repo/.rsync-filter' $local_repo $deploy_dir"));
-    //composer  install
-//    run_command(sprintf("cd $deploy_dir/protected && composer install"));
 }
 
-//function post_deploy() {
-//    system_message("Post deploy tasks");
-//}
-//
-//function get_pake_cmd($cmd){
-//    $cmd = PHP_COMMAND.' -d html_errors=off -qC '.PAKE_DIR.'/pake.php "'.$cmd.'"';
-//    return $cmd;
-//}
-//function install(){
-//    chdir(DEPLOY_DIR."/".BUILD_DIR);
-//    run_command(get_pake_cmd('install'));
-//}
-//function build(){
-//    chdir(DEPLOY_DIR."/".BUILD_DIR);
-//    run_command(get_pake_cmd('build'));
-//}
+function composer()
+{
+    //composer  install
+    $deploy_dir = rtrim(DEPLOY_DIR, '/') . '/';
+    run_command(sprintf("cd $deploy_dir && composer install"));
+}
+
+function run_migrations() {
+    $deploy_dir = rtrim(DEPLOY_DIR, '/') . '/';
+    run_command(sprintf("cd $deploy_dir && /usr/local/bin/php artisan migrate"));
+}
 
 function option_exists($option) {
     $options = getopt("f::v::");
@@ -128,23 +112,7 @@ if (is_already_running()) {
     exit();
 }
 
-if (option_exists('f')) {
-    system_message("Force used, don't check for deploy file.");
-} elseif (!need_deploy()) {
-    system_message(sprintf('File %s does not exist, so deploy is redundant, exiting.', NEED_DEPLOY_FILE));
-    exit();
-}
-
-//if (!local_repo_exists()) {
-//    clone_repo();
-//} else {
-//    update_repo();
-//}
-
 update_repo();
-//pull();
-//deploy();
-//post_deploy();
-//install();
 //build();
-system_message('Finished ok');
+
+system_message('done');

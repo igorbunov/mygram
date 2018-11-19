@@ -3,43 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\account;
+use App\DirectTask;
+use App\Tariff;
 use App\Task;
 use App\TaskList;
 use App\User;
 use Illuminate\Http\Request;
+use Mockery\Exception;
 
 class TaskController extends Controller
 {
 
     public function getTasks(int $accountId) {
         $res = account::find($accountId);
-
-        $activeDirectTasks = [];
-
+//TODO: тут какая-то не понятная хрень, переделать!
         foreach($res->directTasks as $i => $task) {
             $res->directTasks[$i]->taskList = $task->taskList;
-//            $res->directTasks[$i]['taskList'] = $task->taskList->toArray();
-//            $activeDirectTasks[$task->taskList->id] = $task->taskList->toArray();
+            $res->directTasks[$i]->taskType = 'direct';
+        }
+//        SELECT id, title, `type` FROM task_lists WHERE is_active = 1 AND tariff_list_id = 1
+
+        $userId = (int) session('user_id', 0);
+
+        if ($userId == 0) {
+            return view('main_not_logined');
         }
 
-//        dd($res->directTasks[0]->taskList);
-//        dd($activeDirectTasks);
+        $tariff = Tariff::getUserCurrentTariff($userId);
 
-//        $taskTypeList = TaskList::all()->toArray();
-//
-//        dd($taskTypeList);
+        $taskList = TaskList::where([
+            'is_active' => 1,
+            'tariff_list_id' => $tariff->tariff_list_id
+        ])->get();
 
         return view('account_task', [
             'title' => 'Задачи',
             'activePage' => 'tasks',
             'tasks' => $res->directTasks,
-            'account' => $res
+            'account' => $res,
+            'taskList' => $taskList,
+            'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
         ]);
-
-
-        dd($res->directTasks->toArray());
-//        dd($activeDirectTasks);
-        dd($res->toArray(), $res->user->toArray(),  $res->user->tariffs->toArray(), $res->directTasks->toArray());
     }
     /**
      * Display a listing of the resource.
@@ -60,6 +64,7 @@ class TaskController extends Controller
             'title' => 'Задачи'
             , 'activePage' => 'tasks'
             , 'accounts' => $accounts
+            , 'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
         ];
 
         if ($error != '') {
@@ -69,69 +74,83 @@ class TaskController extends Controller
         return view('tasks', $res);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function createTask(Request $req)
     {
-        //
+//        dd($req->all());
+        $accountId = (int) $req->post('account_id', 0);
+        $taskListId = (int) $req->post('task_list_id', 0);
+        $directText = $req->post('direct_text', '');
+        $isUseDelay = $req->post('is_use_delay', 'off');
+        $isUseDelay = filter_var($isUseDelay, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
+
+        $workOnlyInMight = $req->post('work_only_in_night', 'off');
+        $workOnlyInMight = filter_var($workOnlyInMight, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
+
+        if ($accountId == 0) {
+            throw new Exception('account not set');
+        }
+        if ($taskListId == 0) {
+            throw new Exception('task type not set');
+        }
+
+        //TODO: $taskListId узнать тип таска и в зависимости от него делать инсерт в нужную таблицу
+        // сейчас реализовано только директ таск
+
+//        dd([
+//            '$taskListId' => $taskListId,
+//            'accountId' => $accountId,
+//            'directText' => $directText,
+//            'isUseDelay' => $isUseDelay,
+//            'workOnlyInMight' => $workOnlyInMight,
+//            'task_list_id' => $taskListId
+//        ]);
+
+        $direct = new DirectTask();
+        $direct->account_id = $accountId;
+        $direct->is_active = 1;
+        $direct->task_list_id = $taskListId;
+        $direct->message = $directText;
+        $direct->delay_time_min = ($isUseDelay) ? 30 : 5;
+        $direct->work_only_in_night = $workOnlyInMight ? 1 : 0;
+        $direct->save();
+
+        return redirect('account/' . $accountId);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function changeStatus(Request $req)
     {
-        //
-    }
+        $taskId = (int) $req->post('task_id', 0);
+        $isActive = (int) $req->post('is_active', -1);
+        $taskType = $req->post('task_type', '');
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Task $task)
-    {
-        //
-    }
+        if ($isActive == -1) {
+            return response()->json(['success' => false, 'error' => 'not set status']);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
+        if ($taskType == 'direct') {
+            $direct = DirectTask::where('id', $taskId)->first();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Task $task)
-    {
-        //
-    }
+            $activeDirect = DirectTask::where([
+                'account_id' => $direct->account_id,
+                'is_active' => 1
+            ])->first();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Task $task)
-    {
-        //
+            if (!is_null($activeDirect) and $isActive > 0) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'У аккаунта уже есть одно активное задание. Сначала деактивируйте его.'
+                ]);
+            }
+
+            $direct->is_active = $isActive;
+            $direct->save();
+
+            return response()->json([
+                'success' => true,
+                'accountId' => $direct->account_id
+            ]);
+        }
+
+        return response()->json(['success' => false, 'error' => 'not set task type']);
     }
 }

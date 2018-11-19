@@ -125,3 +125,20 @@ ul, li {
 .account{
     cursor: pointer;
 }
+
+#add-task-form {
+    display: none;
+    margin-top: 25px;
+}
+#add-direct-task {
+    display: block;
+}
+#add-unfollowing-task {
+    display: none;
+}
+.account-tasks.active{
+    background-color: green;
+}
+.account-tasks.deactivated{
+    background-color: grey;
+}
