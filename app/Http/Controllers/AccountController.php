@@ -61,7 +61,7 @@ class AccountController extends Controller
         $account->user_id = $userId;
         $account->nickname = $nickname;
         $account->picture = '';
-        $account->password = UserController::getHashPassword($password);
+        $account->password = $password;
         $account->save();
 
         return redirect('accounts');

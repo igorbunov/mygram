@@ -13,6 +13,7 @@
 
 
 Route::get('/', 'AccountController@index');
+Route::get('/check', 'TaskController@check');
 
 Route::post('activationsuccess', 'TariffController@paymentCallback');
 

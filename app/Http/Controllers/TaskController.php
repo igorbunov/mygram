@@ -4,15 +4,24 @@ namespace App\Http\Controllers;
 
 use App\account;
 use App\DirectTask;
+use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
+use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Tariff;
 use App\Task;
 use App\TaskList;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use InstagramAPI\Instagram;
 use Mockery\Exception;
 
 class TaskController extends Controller
 {
+    public function check()
+    {
+//        DirectTaskCreatorController::generateDirectTasks();
+//        DirectToSubsTasksRunner::sendDirectToSubscribers(1);
+    }
 
     public function getTasks(int $accountId) {
         $res = account::find($accountId);

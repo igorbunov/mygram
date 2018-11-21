@@ -2,11 +2,13 @@
 
 namespace App\Console;
 
-use App\Http\Controllers\TariffController;
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
+use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Tariff;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -31,6 +33,11 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 
         $schedule->call(function() {
+//            Log::debug('runFastTask run');
+//            DirectTaskCreatorController::generateDirectTasks();
+        })->everyMinute();
+
+        $schedule->call(function() {
             Tariff::tariffTick();
         })->daily();
     }
@@ -45,5 +52,9 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
+
+        Artisan::command('direct:send {directTaskId} {accountId}', function ($directTaskId, $accountId) {
+            DirectToSubsTasksRunner::sendDirectToSubscribers($directTaskId, $accountId);
+        });
     }
 }

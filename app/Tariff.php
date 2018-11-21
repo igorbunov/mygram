@@ -15,19 +15,25 @@ class Tariff extends Model
         return $this->belongsTo('App\User', 'user_id', 'id');
     }
 
-    public static function getUserCurrentTariff(int $userId = 0)
+    public static function getUserCurrentTariff(int $userId = 0, bool $asArray = false)
     {
         if ($userId == 0) {
             $userId = (int) session('user_id');
         }
 
-        return Tariff::where([
+        $res = Tariff::where([
             'is_active' => 1
             , 'is_payed' => 1
             , 'user_id' => $userId
         ])
         ->orderBy('id', 'DESC')
         ->first();
+
+        if (!$asArray) {
+            return $res;
+        }
+
+        return (is_null($res)) ? null : $res->toArray();
     }
 
     public static function getUserCurrentTariffForMainView(int $userId = 0)
