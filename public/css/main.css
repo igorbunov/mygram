@@ -122,7 +122,7 @@ ul, li {
 #add-account-form{
     display:none;
 }
-.account{
+.account-link{
     cursor: pointer;
 }
 
@@ -140,5 +140,11 @@ ul, li {
     background-color: green;
 }
 .account-tasks.deactivated{
+    background-color: grey;
+}
+.account.active{
+    background-color: green;
+}
+.account.deactivated{
     background-color: grey;
 }

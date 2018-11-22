@@ -9,7 +9,8 @@
         </div>
 
         @foreach ($accounts as $account)
-            <section id="account" class="account" data-account-id="{{ $account->id }}">
+            <section id="account" class="account-link account @if($account->is_active) active @else deactivated @endif"
+                     data-account-id="{{ $account->id }}">
                 <div class="row">
                     <div class="col-lg-11">
                         <h4>{{ $account->nickname }}</h4>

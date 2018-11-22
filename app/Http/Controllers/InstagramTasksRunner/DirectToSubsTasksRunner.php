@@ -33,14 +33,14 @@ class DirectToSubsTasksRunner
 
             $ig = new Instagram();
             Log::debug('inst created');
-            $directTask = DirectTask::getActiveDirectTaskById($directTaskId, $accountId);
+            $directTask = DirectTask::getDirectTaskById($directTaskId, $accountId, true);
 
             if (is_null($directTask)) {
                 Log::debug('direct task not found');
                 return;
             }
             Log::debug('direct task polu4en');
-            $account = account::getAccountById($accountId);
+            $account = account::getAccountById($accountId, true);
 
             if (is_null($account)) {
                 Log::debug('account not found');

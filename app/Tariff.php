@@ -41,8 +41,7 @@ class Tariff extends Model
         $tariff = self::getUserCurrentTariff($userId);
 
         if (is_null($tariff)) {
-//            dd($tariff, $userId, session()->all());
-            return [];
+            return null;
         }
 
         $tariffList = $tariff->tariffList;

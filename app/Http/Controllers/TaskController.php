@@ -7,10 +7,12 @@ use App\DirectTask;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Tariff;
+use App\TariffList;
 use App\Task;
 use App\TaskList;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InstagramAPI\Instagram;
 use Mockery\Exception;
@@ -19,6 +21,7 @@ class TaskController extends Controller
 {
     public function check()
     {
+        self::disableAccountsAndTasksByEndTariff();
 //        DirectTaskCreatorController::generateDirectTasks();
 //        DirectToSubsTasksRunner::sendDirectToSubscribers(1);
     }
@@ -30,7 +33,6 @@ class TaskController extends Controller
             $res->directTasks[$i]->taskList = $task->taskList;
             $res->directTasks[$i]->taskType = 'direct';
         }
-//        SELECT id, title, `type` FROM task_lists WHERE is_active = 1 AND tariff_list_id = 1
 
         $userId = (int) session('user_id', 0);
 
@@ -39,26 +41,25 @@ class TaskController extends Controller
         }
 
         $tariff = Tariff::getUserCurrentTariff($userId);
+        $taskList = null;
 
-        $taskList = TaskList::where([
-            'is_active' => 1,
-            'tariff_list_id' => $tariff->tariff_list_id
-        ])->get();
+        if (!is_null($tariff)) {
+            $taskList = TaskList::where([
+                'is_active' => 1,
+                'tariff_list_id' => $tariff->tariff_list_id
+            ])->get();
+        }
 
         return view('account_task', [
             'title' => 'Задачи',
             'activePage' => 'tasks',
             'tasks' => $res->directTasks,
             'account' => $res,
-            'taskList' => $taskList,
+            'taskList' => (!is_null($tariff)) ? $taskList : [],
             'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
         ]);
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index($error = '')
     {
         $userId = (int) session('user_id', 0);
@@ -67,7 +68,7 @@ class TaskController extends Controller
             return view('main_not_logined');
         }
 
-        $accounts = User::find($userId)->accounts;
+        $accounts = User::getAccountsByUser($userId);
 
         $res = [
             'title' => 'Задачи'
@@ -85,15 +86,19 @@ class TaskController extends Controller
 
     public function createTask(Request $req)
     {
-//        dd($req->all());
+        $userId = (int) session('user_id', 0);
         $accountId = (int) $req->post('account_id', 0);
         $taskListId = (int) $req->post('task_list_id', 0);
         $directText = $req->post('direct_text', '');
         $isUseDelay = $req->post('is_use_delay', 'off');
         $isUseDelay = filter_var($isUseDelay, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
 
-        $workOnlyInMight = $req->post('work_only_in_night', 'off');
-        $workOnlyInMight = filter_var($workOnlyInMight, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
+        $workOnlyInNight = $req->post('work_only_in_night', 'off');
+        $workOnlyInNight = filter_var($workOnlyInNight, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
+
+        if ($userId == 0) {
+            return redirect('account/' . $accountId);
+        }
 
         if ($accountId == 0) {
             throw new Exception('account not set');
@@ -102,26 +107,47 @@ class TaskController extends Controller
             throw new Exception('task type not set');
         }
 
-        //TODO: $taskListId узнать тип таска и в зависимости от него делать инсерт в нужную таблицу
-        // сейчас реализовано только директ таск
+        $tariff = Tariff::getUserCurrentTariff($userId);
 
-//        dd([
-//            '$taskListId' => $taskListId,
-//            'accountId' => $accountId,
-//            'directText' => $directText,
-//            'isUseDelay' => $isUseDelay,
-//            'workOnlyInMight' => $workOnlyInMight,
-//            'task_list_id' => $taskListId
-//        ]);
+        if (is_null($tariff)) {
+            return redirect('account/' . $accountId);
+        }
 
-        $direct = new DirectTask();
-        $direct->account_id = $accountId;
-        $direct->is_active = 1;
-        $direct->task_list_id = $taskListId;
-        $direct->message = $directText;
-        $direct->delay_time_min = ($isUseDelay) ? 30 : 5;
-        $direct->work_only_in_night = $workOnlyInMight ? 1 : 0;
-        $direct->save();
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return redirect('account/' . $accountId);
+        }
+
+        $taskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
+
+        if (count($taskList) == 0) {
+            return redirect('account/' . $accountId);
+        }
+
+        foreach ($taskList as $taskListItem) {
+            if ($taskListItem->id == $taskListId) {
+                if ('direct' == $taskListItem->type) {
+                    $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $accountId,true);
+
+                    if (!is_null($directTask)) {
+                        throw new \Exception('У вас уже есть активное задание с таким типом');
+                    } else {
+                        //TODO: $taskListId узнать тип таска и в зависимости от него делать инсерт в нужную таблицу
+                        // сейчас реализовано только директ таск
+
+                        $direct = new DirectTask();
+                        $direct->account_id = $accountId;
+                        $direct->is_active = 1;
+                        $direct->task_list_id = $taskListId;
+                        $direct->message = $directText;
+                        $direct->delay_time_min = ($isUseDelay) ? 30 : 5;
+                        $direct->work_only_in_night = $workOnlyInNight ? 1 : 0;
+                        $direct->save();
+
+                        return redirect('account/' . $accountId);
+                    }
+                }
+            }
+        }
 
         return redirect('account/' . $accountId);
     }
@@ -130,25 +156,40 @@ class TaskController extends Controller
     {
         $taskId = (int) $req->post('task_id', 0);
         $isActive = (int) $req->post('is_active', -1);
+        $accountId = (int) $req->post('account_id', 0);
         $taskType = $req->post('task_type', '');
 
         if ($isActive == -1) {
             return response()->json(['success' => false, 'error' => 'not set status']);
         }
+        if ($accountId == 0) {
+            return response()->json(['success' => false, 'error' => 'not set account id']);
+        }
+
+        $userId = (int) session('user_id', 0);
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'error' => 'Необходимо авторизоваться']);
+        }
+
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return response()->json(['success' => false, 'error' => 'Это не ваш аккаунт']);
+        }
 
         if ($taskType == 'direct') {
-            $direct = DirectTask::where('id', $taskId)->first();
+            $activeTaskCount = DirectTask::getActiveTasksCountByAccountId($accountId);
 
-            $activeDirect = DirectTask::where([
-                'account_id' => $direct->account_id,
-                'is_active' => 1
-            ])->first();
-
-            if (!is_null($activeDirect) and $isActive > 0) {
+            if ($isActive > 0 and $activeTaskCount > 0) {
                 return response()->json([
                     'success' => false,
                     'error' => 'У аккаунта уже есть одно активное задание. Сначала деактивируйте его.'
                 ]);
+            }
+
+            $direct = DirectTask::getDirectTaskById($taskId, $accountId, false);
+
+            if (is_null($direct)) {
+                return response()->json(['success' => false, 'error' => 'Задание не найдено']);
             }
 
             $direct->is_active = $isActive;
@@ -161,5 +202,22 @@ class TaskController extends Controller
         }
 
         return response()->json(['success' => false, 'error' => 'not set task type']);
+    }
+
+    public static function disableAccountsAndTasksByEndTariff()
+    {
+        $users = User::where(['is_confirmed' => 1])->get();
+
+        foreach ($users as $user) {
+            $tariff = Tariff::getUserCurrentTariff($user->id);
+
+            if (is_null($tariff)) {
+                DB::statement("UPDATE direct_tasks
+                    SET is_active = 0
+                    WHERE account_id IN (SELECT id FROM accounts WHERE user_id = {$user->id})");
+
+                DB::statement("UPDATE accounts SET is_active = 0 WHERE user_id = {$user->id}");
+            }
+        }
     }
 }

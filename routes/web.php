@@ -23,9 +23,9 @@ Route::group(['middleware' => 'myauth'], function () {
     Route::get('tasks', 'TaskController@index');
     Route::post('account/create_task', 'TaskController@createTask');
     Route::post('account/change_task', 'TaskController@changeStatus');
+    Route::post('change_account', 'AccountController@changeStatus');
     Route::post('accounts', 'AccountController@create');
-    Route::post('account_sync', 'AccountController@async');
-    Route::delete('accounts', 'AccountController@destroy');
+    Route::post('account_sync', 'AccountController@sync');
     Route::get('tariffs', 'TariffController@index');
     Route::post('checkout', 'TariffController@checkout');
 

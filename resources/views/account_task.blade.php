@@ -15,14 +15,18 @@
                         <h4>{{ $task->message }}</h4>
                     </div>
                     <div class="col-lg-4 ml-auto">
-                        @if($task->is_active == 1)
-                            <button class="task-deactivate"
-                                    data-task-type="{{ $task->taskType }}"
-                                    data-task-id="{{ $task->id }}">Деактивировать</button>
-                        @else
-                            <button class="task-activate"
-                                    data-task-type="{{ $task->taskType }}"
-                                    data-task-id="{{ $task->id }}">Активировать</button>
+                        @if($currentTariff != null)
+                            @if($task->is_active == 1)
+                                <button class="task-deactivate"
+                                        data-task-type="{{ $task->taskType }}"
+                                        data-account-id="{{ $account->id }}"
+                                        data-task-id="{{ $task->id }}">Деактивировать</button>
+                            @else
+                                <button class="task-activate"
+                                        data-task-type="{{ $task->taskType }}"
+                                        data-account-id="{{ $account->id }}"
+                                        data-task-id="{{ $task->id }}">Активировать</button>
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -41,75 +45,76 @@
             </section>
         @endforeach
 
-
-        <div class="row">
-            <div class="col-lg-12">
-                <button id="add-task-btn">Добавить задание</button>
+        @if($currentTariff != null)
+            <div class="row">
+                <div class="col-lg-12">
+                    <button id="add-task-btn">Добавить задание</button>
+                </div>
             </div>
-        </div>
 
-        <div id="add-task-form">
-            <form method="POST" action="create_task">
-                {{ csrf_field() }}
+            <div id="add-task-form">
+                <form method="POST" action="create_task">
+                    {{ csrf_field() }}
 
-                <input type="hidden" name="account_id" value="{{ $account->id }}" />
-
-                <div class="row">
-                    <div class="col-lg-12">
-                        <label for="add-task-task-type">Тип задания</label>
-                        <select id="add-task-task-type" name="task_list_id">
-                            @foreach($taskList as $i => $taskListItem)
-                                @if($i == 0)
-                                    <option selected value="{{ $taskListItem->id }}"
-                                            data-task-type="{{ $taskListItem->type }}">
-                                        {{ $taskListItem->title }}</option>
-                                @else
-                                    <option value="{{ $taskListItem->id }}"
-                                            data-task-type="{{ $taskListItem->type }}">
-                                        {{ $taskListItem->title }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <selection id="add-direct-task">
-                    <h3>Директ ответ подписавшимся</h3>
+                    <input type="hidden" name="account_id" value="{{ $account->id }}" />
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <label for="add-direct-task-text">Текст сообщения</label>
-                            <textarea id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
-                        </div>
-                        <div class="col-lg-12">
-                            <label for="add-direct-task-delay">Отправлять с задержкой 10 миинут</label>
-                            <input id="add-direct-task-delay" type="checkbox" name="is_use_delay" />
-                        </div>
-                        <div class="col-lg-12">
-                            <label for="add-direct-task-work-only-in-night">Работать только ночью</label>
-                            <input id="add-direct-task-work-only-in-night" type="checkbox" name="work_only_in_night" />
+                            <label for="add-task-task-type">Тип задания</label>
+                            <select id="add-task-task-type" name="task_list_id">
+                                @foreach($taskList as $i => $taskListItem)
+                                    @if($i == 0)
+                                        <option selected value="{{ $taskListItem->id }}"
+                                                data-task-type="{{ $taskListItem->type }}">
+                                            {{ $taskListItem->title }}</option>
+                                    @else
+                                        <option value="{{ $taskListItem->id }}"
+                                                data-task-type="{{ $taskListItem->type }}">
+                                            {{ $taskListItem->title }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
-                </selection>
+                    <selection id="add-direct-task">
+                        <h3>Директ ответ подписавшимся</h3>
 
-                <selection id="add-unfollowing-task">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <label for="add-direct-task-text">Текст сообщения</label>
+                                <textarea id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
+                            </div>
+                            <div class="col-lg-12">
+                                <label for="add-direct-task-delay">Отправлять с задержкой 10 миинут</label>
+                                <input id="add-direct-task-delay" type="checkbox" name="is_use_delay" />
+                            </div>
+                            <div class="col-lg-12">
+                                <label for="add-direct-task-work-only-in-night">Работать только ночью</label>
+                                <input id="add-direct-task-work-only-in-night" type="checkbox" name="work_only_in_night" />
+                            </div>
+                        </div>
+
+                    </selection>
+
+                    <selection id="add-unfollowing-task">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3>unfollowing task</h3>
+                            </div>
+                        </div>
+                    </selection>
+
+
                     <div class="row">
                         <div class="col-lg-12">
-                            <h3>unfollowing task</h3>
+                            <input type="submit" value="Сохранить">
                         </div>
                     </div>
-                </selection>
 
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <input type="submit" value="Сохранить">
-                    </div>
-                </div>
-
-
-            </form>
-        </div>
+                </form>
+            </div>
+        @endif
     </div>
 @stop

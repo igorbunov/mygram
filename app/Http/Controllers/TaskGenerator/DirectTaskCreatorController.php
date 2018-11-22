@@ -29,7 +29,7 @@ class DirectTaskCreatorController
                 continue;
             }
 
-            $tasks = TaskList::getAvaliableTasksForTariff($tariff->tariff_list_id);
+            $tasks = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
 
             if (count($tasks) > 0) {
                 $accounts = account::getActiveAccountsByUser($user->id);

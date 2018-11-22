@@ -23,7 +23,7 @@ class AccountController extends Controller
             return view('main_not_logined');
         }
 
-        $accounts = User::find($userId)->accounts;
+        $accounts = User::getAccountsByUser($userId);
 
         $res = [
             'title' => 'Акаунты'
@@ -40,15 +40,25 @@ class AccountController extends Controller
         return view('accounts', $res);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create(Request $req)
     {
         $userId = (int) session('user_id', 0);
-//        dd($req->all(), $userId);
+
+        if ($userId == 0) {
+            return redirect('accounts');
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return redirect('accounts');
+        }
+
+        $activeAccounts = account::getActiveAccountsByUser($userId);
+
+        if (count($activeAccounts) >= $tariff->accounts_count) {
+            return redirect('accounts');
+        }
 
         $nickname = (string) $req->post('account_name', '');
         $password = (string) $req->post('account_password', '');
@@ -67,23 +77,7 @@ class AccountController extends Controller
         return redirect('accounts');
     }
 
-    public function destroy(Request $req)
-    {
-        $userId = (int) session('user_id', 0);
-//        dd($req->all(), $userId);
-
-        $nickname = (string) $req->post('account_name', '');
-
-        if ($nickname == '') {
-            return response()->json(['success' => false, 'error' => 'Не верный никнейм']);
-        }
-
-        DB::table('accounts')->where(['nickname' => $nickname, 'user_id' => $userId])->delete();
-
-        return response()->json(['success' => true]);
-    }
-
-    public function async(Request $req) {
+    public function sync(Request $req) {
         $userId = (int) session('user_id', 0);
 
         $nickname = (string) $req->post('account_name', '');
@@ -93,6 +87,42 @@ class AccountController extends Controller
         }
         //TODO: run sync task
 //        DB::table('accounts')->where(['nickname' => $nickname, 'user_id' => $userId])->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function changeStatus(Request $req)
+    {
+        $accountId = (int) $req->post('account_id', 0);
+        $isActive = (int) $req->post('is_active', 1);
+
+        $userId = (int) session('user_id', 0);
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'error' => 'Необходимо авторизоваться']);
+        }
+
+        if ($accountId == 0) {
+            return response()->json(['success' => false, 'error' => 'Не выбран аккаунт']);
+        }
+
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return response()->json(['success' => false, 'error' => 'Это не ваш аккаунт']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'error' => 'У вас закончился тариф. Функция активации аккаунта отключена.']);
+        }
+
+        $activeAccounts = account::getActiveAccountsByUser($userId);
+
+        if ($isActive and count($activeAccounts) >= $tariff->accounts_count) {
+            return response()->json(['success' => false, 'error' => 'Вы достигли лимита по кол-ву активных аккаунтов для текущего тарифа']);
+        }
+
+        account::changeStatus($accountId, $isActive);
 
         return response()->json(['success' => true]);
     }

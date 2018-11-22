@@ -1,28 +1,4 @@
 $(document).ready(function() {
-    $('.delete-account').click(function () {
-        var nickname = $(this).data('nickname');
-
-        $.ajax({
-            url: 'accounts',
-            headers: {
-               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            method: 'DELETE',
-            dataType: 'json',
-            data: {
-                account_name: nickname
-            },
-            success: function(data){
-
-                if (data.success) {
-                    location.href = 'accounts';
-                } else {
-                    console.log('error', data.error);
-                    debugger;
-                }
-            }
-        });
-    });
     $('.sync-account').click(function () {
         var nickname = $(this).data('nickname');
 
@@ -51,7 +27,7 @@ $(document).ready(function() {
     $('#add-account-btn').click(function () {
         $('#add-account-form').show();
     });
-    $('.account').click(function () {
+    $('.account-link').click(function () {
         var id = $(this).data('accountId');
 
         location.href = 'account/' + id;
@@ -98,8 +74,7 @@ $(document).ready(function() {
 
     });
 
-
-    var changeTaskStatus = function(taskId, taskType, isActive) {
+    var changeTaskStatus = function(taskId, taskType, accountId, isActive) {
         $.ajax({
             url: 'change_task',
             headers: {
@@ -110,7 +85,8 @@ $(document).ready(function() {
             data: {
                 task_id: taskId,
                 is_active: isActive,
-                task_type: taskType
+                task_type: taskType,
+                account_id: accountId
             },
             success: function(data) {
                 if (data.success) {
@@ -125,15 +101,54 @@ $(document).ready(function() {
 
     $('.task-deactivate').click(function () {
         var taskId = $(this).data('taskId')
+            , accountId = $(this).data('accountId')
             , taskType = $(this).data('taskType');
 
-        changeTaskStatus(taskId, taskType, 0);
+        changeTaskStatus(taskId, taskType, accountId, 0);
     });
 
     $('.task-activate').click(function () {
         var taskId = $(this).data('taskId')
+            , accountId = $(this).data('accountId')
             , taskType = $(this).data('taskType');
 
-        changeTaskStatus(taskId, taskType, 1);
+        changeTaskStatus(taskId, taskType, accountId, 1);
+    });
+
+
+    var changeAccountStatus = function(accountId, isActive) {
+        $.ajax({
+            url: 'change_account',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                account_id: accountId,
+                is_active: isActive
+            },
+            success: function(data) {
+                if (data.success) {
+                    location.href = '/accounts';
+                } else {
+                    // console.log('error', data.error);
+                    alert(data.error);
+                }
+            }
+        });
+    };
+
+
+    $('.account-deactivate').click(function () {
+        var accountId = $(this).data('accountId');
+
+        changeAccountStatus(accountId, 0);
+    });
+
+    $('.account-activate').click(function () {
+        var accountId = $(this).data('accountId');
+
+        changeAccountStatus(accountId, 1);
     });
 });

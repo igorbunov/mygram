@@ -34,17 +34,41 @@ class account extends Model
         return $result;
     }
 
-    public static function getAccountById(int $accountId, bool $asArray = false)
+    public static function getAccountById(int $accountId, bool $onlyActive = true, bool $asArray = false)
     {
-        $res = self::where([
-            'id' => $accountId,
-            'is_active' => 1
-        ])->first();
+        $filter = [
+            'id' => $accountId
+        ];
+
+        if ($onlyActive) {
+            $filter['is_active'] = 1;
+        }
+
+        $res = self::where($filter)->first();
 
         if (!$asArray) {
             return $res;
         }
 
         return (is_null($res)) ? null: $res->toArray();
+    }
+
+    public static function isAccountBelongsToUser(int $userId, int $accountId)
+    {
+        $res = self::where([
+            'id' => $accountId,
+            'user_id' => $userId
+        ])->get();
+
+        return (count($res) > 0);
+    }
+
+    public static function changeStatus(int $accountId, int $isActive)
+    {
+//        dd($accountId);
+        $acc = self::getAccountById($accountId, false);
+//        dd($acc);
+        $acc->is_active = $isActive;
+        $acc->save();
     }
 }

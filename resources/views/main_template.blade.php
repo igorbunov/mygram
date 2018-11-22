@@ -16,14 +16,15 @@
                     <div class="col-lg-3">
                         {{ session('user_email') }}<br/>
                         <a href="{{ url('logout') }}">Выйти</a><br/>
-                        Тариф: {{ $currentTariff['name'] }}<br/>
-                        Аккаунтов: {{ $currentTariff['accounts_count'] }}<br/>
-                        Действует до: {{ $currentTariff['dt_end'] }}<br/>
+
+                        @if($currentTariff != null)
+                            Тариф: {{ $currentTariff['name'] }}<br/>
+                            Аккаунтов: {{ $currentTariff['accounts_count'] }}<br/>
+                            Действует до: {{ $currentTariff['dt_end'] }}<br/>
+                        @endif
                     </div>
                     <div class="col-lg-1"></div>
                 </div>
-
-
             </div>
         </header>
 

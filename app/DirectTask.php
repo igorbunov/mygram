@@ -19,13 +19,30 @@ class DirectTask extends Model
         return $this->hasMany('App\DirectTaskReport', 'direct_task_id', 'id');
     }
 
-    public static function getActiveDirectTaskById(int $taskId, int $accountId, bool $asArray = false)
+    public static function getActiveTasksCountByAccountId(int $accountId)
     {
-        $res = self::where([
+        $filter = [
             'account_id' => $accountId,
-            'is_active' => 1,
-            'id' => $taskId
-        ])->first();
+            'is_active' => 1
+        ];
+
+        $res = self::where($filter)->get();
+
+        return count($res);
+    }
+
+    public static function getDirectTaskById(int $taskId, int $accountId, bool $onlyActive = true, bool $asArray = false)
+    {
+        $filter = [
+            'id' => $taskId,
+            'account_id' => $accountId
+        ];
+
+        if ($onlyActive) {
+            $filter['is_active'] = 1;
+        }
+
+        $res = self::where($filter)->first();
 
         if (!$asArray) {
             return $res;

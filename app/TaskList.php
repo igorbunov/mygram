@@ -14,9 +14,9 @@ class TaskList extends Model
         return $this->hasMany('App\TariffList', 'tariff_list_id', 'id');
     }
 
-    public static function getAvaliableTasksForTariff(int $taskListId, bool $asArray = false)
+    public static function getAvaliableTasksForTariffListId(int $tariffListId, bool $asArray = false)
     {
-        $res = TaskList::where(['tariff_list_id' => $taskListId])->get();
+        $res = TaskList::where(['tariff_list_id' => $tariffListId])->get();
 
         if (!$asArray) {
             return $res;

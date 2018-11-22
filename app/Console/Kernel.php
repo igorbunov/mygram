@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Tariff;
 use Illuminate\Console\Scheduling\Schedule;
@@ -39,6 +40,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function() {
             Tariff::tariffTick();
+            TaskController::disableAccountsAndTasksByEndTariff();
         })->daily();
     }
 
