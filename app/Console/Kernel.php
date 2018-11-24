@@ -36,6 +36,9 @@ class Kernel extends ConsoleKernel
         $schedule->call(function() {
 //            Log::debug('runFastTask run');
 //            DirectTaskCreatorController::generateDirectTasks();
+
+            $pataTestAccountId = 3;
+//            DirectToSubsTasksRunner::getAccountSubscribers($pataTestAccountId);
         })->everyMinute();
 
         $schedule->call(function() {

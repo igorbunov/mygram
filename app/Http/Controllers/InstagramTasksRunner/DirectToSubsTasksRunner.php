@@ -7,28 +7,82 @@
  */
 namespace App\Http\Controllers\InstagramTasksRunner;
 use App\account;
+use App\AccountSubscribers;
 use App\DirectTask;
 use Illuminate\Support\Facades\Log;
 use InstagramAPI\Instagram;
+use InstagramAPI\Signatures;
 
 class DirectToSubsTasksRunner
 {
+    private static function includeLibrary()
+    {
+        $path =__DIR__.'/../../../../instagram_lib/vendor/autoload.php';
+
+        if (!file_exists($path)) {
+            Log::error('cant find path: '.$path);
+            return false;
+        }
+
+        require_once $path;
+
+        return true;
+    }
+
+    public static function getAccountSubscribers(int $accountId)
+    {
+        if (!self::includeLibrary()) {
+            return;
+        }
+
+        $account = account::getAccountById($accountId);
+
+        if (is_null($account)) {
+            Log::debug('account not found');
+            return;
+        }
+
+        $ig = new Instagram();
+        Log::debug('inst created');
+
+        $ig->login($account->nickname, $account->password);
+
+        $maxId = null;
+        $rankToken = Signatures::generateUUID();
+        Log::debug('account_id '.$ig->account_id.' $rankToken: '.$rankToken);
+
+        $response = $ig->people->getFollowers($ig->account_id, $rankToken);
+
+//        Log::debug('response: '.$response);
+
+        if ($response->isOk()) {
+            $followers = $response->getUsers();
+//            Log::debug('followers: '.\json_encode($followers));
+
+            foreach ($followers as $follower) {
+//                Log::debug('follower', $follower);
+
+                AccountSubscribers::addUnique([
+                    'owner_account_id' => $accountId,
+                    'username' => $follower->getUsername(),
+                    'pk' => $follower->getPk(),
+                    'json' => \json_encode($follower)
+                ]);
+            }
+        } else {
+            Log::error('cant get response: '.$response->getMessage());
+        }
+    }
+
     public static function sendDirectToSubscribers(int $directTaskId, int $accountId)
     {
         Log::debug('sendDirectToSubscribers '.$directTaskId. ' '.$accountId);
-        $path =__DIR__.'/../../../../instagram_lib/vendor/autoload.php';
 
-        Log::debug('file exists '. file_exists($path));
-
-        if (!file_exists($path)) {
-
-            Log::error('cant find path: '.$path);
+        if (!self::includeLibrary()) {
             return;
         }
 
         try {
-            require_once $path;
-
 //            Instagram::$allowDangerousWebUsageAtMyOwnRisk = true;
 
             $ig = new Instagram();
