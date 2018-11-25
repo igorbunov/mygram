@@ -25,6 +25,8 @@ class CreateAccountsTable extends Migration
             $table->integer('subscriptions')->default(0);
             $table->text('picture');
             $table->tinyInteger('is_active')->default(1);
+            $table->string('rank_token')->default('');
+
             $table->timestamps();
         });
     }

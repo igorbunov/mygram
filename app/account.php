@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use InstagramAPI\Signatures;
 
 class account extends Model
 {
@@ -65,10 +66,44 @@ class account extends Model
 
     public static function changeStatus(int $accountId, int $isActive)
     {
-//        dd($accountId);
         $acc = self::getAccountById($accountId, false);
-//        dd($acc);
+
+        if (is_null($acc)) {
+            return;
+        }
+
         $acc->is_active = $isActive;
         $acc->save();
+    }
+
+    public static function setToken(int $accountId, string $rankToken)
+    {
+        $acc = self::getAccountById($accountId, false);
+
+        if (is_null($acc)) {
+            return;
+        }
+
+        $acc->rank_token = $rankToken;
+        $acc->save();
+    }
+
+    public static function getRankToken(int $accountId)
+    {
+        $account = self::getAccountById($accountId);
+
+        if (is_null($account)) {
+            throw new \Exception('Account id: ' . $accountId . ' not found');
+        }
+
+        if (!empty($account->rank_token)) {
+            return $account->rank_token;
+        }
+
+        $rankToken = Signatures::generateUUID();
+
+        self::setToken($accountId, $rankToken);
+
+        return $rankToken;
     }
 }

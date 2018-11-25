@@ -7,6 +7,26 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscribers extends Model
 {
+    public static function addUniqueArray(array $followers)
+    {
+        foreach ($followers as $follower) {
+            AccountSubscribers::addUnique($follower);
+        }
+    }
+
+    public static function getCurrentFollowersCount(int $accountId)
+    {
+        $followers = self::where([
+            'owner_account_id' => $accountId
+        ])->get();
+
+        if (is_null($followers)) {
+            return 0;
+        }
+
+        return count($followers);
+    }
+
     public static function addUnique($data)
     {
         // TODO: решить как доставать новых подпищиков
@@ -25,8 +45,44 @@ class AccountSubscribers extends Model
         }
     }
 
-    public static function getNewSubscribers(int $accountId)
+    public static function getNewFollowers(int $accountId, array $newFollowersArr): array
     {
+        $followers = self::where([
+            'owner_account_id' => $accountId
+        ])->get();
 
+        if (is_null($followers)) {
+            return [];
+        }
+
+        $newFollowers = [];
+
+        foreach ($newFollowersArr as $i => $newFollower) {
+            if ($i == 100) {
+                break;
+            }
+
+            $isFound = false;
+
+            foreach ($followers as $oldFollower) {
+                if ($oldFollower->pk == $newFollower['pk']) {
+                    $isFound = true;
+                    break;
+                }
+            }
+
+            if (!$isFound) {
+                $newFollowers[] = $newFollower;
+            }
+        }
+
+        return $newFollowers;
+    }
+
+    public static function deleteOldFollowers($accountId)
+    {
+        self::where([
+            'owner_account_id' => $accountId
+        ])->delete();
     }
 }

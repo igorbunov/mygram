@@ -34,12 +34,12 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 
         $schedule->call(function() {
-//            Log::debug('runFastTask run');
-//            DirectTaskCreatorController::generateDirectTasks();
-
-            $pataTestAccountId = 3;
-//            DirectToSubsTasksRunner::getAccountSubscribers($pataTestAccountId);
+            DirectTaskCreatorController::generateDirectTasks();
         })->everyMinute();
+
+//        $schedule->call(function() {
+//            DirectTaskCreatorController::generateDirectTasks();
+//        })->everyFiveMinutes();
 
         $schedule->call(function() {
             Tariff::tariffTick();
@@ -59,7 +59,11 @@ class Kernel extends ConsoleKernel
         require base_path('routes/console.php');
 
         Artisan::command('direct:send {directTaskId} {accountId}', function ($directTaskId, $accountId) {
-            DirectToSubsTasksRunner::sendDirectToSubscribers($directTaskId, $accountId);
+            try {
+                DirectToSubsTasksRunner::runDirectTasks($directTaskId, $accountId);
+            } catch (\Exception $err) {
+                Log::error('Error running task DirectToSubsTasksRunner::getAccountSubscribers: ' . $err->getMessage());
+            }
         });
     }
 }

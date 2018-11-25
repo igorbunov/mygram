@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class DirectTask extends Model
@@ -64,5 +65,32 @@ class DirectTask extends Model
         }
 
         return (is_null($res)) ? null : $res->toArray();
+    }
+
+    public static function updateStatistics(int $directTaskId)
+    {
+        $res = DB::select("SELECT COUNT(1) AS total
+                , SUM(IF(success = 1, 1, 0)) AS success
+                , SUM(IF(success = 0, 1, 0)) AS failures
+            FROM direct_task_reports 
+            WHERE direct_task_id = ?
+            LIMIT 1"
+        , [$directTaskId]);
+
+        if (is_null($res)) {
+            return;
+        }
+
+        $task = self::find($directTaskId);
+
+        if (is_null($task)) {
+            return;
+        }
+
+        $task->total_messages = $res[0]->total;
+        $task->success_count = $res[0]->success;
+        $task->failure_count = $res[0]->failures;
+
+        $task->save();
     }
 }
