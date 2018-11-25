@@ -34,7 +34,6 @@
                     <div class="col-lg-12 d-flex flex-row">
                         <div class="p-2">{{ $task->taskType }}</div>
                         <div class="p-2">{{ $task->taskList->title }}</div>
-                        <div class="p-2">{{ $task->delay_time_min }}</div>
                         <div class="p-2">{{ $task->is_active }}</div>
                         <div class="p-2">{{ $task->total_messages }}</div>
                         <div class="p-2">{{ $task->success_count }}</div>
@@ -84,10 +83,6 @@
                             <div class="col-lg-12">
                                 <label for="add-direct-task-text">Текст сообщения</label>
                                 <textarea id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
-                            </div>
-                            <div class="col-lg-12">
-                                <label for="add-direct-task-delay">Отправлять с задержкой 10 миинут</label>
-                                <input id="add-direct-task-delay" type="checkbox" name="is_use_delay" />
                             </div>
                             <div class="col-lg-12">
                                 <label for="add-direct-task-work-only-in-night">Работать только ночью</label>

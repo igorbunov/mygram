@@ -90,8 +90,6 @@ class TaskController extends Controller
         $accountId = (int) $req->post('account_id', 0);
         $taskListId = (int) $req->post('task_list_id', 0);
         $directText = $req->post('direct_text', '');
-        $isUseDelay = $req->post('is_use_delay', 'off');
-        $isUseDelay = filter_var($isUseDelay, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
 
         $workOnlyInNight = $req->post('work_only_in_night', 'off');
         $workOnlyInNight = filter_var($workOnlyInNight, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
@@ -139,7 +137,6 @@ class TaskController extends Controller
                         $direct->is_active = 1;
                         $direct->task_list_id = $taskListId;
                         $direct->message = $directText;
-                        $direct->delay_time_min = ($isUseDelay) ? 30 : 5;
                         $direct->work_only_in_night = $workOnlyInNight ? 1 : 0;
                         $direct->save();
 

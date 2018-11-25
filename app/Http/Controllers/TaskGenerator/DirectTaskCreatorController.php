@@ -44,6 +44,11 @@ class DirectTaskCreatorController
                                 continue;
                             }
 
+                            if ($directTask->work_only_in_night > 0 and !self::isNight()) {
+                                Log::debug('This is night task and now is not night');
+                                continue;
+                            }
+
                             $preCommand = "cd /home/pata/projects/myinst";
                             $command = " && /usr/bin/php artisan direct:send " . $directTask->id . ' ' . $account->id;
                             $runInBackground = " > /dev/null 2>/dev/null &";
@@ -57,5 +62,17 @@ class DirectTaskCreatorController
                 }
             }
         }
+    }
+
+    public static function isNight()
+    {
+        date_default_timezone_set('Europe/Kiev');
+
+        $nightStartTime = 23;
+        $nightEndTime = 6;
+
+        $curHour = date("H");
+
+        return ($curHour >= $nightStartTime or $curHour <= $nightEndTime);
     }
 }

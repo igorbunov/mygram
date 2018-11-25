@@ -19,7 +19,6 @@ class CreateDirectTasksTable extends Migration
             $table->tinyInteger('is_active')->default(0);
             $table->integer('task_list_id');
             $table->text('message'); // 800
-            $table->integer('delay_time_min')->default(5);
             $table->tinyInteger('work_only_in_night')->default(0);
             $table->integer('total_messages')->default(0);
             $table->integer('success_count')->default(0);

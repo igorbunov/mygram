@@ -109,7 +109,7 @@ class DirectToSubsTasksRunner
         MyInstagram::getInstanse()->login($account);
 
         foreach ($newFollowers as $newFollower) {
-            sleep(rand(4, 10));
+            sleep(rand(10, 30));
 
             $response = MyInstagram::getInstanse()->sendDirect($newFollower['pk'], $directTask->message);
 
