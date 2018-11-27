@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\account;
+use App\AccountSubscribers;
 use App\DirectTask;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
@@ -212,6 +213,10 @@ class TaskController extends Controller
 
             $direct->is_active = $isActive;
             $direct->save();
+
+            if (0 == $isActive) {
+                AccountSubscribers::deleteOldFollowers($accountId);
+            }
 
             return response()->json([
                 'success' => true,
