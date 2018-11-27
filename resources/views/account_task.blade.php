@@ -8,7 +8,7 @@
             </div>
         </div>
 <br/>
-        @foreach ($tasks as $task)
+        @foreach ($directTasks as $task)
             <section class="account-tasks @if($task->is_active) active @else deactivated @endif">
                 <div class="row">
                     <div class="col-lg-8">

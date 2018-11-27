@@ -16,7 +16,10 @@ class TaskList extends Model
 
     public static function getAvaliableTasksForTariffListId(int $tariffListId, bool $asArray = false)
     {
-        $res = TaskList::where(['tariff_list_id' => $tariffListId])->get();
+        $res = self::where([
+            'tariff_list_id' => $tariffListId,
+            'is_active' => 1
+        ])->get();
 
         if (!$asArray) {
             return $res;

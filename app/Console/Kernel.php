@@ -2,9 +2,12 @@
 
 namespace App\Console;
 
+use App\FastTask;
+use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
+use App\Http\Controllers\TaskGenerator\ValidateAccountTaskCreator;
 use App\Tariff;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -30,16 +33,34 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->call(function() {
+            for ($i = 0; $i < 10; $i++) {
+                $tasks = FastTask::getTask();
+
+                if (!is_null($tasks) and count($tasks) > 0) {
+                    Log::debug('found task: ' . json_encode($tasks));
+
+                    foreach ($tasks as $task) {
+                        switch ($task->task_type) {
+                            case FastTask::TYPE_TRY_LOGIN:
+                                FastTask::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
+                                ValidateAccountTaskCreator::generateFirstLoginTask($task->account_id, $task->id);
+
+                                break;
+                            case FastTask::TYPE_REFRESH_ACCOUNT:
+
+                                break;
+                        }
+                    }
+                }
+                sleep(5);
+            }
+        })->everyMinute();
 
 //        $schedule->call(function() {
+//            Log::debug('run task');
 //            DirectTaskCreatorController::generateDirectTasks();
-//        })->everyMinute();
-
-//        $schedule->call(function() {
-//            DirectTaskCreatorController::generateDirectTasks();
-//        })->everyFiveMinutes();
+//        })->everyMinute(); // ->everyFiveMinutes();
 
         $schedule->call(function() {
             Tariff::tariffTick();
@@ -63,6 +84,14 @@ class Kernel extends ConsoleKernel
                 DirectToSubsTasksRunner::runDirectTasks($directTaskId, $accountId);
             } catch (\Exception $err) {
                 Log::error('Error running task DirectToSubsTasksRunner::getAccountSubscribers: ' . $err->getMessage());
+            }
+        });
+
+        Artisan::command('fast_tasks:login {accountId} {fastTaskId}', function($accountId, $fastTaskId) {
+            try {
+                AccountFirstLoginRunner::tryLogin($accountId, $fastTaskId);
+            } catch (\Exception $err) {
+                Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage());
             }
         });
     }

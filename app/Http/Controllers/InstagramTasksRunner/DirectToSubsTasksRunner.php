@@ -16,26 +16,8 @@ use InstagramAPI\Instagram;
 
 class DirectToSubsTasksRunner
 {
-    private static function includeLibrary()
-    {
-        $path =__DIR__.'/../../../../instagram_lib/vendor/autoload.php';
-
-        if (!file_exists($path)) {
-            Log::error('cant find path: '.$path);
-            return false;
-        }
-
-        require_once $path;
-
-        return true;
-    }
-
     public static function runDirectTasks(int $directTaskId, int $accountId)
     {
-        if (!self::includeLibrary()) {
-            return;
-        }
-
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -90,10 +72,6 @@ class DirectToSubsTasksRunner
 
     public static function sendDirectToSubscribers(int $directTaskId, int $accountId, array $newFollowers)
     {
-        if (!self::includeLibrary()) {
-            return;
-        }
-
         $directTask = DirectTask::getDirectTaskById($directTaskId, $accountId, true);
 
         if (is_null($directTask)) {

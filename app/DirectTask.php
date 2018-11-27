@@ -52,6 +52,33 @@ class DirectTask extends Model
         return (is_null($res)) ? null : $res->toArray();
     }
 
+
+    public static function getDirectTasksByTaskListId(int $taskListId, int $accountId, bool $onlyActive = false, bool $asArray = false)
+    {
+        $filter = [
+            'account_id' => $accountId,
+            'task_list_id' => $taskListId
+        ];
+
+        if ($onlyActive) {
+            $filter['is_active'] = 1;
+        }
+
+        $res = self::where($filter)->get();
+
+        if (!$asArray) {
+            return $res;
+        }
+
+        $result = [];
+
+        foreach ($res as $row) {
+            $result[] = $row->toArray();
+        }
+
+        return $result;
+    }
+
     public static function getActiveDirectTaskByTaskListId(int $taskListId, int $accountId, bool $asArray = false)
     {
         $res = self::where([

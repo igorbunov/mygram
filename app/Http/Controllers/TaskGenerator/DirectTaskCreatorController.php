@@ -29,15 +29,15 @@ class DirectTaskCreatorController
                 continue;
             }
 
-            $tasks = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
+            $tasksTypes = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
 
-            if (count($tasks) > 0) {
+            if (count($tasksTypes) > 0) {
                 $accounts = account::getActiveAccountsByUser($user->id);
 
                 foreach ($accounts as $account) {
-                    foreach ($tasks as $task) {
-                        if ('direct' == $task->type) {
-                            $taskListId = $task->id;
+                    foreach ($tasksTypes as $taskType) {
+                        if ('direct' == $taskType->type) {
+                            $taskListId = $taskType->id;
                             $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id);
 
                             if (is_null($directTask)) {
@@ -54,7 +54,7 @@ class DirectTaskCreatorController
                             $runInBackground = " > /dev/null 2>/dev/null &";
                             sleep(rand(1, 15));
                             exec($preCommand . $command . $runInBackground);
-                        } else if ('unfollowing' == $task->type) {
+                        } else if ('unfollowing' == $taskType->type) {
 
                         }
                     }

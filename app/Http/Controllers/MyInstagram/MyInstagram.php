@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\MyInstagram;
 
 use App\account;
+use Illuminate\Support\Facades\Log;
 use InstagramAPI\Instagram;
 
 class MyInstagram
@@ -22,7 +23,28 @@ class MyInstagram
 
     private function __construct()
     {
+        if (!self::includeLibrary()) {
+            return;
+        }
+
     }
+
+    private static function includeLibrary()
+    {
+        $path =__DIR__.'/../../../../instagram_lib/vendor/autoload.php';
+
+        if (!file_exists($path)) {
+            Log::error('cant find path: '.$path);
+            return false;
+        } else {
+            Log::debug('файл найден');
+        }
+
+        require_once $path;
+
+        return true;
+    }
+
 
     public static function getInstanse()
     {
@@ -79,17 +101,35 @@ class MyInstagram
             $this->logout();
         }
 
-        $this->account = $account;
+        try {
+            $this->account = $account;
 
-        $this->instagram = new Instagram();
-        $this->instagram->login($this->account->nickname, $this->account->password);
+            $this->instagram = new Instagram();
+            $respose = $this->instagram->login($this->account->nickname, $this->account->password);
 
-        $this->setRankToken();
+            $this->setRankToken();
 
-        $this->accountPK = $this->instagram->account_id;
-        $this->accountId = $this->account->id;
+            $this->accountPK = $this->instagram->account_id;
+            $this->accountId = $this->account->id;
 
-        return $this->instagram;
+            account::setLoginStatus([
+                'accountId' => $account->id,
+                'isError' => false,
+                'message' => (is_null($respose)) ? 'session exists' : \json_encode($respose)
+            ]);
+
+            return $this->instagram;
+        } catch (\Exception $err) {
+            account::setLoginStatus([
+                'accountId' => $account->id,
+                'isError' => true,
+                'message' => $err->getMessage()
+            ]);
+
+            Log::error('Ошибка логина в инстаграм: ' . $err->getMessage().' '.$err->getTraceAsString());
+        }
+
+        return null;
     }
 
     public function getInstagram()

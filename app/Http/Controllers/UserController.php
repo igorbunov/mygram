@@ -83,6 +83,10 @@ class UserController extends Controller
     }
 
     public function register(Request $req) {
+        if (!env('ENABLE_REGISTRATION')) {
+            return '<h3>Регистрация временно отключена</h3>';
+        }
+
         $catpchaCode = $req->post("g-recaptcha-response");
 
         if (empty($catpchaCode)) {
@@ -110,8 +114,10 @@ class UserController extends Controller
             $user->confirm_code = $code;
             $user->save();
 
-            // TODO: send email with confirmation code $code
-            //mail($email, 'Регистрация на сайте {имя сайта}', 'Ссылка для завершения регистрации: '.env('APP_URL').'register/'.$code);
+            if (env('ENABLE_EMAIL')) {
+                mail($email, 'Регистрация на сайте ' . env('APP_URL'),
+                    'Ссылка для завершения регистрации: ' . env('APP_URL') . 'register/' . $code);
+            }
 
             return view('auth.register_confirm_sended', ['email' => $email]);
         } else {
@@ -120,6 +126,10 @@ class UserController extends Controller
     }
 
     public function registerConfirm($code) {
+        if (!env('ENABLE_REGISTRATION')) {
+            return '<h3>Регистрация временно отключена</h3>';
+        }
+
         $code = trim($code);
 
         if ($code == '' OR empty($code)) {
@@ -134,6 +144,10 @@ class UserController extends Controller
     }
 
     public function registerFinish(Request $req) {
+        if (!env('ENABLE_REGISTRATION')) {
+            return '<h3>Регистрация временно отключена</h3>';
+        }
+
         $code = trim($req->post('code', ''));
         $pass1 = trim($req->post('pass1', ''));
         $pass2 = trim($req->post('pass2', ''));
@@ -161,6 +175,10 @@ class UserController extends Controller
     }
 
     public function registerView() {
+        if (!env('ENABLE_REGISTRATION')) {
+            return '<h3>Регистрация временно отключена</h3>';
+        }
+
         return view('auth.register');
     }
 
@@ -226,8 +244,11 @@ class UserController extends Controller
             $user->forgot_code = $code;
             $user->save();
 
-            // TODO send email
-            //mail($email, 'Смена пароля на сайте {имя сайта}', 'Если вы не нажимали на восстановление пароля, то игнорируйте это сообщение .Ссылка для смены пароля: '.env('APP_URL').'forgot/'.$code);
+            if (env('ENABLE_EMAIL')) {
+                mail($email, 'Смена пароля на сайте ' . env('APP_URL'),
+                    'Если вы не нажимали на восстановление пароля, то игнорируйте это сообщение .Ссылка для смены пароля: '
+                    . env('APP_URL') . 'forgot/' . $code);
+            }
 
             return view('auth.forgot_sended', ['email' => $email]);
         }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\account;
+use App\FastTask;
+use App\Http\Controllers\TaskGenerator\ValidateAccountTaskCreator;
 use App\Tariff;
 use App\User;
 use Illuminate\Http\Request;
@@ -10,11 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index($error = '')
     {
         $userId = (int) session('user_id', 0);
@@ -62,19 +59,22 @@ class AccountController extends Controller
 
         $nickname = (string) $req->post('account_name', '');
         $password = (string) $req->post('account_password', '');
-//dd($nickname, $password, $req->all());
+
         if ($nickname == '' OR $password == '') {
             return $this->index('Пустые поля');
         }
-//dd('awf');
-        $account = new account();
-        $account->user_id = $userId;
-        $account->nickname = $nickname;
-        $account->picture = '';
-        $account->password = $password;
-        $account->save();
 
-        return redirect('accounts');
+        $accountId = account::addNew([
+            'user_id' => $userId,
+            'nickname' => $nickname,
+            'password' => $password
+        ]);
+
+        if ($accountId > 0) {
+            FastTask::addTask($accountId, FastTask::TYPE_TRY_LOGIN);
+        }
+
+        return redirect('account/' . $accountId);
     }
 
     public function sync(Request $req) {

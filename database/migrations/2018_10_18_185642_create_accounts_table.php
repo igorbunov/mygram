@@ -26,6 +26,8 @@ class CreateAccountsTable extends Migration
             $table->text('picture');
             $table->tinyInteger('is_active')->default(1);
             $table->string('rank_token')->default('');
+            $table->tinyInteger('is_confirmed')->default(0);
+            $table->text('response');
 
             $table->timestamps();
         });

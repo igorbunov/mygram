@@ -7,6 +7,42 @@ use InstagramAPI\Signatures;
 
 class account extends Model
 {
+    public static function getNonConfirmedAccounts()
+    {
+        return self::where([
+            'is_confirmed' => 0,
+            'response' => ''
+        ])->get();
+    }
+
+    public static function setLoginStatus(array $data)
+    {
+        $account = self::getAccountById($data['accountId']);
+
+        if (is_null($account)) {
+            throw new \Exception('account not found');
+        }
+
+        $account->is_confirmed = ($data['isError']) ? 0 : 1;
+        $account->response = $data['message'];
+        $account->save();
+    }
+
+    public static function addNew(array $data)
+    {
+        $account = new account();
+        $account->picture = '';
+        $account->response = '';
+
+        foreach ($data as $field => $value) {
+            $account->$field = $value;
+        }
+
+        $account->save();
+
+        return $account->id;
+    }
+
     public function user() {
         return $this->belongsTo('App\User', 'user_id', 'id');
     }

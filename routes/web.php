@@ -11,6 +11,10 @@
 |
 */
 
+if (!env('SITE_ENABLED')) {
+    echo '<h3>Site disabled</h3>';
+    die();
+}
 
 Route::get('/', 'AccountController@index');
 Route::get('/check', 'TaskController@check');
