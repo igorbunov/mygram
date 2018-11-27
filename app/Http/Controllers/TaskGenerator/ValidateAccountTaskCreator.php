@@ -31,8 +31,8 @@ class ValidateAccountTaskCreator
 
     public static function generateFirstLoginTask(int $accountId, int $fastTaskId)
     {
-        $preCommand = "cd /home/pata/projects/myinst";
-        $command = " && /usr/bin/php artisan fast_tasks:login " .  $accountId . ' ' . $fastTaskId;
+        $preCommand = "cd " . env('PROJECT_PATH');
+        $command = " && " . env('PHP_PATH') . " artisan fast_tasks:login " .  $accountId . ' ' . $fastTaskId;
         $runInBackground = " > /dev/null 2>/dev/null &";
 
         Log::debug('fast task command: ' . $preCommand . $command . $runInBackground);

@@ -49,8 +49,8 @@ class DirectTaskCreatorController
                                 continue;
                             }
 
-                            $preCommand = "cd /home/pata/projects/myinst";
-                            $command = " && /usr/bin/php artisan direct:send " . $directTask->id . ' ' . $account->id;
+                            $preCommand = "cd " . env('PROJECT_PATH');
+                            $command = " && " . env('PHP_PATH') . " artisan direct:send " . $directTask->id . ' ' . $account->id;
                             $runInBackground = " > /dev/null 2>/dev/null &";
                             sleep(rand(1, 15));
                             exec($preCommand . $command . $runInBackground);
