@@ -113,6 +113,6 @@ if (is_already_running()) {
 }
 
 update_repo();
-//build();
+run_migrations();
 
 system_message('done');
