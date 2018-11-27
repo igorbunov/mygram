@@ -34,11 +34,22 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(function() {
+//            Log::debug('run task');
+            DirectTaskCreatorController::generateDirectTasks();
+        })->everyTenMinutes();
+//        })->everyMinute(); // ->everyFiveMinutes();
+
+        $schedule->call(function() {
+            Tariff::tariffTick();
+            TaskController::disableAccountsAndTasksByEndTariff();
+        })->daily();
+
+        $schedule->call(function() {
             for ($i = 0; $i < 10; $i++) {
                 $tasks = FastTask::getTask();
 
                 if (!is_null($tasks) and count($tasks) > 0) {
-                    Log::debug('found task: ' . json_encode($tasks));
+//                    Log::debug('found task: ' . json_encode($tasks));
 
                     foreach ($tasks as $task) {
                         switch ($task->task_type) {
@@ -56,16 +67,6 @@ class Kernel extends ConsoleKernel
                 sleep(5);
             }
         })->everyMinute();
-
-//        $schedule->call(function() {
-//            Log::debug('run task');
-//            DirectTaskCreatorController::generateDirectTasks();
-//        })->everyMinute(); // ->everyFiveMinutes();
-
-        $schedule->call(function() {
-            Tariff::tariffTick();
-            TaskController::disableAccountsAndTasksByEndTariff();
-        })->daily();
     }
 
     /**
