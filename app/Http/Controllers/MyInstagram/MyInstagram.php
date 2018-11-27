@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\MyInstagram;
 
 use App\account;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use InstagramAPI\Instagram;
 
@@ -105,7 +106,7 @@ class MyInstagram
             $this->account = $account;
 
             $this->instagram = new Instagram();
-            $respose = $this->instagram->login($this->account->nickname, $this->account->password);
+            $respose = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
 
             $this->setRankToken();
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\TaskGenerator\ValidateAccountTaskCreator;
 use App\Tariff;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
@@ -67,7 +68,7 @@ class AccountController extends Controller
         $accountId = account::addNew([
             'user_id' => $userId,
             'nickname' => $nickname,
-            'password' => $password
+            'password' => Crypt::encryptString($password)
         ]);
 
         if ($accountId > 0) {
