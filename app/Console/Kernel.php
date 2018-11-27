@@ -33,6 +33,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        if (!env('SITE_ENABLED')) {
+            return;
+        }
+
         $schedule->call(function() {
 //            Log::debug('run task');
             DirectTaskCreatorController::generateDirectTasks();
