@@ -50,8 +50,9 @@ class DirectTaskCreatorController
                             }
 
                             $preCommand = "cd " . env('PROJECT_PATH');
-                            $command = " && " . env('PHP_PATH') . " artisan direct:send " . $directTask->id . ' ' . $account->id;
-                            $runInBackground = " > /dev/null &";
+                            $command = " && /usr/bin/nohup php artisan direct:send " . $directTask->id . ' ' . $account->id;
+                            $runInBackground = " >/dev/null 2>&1 &";
+                            //exec('/usr/bin/nohup php script.php >/dev/null 2>&1 &');
                             sleep(rand(1, 15));
                             exec($preCommand . $command . $runInBackground);
                         } else if ('unfollowing' == $taskType->type) {

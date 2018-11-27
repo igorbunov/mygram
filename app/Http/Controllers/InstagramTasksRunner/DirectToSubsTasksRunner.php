@@ -69,9 +69,10 @@ class DirectToSubsTasksRunner
 
         if (count($followersDiff) > 0) {
             self::sendDirectToSubscribers($directTaskId, $accountId, $followersDiff);
+
+            DirectTask::updateStatistics($directTaskId);
         }
 
-        DirectTask::updateStatistics($directTaskId);
         Log::debug('done');
     }
 
