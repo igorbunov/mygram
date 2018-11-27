@@ -106,7 +106,13 @@ class MyInstagram
             $this->account = $account;
 
             $this->instagram = new Instagram();
-            $respose = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
+            $respose = '';
+
+            try {
+                $respose = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
+            } catch (\Exception $err0) {
+                Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
+            }
 
             $this->setRankToken();
 

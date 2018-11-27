@@ -25,6 +25,8 @@ class DirectToSubsTasksRunner
             return;
         }
 
+        sleep(rand(10, 180)); // спим от 10 сек до 3 мин
+
         MyInstagram::getInstanse()->login($account);
 
         Log::debug('account_id ' . MyInstagram::getInstanse()->getInstagram()->account_id .

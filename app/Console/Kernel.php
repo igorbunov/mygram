@@ -38,9 +38,8 @@ class Kernel extends ConsoleKernel
         }
 
         $schedule->call(function() {
-//            Log::debug('run task');
             DirectTaskCreatorController::generateDirectTasks();
-        })->everyTenMinutes();
+        })->everyTenMinutes()->withoutOverlapping();
 //        })->everyMinute(); // ->everyFiveMinutes();
 
         $schedule->call(function() {
@@ -53,8 +52,6 @@ class Kernel extends ConsoleKernel
                 $tasks = FastTask::getTask();
 
                 if (!is_null($tasks) and count($tasks) > 0) {
-//                    Log::debug('found task: ' . json_encode($tasks));
-
                     foreach ($tasks as $task) {
                         switch ($task->task_type) {
                             case FastTask::TYPE_TRY_LOGIN:
@@ -70,7 +67,7 @@ class Kernel extends ConsoleKernel
                 }
                 sleep(5);
             }
-        })->everyMinute();
+        })->everyMinute()->withoutOverlapping();
     }
 
     /**
