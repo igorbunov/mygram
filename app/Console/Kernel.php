@@ -38,18 +38,13 @@ class Kernel extends ConsoleKernel
         }
 
         $schedule->call(function() {
-            Log::debug('== Run chedule direct task generator == ');
-            DirectTaskCreatorController::generateDirectTasks();
-        })->everyTenMinutes();
-//        })->everyMinute(); // ->everyFiveMinutes();
-
-        $schedule->call(function() {
             Log::debug('== Run chedule tariff changer == ');
             Tariff::tariffTick();
             TaskController::disableAccountsAndTasksByEndTariff();
         })->daily();
 
         $schedule->call(function() {
+            Log::debug('== Run chedule fast task generator == ');
 //            for ($i = 0; $i < 10; $i++) {
                 $tasks = FastTask::getTask();
 
@@ -57,7 +52,6 @@ class Kernel extends ConsoleKernel
                     foreach ($tasks as $task) {
                         switch ($task->task_type) {
                             case FastTask::TYPE_TRY_LOGIN:
-                                Log::debug('== Run chedule fast task generator == ');
                                 FastTask::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
                                 ValidateAccountTaskCreator::generateFirstLoginTask($task->account_id, $task->id);
 
@@ -71,6 +65,12 @@ class Kernel extends ConsoleKernel
 //                sleep(5);
 //            }
         })->everyMinute();
+
+        $schedule->call(function() {
+            Log::debug('== Run chedule direct task generator == ');
+            DirectTaskCreatorController::generateDirectTasks();
+        })->everyTenMinutes()->runInBackground();
+//        })->everyMinute(); // ->everyFiveMinutes();
     }
 
     /**
