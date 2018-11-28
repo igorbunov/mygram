@@ -39,9 +39,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function() {
             DirectTaskCreatorController::generateDirectTasks();
-        })->everyTenMinutes()
-            ->name('direct_task_generator')
-            ->withoutOverlapping();
+        })->everyTenMinutes();
 //        })->everyMinute(); // ->everyFiveMinutes();
 
         $schedule->call(function() {
@@ -69,9 +67,7 @@ class Kernel extends ConsoleKernel
                 }
                 sleep(5);
             }
-        })->everyMinute()
-            ->name('fast_task')
-            ->withoutOverlapping();
+        })->everyMinute();
     }
 
     /**
