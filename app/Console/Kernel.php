@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
         })->daily();
 
         $schedule->call(function() {
-            for ($i = 0; $i < 10; $i++) {
+//            for ($i = 0; $i < 10; $i++) {
                 $tasks = FastTask::getTask();
 
                 if (!is_null($tasks) and count($tasks) > 0) {
@@ -68,8 +68,8 @@ class Kernel extends ConsoleKernel
                         }
                     }
                 }
-                sleep(5);
-            }
+//                sleep(5);
+//            }
         })->everyMinute();
     }
 
