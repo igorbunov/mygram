@@ -50,7 +50,7 @@ class DirectTaskCreatorController
                             }
 
                             $preCommand = "cd " . env('PROJECT_PATH');
-                            $command = " && /usr/bin/php artisan direct:send " . $directTask->id . ' ' . $account->id;
+                            $command = " && /usr/local/bin/php artisan direct:send " . $directTask->id . ' ' . $account->id;
                             $runInBackground = " > /dev/null &";
                             //exec('/usr/bin/nohup php  artisan direct:send 5 5 >/dev/null 2>&1 &');
                             Log::debug('command: ' . $preCommand . $command . $runInBackground);
