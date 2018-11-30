@@ -65,22 +65,32 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
 
-        Artisan::command('test:run {name}', function(string $name) {
-            Log::debug('run test task: ' . $name);
-            DirectTaskCreatorController::runTestTask($name);
-        });
+//        Artisan::command('test:run {name}', function(string $name) {
+//            Log::debug('run test task: ' . $name);
+//            DirectTaskCreatorController::runTestTask($name);
+//        });
 
+
+// * * * * * cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 &
         Artisan::command('fastTask:run', function() {
             Log::debug('run fast task');
             FastTask::runTask();
         });
 
-        Artisan::command('direct:send {directTaskId} {accountId}', function ($directTaskId, $accountId) {
-            try {
-                DirectToSubsTasksRunner::runDirectTasks($directTaskId, $accountId);
-            } catch (\Exception $err) {
-                Log::error('Error running task DirectToSubsTasksRunner::getAccountSubscribers: ' . $err->getMessage());
-            }
-        });
+//        Artisan::command('directs:send', function () {
+//            try {
+//                DirectToSubsTasksRunner::runDirectTasksIfNeeded();
+//            } catch (\Exception $err) {
+//                Log::error('Error running task DirectToSubsTasksRunner::runDirectTasksIfNeeded: ' . $err->getMessage());
+//            }
+//        });
+
+//        Artisan::command('direct:send {directTaskId} {accountId}', function ($directTaskId, $accountId) {
+//            try {
+//                DirectToSubsTasksRunner::runDirectTasks($directTaskId, $accountId);
+//            } catch (\Exception $err) {
+//                Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $err->getMessage());
+//            }
+//        });
     }
 }

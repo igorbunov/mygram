@@ -17,7 +17,6 @@ class AccountFirstLoginRunner
 {
     public static function tryLogin(int $accountId, int $fastTaskId)
     {
-        FastTask::setStatus($fastTaskId, FastTask::STATUS_EXECUTED);
         Log::debug('runned tryLogin task for account id: ' . $accountId . ' fast task id: ' . $fastTaskId);
         $account = account::getAccountById($accountId);
 

@@ -11,6 +11,7 @@ namespace App\Http\Controllers\TaskGenerator;
 use App\account;
 use App\DirectTask;
 use App\DirectTaskReport;
+use App\FastTask;
 use App\Tariff;
 use App\TaskList;
 use App\User;
@@ -57,15 +58,16 @@ class DirectTaskCreatorController
                                 continue;
                             }
 
-                            $preCommand = "cd " . env('PROJECT_PATH');
-                            $command = " && " . env('PHP_PATH') . " artisan direct:send " . $directTask->id . ' ' . $account->id;
-                            $runInBackground = " > /dev/null 2>&1";
+                            FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
+                            Log::debug('add fast direct task: ' . $directTask->id . ' ' . $account->id);
 
-                            Log::debug('command: ' . $preCommand . $command . $runInBackground);
-
-                            exec($preCommand . $command . $runInBackground);
-                        } else if ('unfollowing' == $taskType->type) {
-
+//                            $preCommand = "cd " . env('PROJECT_PATH');
+//                            $command = " && " . env('PHP_PATH') . " artisan direct:send " . $directTask->id . ' ' . $account->id;
+//                            $runInBackground = " > /dev/null 2>&1";
+//
+//                            Log::debug('command: ' . $preCommand . $command . $runInBackground);
+//
+//                            exec($preCommand . $command . $runInBackground);
                         }
                     }
 
