@@ -54,6 +54,7 @@ class FastTask extends Model
 
         if (!is_null($task)) {
             self::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
+            Log::debug('Found fast task # ' . $task->id);
 
             switch ($task->task_type) {
                 case self::TYPE_TRY_LOGIN:

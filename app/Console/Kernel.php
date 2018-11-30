@@ -73,7 +73,7 @@ class Kernel extends ConsoleKernel
 
 // * * * * * cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 &
         Artisan::command('fastTask:run', function() {
-            Log::debug('run fast task');
+//            Log::debug('run fast task');
             FastTask::runTask();
         });
 
