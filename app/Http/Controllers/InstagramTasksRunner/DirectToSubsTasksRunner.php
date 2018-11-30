@@ -18,6 +18,7 @@ class DirectToSubsTasksRunner
 {
     public static function runDirectTasks(int $directTaskId, int $accountId)
     {
+        Log::debug('=== start async method: runDirectTasks ' . $directTaskId . ' ===');
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -25,10 +26,9 @@ class DirectToSubsTasksRunner
             return;
         }
 
-        $sleepTime = rand(10, 180);
+        $sleepTime = rand(10, 180); // спим от 10 сек до 3 мин
+        sleep($sleepTime);
         Log::debug('sleep time: ' . $sleepTime);
-
-        sleep($sleepTime); // спим от 10 сек до 3 мин
 
         MyInstagram::getInstanse()->login($account);
 
@@ -65,7 +65,7 @@ class DirectToSubsTasksRunner
 
         AccountSubscribers::addUniqueArray($followersAsArray);
 
-        Log::debug('readded followers: ' . count($followersAsArray));
+        Log::debug('re-added followers: ' . count($followersAsArray));
 
         if (count($followersDiff) > 0) {
             self::sendDirectToSubscribers($directTaskId, $accountId, $followersDiff);
@@ -73,7 +73,7 @@ class DirectToSubsTasksRunner
             DirectTask::updateStatistics($directTaskId);
         }
 
-        Log::debug('done');
+        Log::debug('=== done ===');
     }
 
     public static function sendDirectToSubscribers(int $directTaskId, int $accountId, array $newFollowers)

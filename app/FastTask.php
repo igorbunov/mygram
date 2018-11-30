@@ -2,7 +2,9 @@
 
 namespace App;
 
+use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class FastTask extends Model
 {
@@ -41,5 +43,40 @@ class FastTask extends Model
             ->get();
 
         return $res;
+    }
+
+    public static function runTask()
+    {
+        $i = 0;
+
+        while($i < 10) {
+//            Log::debug('fast task run while: ' . $i);
+
+            $tasks = FastTask::getTask();
+
+            if (!is_null($tasks) and count($tasks) > 0) {
+                foreach ($tasks as $task) {
+                    switch ($task->task_type) {
+                        case FastTask::TYPE_TRY_LOGIN:
+                            FastTask::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
+
+                            try {
+                                AccountFirstLoginRunner::tryLogin($task->account_id, $task->id);
+                            } catch (\Exception $err) {
+                                Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage());
+                            }
+
+                            break;
+                        case FastTask::TYPE_REFRESH_ACCOUNT:
+
+                            break;
+                    }
+                }
+            }
+
+            $i++;
+
+            sleep(5);
+        }
     }
 }

@@ -7,7 +7,7 @@ use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
-use App\Http\Controllers\TaskGenerator\ValidateAccountTaskCreator;
+use App\Http\Controllers\TaskGenerator\FastTaskGenerator;
 use App\Tariff;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -37,6 +37,11 @@ class Kernel extends ConsoleKernel
             return;
         }
 
+//        $schedule->call(function() {
+//            Log::debug('== Run schedule test task generator == ');
+//            DirectTaskCreatorController::generateTestTasks();
+//        })->everyMinute();
+
         $schedule->call(function() {
             Log::debug('== Run chedule tariff changer == ');
             Tariff::tariffTick();
@@ -44,33 +49,14 @@ class Kernel extends ConsoleKernel
         })->daily();
 
         $schedule->call(function() {
-            Log::debug('== Run chedule fast task generator == ');
-//            for ($i = 0; $i < 10; $i++) {
-                $tasks = FastTask::getTask();
-
-                if (!is_null($tasks) and count($tasks) > 0) {
-                    foreach ($tasks as $task) {
-                        switch ($task->task_type) {
-                            case FastTask::TYPE_TRY_LOGIN:
-                                FastTask::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
-                                ValidateAccountTaskCreator::generateFirstLoginTask($task->account_id, $task->id);
-
-                                break;
-                            case FastTask::TYPE_REFRESH_ACCOUNT:
-
-                                break;
-                        }
-                    }
-                }
-//                sleep(5);
-//            }
-        })->everyMinute();
-
-        $schedule->call(function() {
             Log::debug('== Run chedule direct task generator == ');
             DirectTaskCreatorController::generateDirectTasks();
-        })->everyTenMinutes()->runInBackground();
-//        })->everyMinute(); // ->everyFiveMinutes();
+        })->everyTenMinutes();
+
+        $schedule->call(function() {
+            Log::debug('== Run schedule fast task generator == ');
+            FastTaskGenerator::generateFastTask();
+        })->everyMinute();
     }
 
     /**
@@ -84,19 +70,21 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
 
+        Artisan::command('test:run {name}', function(string $name) {
+            Log::debug('run test task: ' . $name);
+            DirectTaskCreatorController::runTestTask($name);
+        });
+
+        Artisan::command('fastTask:run', function() {
+            Log::debug('run fast task');
+            FastTask::runTask();
+        });
+
         Artisan::command('direct:send {directTaskId} {accountId}', function ($directTaskId, $accountId) {
             try {
                 DirectToSubsTasksRunner::runDirectTasks($directTaskId, $accountId);
             } catch (\Exception $err) {
                 Log::error('Error running task DirectToSubsTasksRunner::getAccountSubscribers: ' . $err->getMessage());
-            }
-        });
-
-        Artisan::command('fast_tasks:login {accountId} {fastTaskId}', function($accountId, $fastTaskId) {
-            try {
-                AccountFirstLoginRunner::tryLogin($accountId, $fastTaskId);
-            } catch (\Exception $err) {
-                Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage());
             }
         });
     }

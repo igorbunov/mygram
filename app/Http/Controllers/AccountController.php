@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\account;
 use App\FastTask;
-use App\Http\Controllers\TaskGenerator\ValidateAccountTaskCreator;
 use App\Tariff;
 use App\User;
 use Illuminate\Http\Request;

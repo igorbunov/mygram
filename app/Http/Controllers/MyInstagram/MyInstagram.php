@@ -37,8 +37,6 @@ class MyInstagram
         if (!file_exists($path)) {
             Log::error('cant find path: '.$path);
             return false;
-        } else {
-            Log::debug('файл найден');
         }
 
         require_once $path;

@@ -17,6 +17,37 @@ use Illuminate\Support\Facades\Log;
 
 class DirectTaskCreatorController
 {
+    public static function generateTestTasks()
+    {
+        Log::debug('generate test tasks');
+
+        $arr = [
+            'task1',
+            'task2',
+            'task3',
+            'task4',
+            'task5'
+        ];
+
+        foreach ($arr as $name) {
+            $preCommand = "cd " . env('PROJECT_PATH');
+            $command = " && " . env('PHP_PATH') . " artisan test:run " . $name;
+            $runInBackground = " > /dev/null 2>&1 &";
+
+            Log::debug('command: ' . $preCommand . $command . $runInBackground);
+//            sleep(rand(2, 10));
+
+            exec($preCommand . $command . $runInBackground);
+        }
+    }
+
+    public static function runTestTask($name)
+    {
+        Log::debug('task start: ' . $name);
+        sleep(rand(5, 20));
+        Log::debug('task end: ' . $name);
+    }
+
     public static function generateDirectTasks()
     {
         Log::debug('generate tasks');
@@ -45,16 +76,15 @@ class DirectTaskCreatorController
                             }
 
                             if ($directTask->work_only_in_night > 0 and !self::isNight()) {
-                                Log::debug('This is night task and now is not night');
+//                                Log::debug('This is night task and now is not night');
                                 continue;
                             }
 
                             $preCommand = "cd " . env('PROJECT_PATH');
-                            $command = " && /usr/local/bin/php artisan direct:send " . $directTask->id . ' ' . $account->id;
-                            $runInBackground = " > /dev/null &";
-                            //exec('/usr/bin/nohup php  artisan direct:send 5 5 >/dev/null 2>&1 &');
+                            $command = " && " . env('PHP_PATH') . " artisan direct:send " . $directTask->id . ' ' . $account->id;
+                            $runInBackground = " > /dev/null 2>&1 &";
+
                             Log::debug('command: ' . $preCommand . $command . $runInBackground);
-                            sleep(rand(1, 15));
 
                             exec($preCommand . $command . $runInBackground);
                         } else if ('unfollowing' == $taskType->type) {
