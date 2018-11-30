@@ -30,7 +30,6 @@ class DirectToSubsTasksRunner
         }
 
         $sleepTime = rand(10, 180); // спим от 10 сек до 3 мин
-        $sleepTime = 0; // спим от 10 сек до 3 мин
         Log::debug('sleep time: ' . $sleepTime);
         sleep($sleepTime);
 
