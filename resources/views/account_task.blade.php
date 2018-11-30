@@ -1,10 +1,10 @@
 @extends('main_template')
 
 @section('main_content')
-    <div class="container">
+    <div class="container container-nopadding">
         <div class="row">
-            <div class="col-lg-12">
-                <h3>{{ $account->nickname }}</h3>
+            <div class="col-lg-12 account-link  active ">
+                <span>@</span>{{ $account->nickname }}
             </div>
         </div>
 <br/>
@@ -17,12 +17,12 @@
                     <div class="col-lg-4 ml-auto">
                         @if($currentTariff != null)
                             @if($task->is_active == 1)
-                                <button type="button" class="btn btn-danger task-deactivate"
+                                <button type="button" class="btn btn-basic task-deactivate"
                                         data-task-type="{{ $task->taskType }}"
                                         data-account-id="{{ $account->id }}"
                                         data-task-id="{{ $task->id }}">Деактивировать</button>
                             @else
-                                <button type="button" class="btn btn-primary task-activate"
+                                <button type="button" class="btn btn-basic task-activate"
                                         data-task-type="{{ $task->taskType }}"
                                         data-account-id="{{ $account->id }}"
                                         data-task-id="{{ $task->id }}">Активировать</button>
@@ -32,8 +32,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12 d-flex flex-row">
-                        <div class="p-2">Тип: {{ $task->taskType }}</div>
-                        <div class="p-2">{{ $task->taskList->title }}</div>
+                        <div class="p-2">Тип: {{ $task->taskList->title }}</div>
                     </div>
                 </div>
 
@@ -52,7 +51,7 @@
         @if($currentTariff != null)
             <div class="row">
                 <div class="col-lg-12">
-                    <button type="button" class="btn btn-primary" id="add-task-btn">Добавить задание</button>
+                    <button type="button" class="btn btn-dark" id="add-task-btn">Добавить задание</button>
                 </div>
             </div>
 

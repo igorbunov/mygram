@@ -16,19 +16,6 @@ class User extends Model
         return $this->hasMany('App\Tariff', 'user_id', 'id');
     }
 
-    public static function setProfilePictureUrl(int $accountId, $profileUrl)
-    {
-        Log::debug('setProfilePicture ' . $accountId . ' url: ' . $profileUrl);
-        $account = account::getAccountById($accountId);
-
-        $user = self::find($account->user_id)->first();
-
-        if (is_null($user->picture) or empty($user->picture)) {
-            $user->picture = $profileUrl;
-            $user->save();
-        }
-    }
-
     public static function getAccountPictureUrl(int $userId = 0)
     {
         if ($userId == 0) {
@@ -39,9 +26,13 @@ class User extends Model
             throw new \Exception('no user');
         }
 
-        $user = self::find($userId)->first();
+        $accounts = account::getActiveAccountsByUser($userId);
 
-        return $user->picture;
+        if (!is_null($accounts) and count($accounts) > 0) {
+            return $accounts[0]->picture;
+        }
+
+        return '';
     }
 
     public static function getAccountsByUser(int $userId, bool $activeOnly = false, bool $asArray = false)

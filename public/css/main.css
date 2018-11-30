@@ -214,5 +214,10 @@ ul, li {
         padding: 0 22px;
         font-size: 18px;
     }
+    .account-tasks.active{
+        background-color: forestgreen;
+        margin: 3px 0;
+        border-radius: 5px;
+    }
 
 }

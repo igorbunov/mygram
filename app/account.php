@@ -15,6 +15,16 @@ class account extends Model
         ])->get();
     }
 
+    public static function setProfilePictureUrl(int $accountId, $profileUrl)
+    {
+        $account = account::getAccountById($accountId);
+
+        if (!is_null($account) and (is_null($account->picture) or empty($account->picture))) {
+            $account->picture = $profileUrl;
+            $account->save();
+        }
+    }
+
     public static function setLoginStatus(array $data)
     {
         $account = self::getAccountById($data['accountId']);
