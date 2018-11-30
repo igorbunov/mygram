@@ -119,7 +119,7 @@ class MyInstagram
             $this->accountId = $this->account->id;
 
             $curUserInfo = $this->instagram->account->getCurrentUser();
-            User::setProfilePictureUrl($this->accountId, $curUserInfo->getUser()->getProfilePicUrl());
+            User::setProfilePictureUrl($account->id, $curUserInfo->getUser()->getProfilePicUrl());
 
             account::setLoginStatus([
                 'accountId' => $account->id,

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class User extends Model
 {
@@ -17,6 +18,7 @@ class User extends Model
 
     public static function setProfilePictureUrl(int $accountId, $profileUrl)
     {
+        Log::debug('setProfilePicture ' . $accountId . ' url: ' . $profileUrl);
         $account = account::getAccountById($accountId);
 
         $user = self::find($account->user_id)->first();
