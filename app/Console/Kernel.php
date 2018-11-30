@@ -36,22 +36,17 @@ class Kernel extends ConsoleKernel
         if (!env('SITE_ENABLED')) {
             return;
         }
-//
-//        $schedule->call(function() {
-//            Log::debug('== Run chedule tariff changer == ');
-//            Tariff::tariffTick();
-//            TaskController::disableAccountsAndTasksByEndTariff();
-//        })->daily();
-//
+
+        $schedule->call(function() {
+            Log::debug('== Run chedule tariff changer == ');
+            Tariff::tariffTick();
+            TaskController::disableAccountsAndTasksByEndTariff();
+        })->daily();
+
         $schedule->call(function() {
             Log::debug('== Run chedule direct task generator == ');
             DirectTaskCreatorController::generateDirectTasks();
         })->everyTenMinutes();
-//
-//        $schedule->call(function() {
-//            Log::debug('== Run schedule fast task generator == ');
-//            FastTaskGenerator::generateFastTask();
-//        })->everyMinute();
     }
 
     /**
@@ -65,32 +60,15 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
 
-//        Artisan::command('test:run {name}', function(string $name) {
-//            Log::debug('run test task: ' . $name);
-//            DirectTaskCreatorController::runTestTask($name);
-//        });
-
-
-// * * * * * cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 &
         Artisan::command('fastTask:run', function() {
+//***** ( cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//***** ( sleep 10 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//***** ( sleep 20 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//***** ( sleep 30 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//***** ( sleep 40 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//***** ( sleep 50 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
 //            Log::debug('run fast task');
             FastTask::runTask();
         });
-
-//        Artisan::command('directs:send', function () {
-//            try {
-//                DirectToSubsTasksRunner::runDirectTasksIfNeeded();
-//            } catch (\Exception $err) {
-//                Log::error('Error running task DirectToSubsTasksRunner::runDirectTasksIfNeeded: ' . $err->getMessage());
-//            }
-//        });
-
-//        Artisan::command('direct:send {directTaskId} {accountId}', function ($directTaskId, $accountId) {
-//            try {
-//                DirectToSubsTasksRunner::runDirectTasks($directTaskId, $accountId);
-//            } catch (\Exception $err) {
-//                Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $err->getMessage());
-//            }
-//        });
     }
 }

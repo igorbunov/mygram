@@ -57,7 +57,7 @@ class DirectTaskCreatorController
                                 continue;
                             } else if (self::isNight()) {
                                 $currentMinutes = (int) date('i');
-                                if ( $currentMinutes%30 < 5 ) { // once on 30 minutes
+                                if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
                                     FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
                                     Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
                                 }
