@@ -26,6 +26,7 @@ class AccountController extends Controller
             'title' => 'Акаунты'
             , 'activePage' => 'accounts'
             , 'accounts' => $accounts
+            , 'accountPicture' => User::getAccountPictureUrl($userId)
         ];
 
         if ($error != '') {

@@ -17,12 +17,12 @@
                     <div class="col-lg-4 ml-auto">
                         @if($currentTariff != null)
                             @if($task->is_active == 1)
-                                <button class="task-deactivate"
+                                <button type="button" class="btn btn-danger task-deactivate"
                                         data-task-type="{{ $task->taskType }}"
                                         data-account-id="{{ $account->id }}"
                                         data-task-id="{{ $task->id }}">Деактивировать</button>
                             @else
-                                <button class="task-activate"
+                                <button type="button" class="btn btn-primary task-activate"
                                         data-task-type="{{ $task->taskType }}"
                                         data-account-id="{{ $account->id }}"
                                         data-task-id="{{ $task->id }}">Активировать</button>
@@ -32,12 +32,17 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12 d-flex flex-row">
-                        <div class="p-2">{{ $task->taskType }}</div>
+                        <div class="p-2">Тип: {{ $task->taskType }}</div>
                         <div class="p-2">{{ $task->taskList->title }}</div>
-                        <div class="p-2">{{ $task->is_active }}</div>
-                        <div class="p-2">{{ $task->total_messages }}</div>
-                        <div class="p-2">{{ $task->success_count }}</div>
-                        <div class="p-2">{{ $task->failure_count }}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 d-flex flex-row">
+                        <div class="p-2">Всего: {{ $task->total_messages }}</div>
+                        <div class="p-2">Удачно: {{ $task->success_count }}</div>
+                        <div class="p-2">Ошибок: {{ $task->failure_count }}</div>
+                        <div class="p-2">Сегодня: {{ $task->sendedToday }}</div>
                     </div>
                 </div>
 
@@ -47,7 +52,7 @@
         @if($currentTariff != null)
             <div class="row">
                 <div class="col-lg-12">
-                    <button id="add-task-btn">Добавить задание</button>
+                    <button type="button" class="btn btn-primary" id="add-task-btn">Добавить задание</button>
                 </div>
             </div>
 
@@ -60,7 +65,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <label for="add-task-task-type">Тип задания</label>
-                            <select id="add-task-task-type" name="task_list_id">
+                            <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="add-task-task-type" name="task_list_id">
                                 @foreach($taskList as $i => $taskListItem)
                                     @if($i == 0)
                                         <option selected value="{{ $taskListItem->id }}"
@@ -82,11 +87,11 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <label for="add-direct-task-text">Текст сообщения</label>
-                                <textarea id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
+                                <textarea class="form-control" id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
                             </div>
                             <div class="col-lg-12">
                                 <label for="add-direct-task-work-only-in-night">Работать только ночью</label>
-                                <input id="add-direct-task-work-only-in-night" type="checkbox" name="work_only_in_night" />
+                                <input class="form-check-input" id="add-direct-task-work-only-in-night" type="checkbox" name="work_only_in_night" />
                             </div>
                         </div>
 
@@ -103,7 +108,7 @@
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <input type="submit" value="Сохранить">
+                            <input type="button" class="btn btn-success" type="submit" value="Сохранить">
                         </div>
                     </div>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\account;
 use App\AccountSubscribers;
 use App\DirectTask;
+use App\DirectTaskReport;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Tariff;
@@ -57,6 +58,7 @@ class TaskController extends Controller
                 $directTasks = DirectTask::getDirectTasksByTaskListId($taskListItem->id,$accountId);
 
                 foreach ($directTasks as $i => $directTask) {
+                    $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
                     $directTasks[$i]->taskType = $taskListItem->type;
                 }
             } else if ('unfollowing' == $taskListItem->type) {
@@ -64,21 +66,14 @@ class TaskController extends Controller
             }
         }
 
-//dd($directTasks);
-//TODO: тут какая-то не понятная хрень, переделать!
-//        foreach($account->directTasks as $i => $task) {
-//            $account->directTasks[$i]->taskList = $task->taskList;
-//            $account->directTasks[$i]->taskType = 'direct';
-//        }
-
-
         return view('account_task', [
             'title' => 'Задачи',
             'activePage' => 'tasks',
             'directTasks' => $directTasks,
             'account' => $account,
             'taskList' => $taskList,
-            'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
+            'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId),
+            'accountPicture' => User::getAccountPictureUrl($userId)
         ]);
     }
 
@@ -97,6 +92,7 @@ class TaskController extends Controller
             , 'activePage' => 'tasks'
             , 'accounts' => $accounts
             , 'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
+            , 'accountPicture' => User::getAccountPictureUrl($userId)
         ];
 
         if ($error != '') {

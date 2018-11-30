@@ -1,7 +1,7 @@
 @extends('main_template')
 
 @section('main_content')
-    <div class="container">
+    <div class="container container-nopadding">
         <div class="row">
             <div class="col-lg-12">
                 <h3>Ваши аккаунты</h3>
@@ -9,38 +9,34 @@
         </div>
 
             @foreach ($accounts as $account)
-                <section id="account" class="account @if($account->is_active) active @else deactivated @endif">
-                    <div class="row">
-                        <div class="col-lg-8 account-link" data-account-id="{{ $account->id }}">
-                            <h4>{{ $account->nickname }}</h4>
+                <section class="account @if($account->is_active) active @else deactivated @endif">
+                    <div class="row d-flex justify-content-end account-title-group">
+                        <div class="account-link @if($account->is_active) active @else deactivated @endif"
+                             data-account-id="{{ $account->id }}">
+                            <span>@</span>{{ $account->nickname }}
                         </div>
-{{--                        @if($currentTariff != null)--}}
-                            {{--<div class="col-lg-1">--}}
-                                {{--<div class="sync-account" data-nickname="{{ $account->nickname }}"><i class="fa fa-sync"></i></div>--}}
-                            {{--</div>--}}
-                            {{--<div class="col-lg-1">--}}
-                                {{--<div class="delete-account" data-nickname="{{ $account->nickname }}"><i class="fa fa-trash"></i></div>--}}
-                            {{--</div>--}}
-                        {{--@endif--}}
-                        <div class="col-lg-4 ml-auto">
+
+                        @if($account->is_active == 1)
+                            <div>
+                                <button type="button" class="btn btn-dark"
+                                        data-account-id="{{ $account->id }}">Обновить</button>
+                            </div>
+                        @endif
+                        <div>
                             @if($account->is_active == 1)
-                                <button class="account-deactivate"
+                                <button type="button" class="btn btn-basic account-deactivate"
                                         data-account-id="{{ $account->id }}">Деактивировать</button>
                             @else
-                                <button class="account-activate"
+                                <button type="button" class="btn btn-basic account-activate"
                                         data-account-id="{{ $account->id }}">Активировать</button>
                             @endif
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-3">
-                            <div>{{ $account->publications }}</div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div>{{ $account->subscribers }}</div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div>{{ $account->subscriptions }}</div>
+                        <div class="col-lg-12 d-flex justify-content-around">
+                            <div>публикации: {{ $account->publications }}</div>
+                            <div>подпищики: {{ $account->subscribers }}</div>
+                            <div>подписки: {{ $account->subscriptions }}</div>
                         </div>
                     </div>
                 </section>
@@ -49,7 +45,7 @@
         @if($currentTariff != null)
             <div class="row">
                 <div class="col-lg-12">
-                    <button id="add-account-btn">Добавить аккаунт</button>
+                    <button type="button" class="btn btn-dark" id="add-account-btn">Добавить аккаунт</button>
                 </div>
             </div>
 

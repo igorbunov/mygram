@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Tariff;
 use App\TariffList;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,8 @@ class TariffController extends Controller
             'title' => 'Тарифы',
             'activePage' => 'tariffs',
             'tariffList' => $list,
-            'currentTariff' => Tariff::getUserCurrentTariffForMainView()
+            'currentTariff' => Tariff::getUserCurrentTariffForMainView(),
+            'accountPicture' => User::getAccountPictureUrl()
         ]);
     }
 

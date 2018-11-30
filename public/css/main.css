@@ -1,12 +1,12 @@
 
-div[class="row"] {
-    outline: 1px dotted rgba(0, 0, 0, 0.25);
-}
+/*div[class="row"] {*/
+    /*outline: 1px dotted rgba(0, 0, 0, 0.25);*/
+/*}*/
 
-div[class^="col-"] {
-    background-color: rgba(255, 0, 0, 0.2);
-    outline: 1px dotted rgba(0, 0, 0, 0.5);
-}
+/*div[class^="col-"] {*/
+    /*background-color: rgba(255, 0, 0, 0.2);*/
+    /*outline: 1px dotted rgba(0, 0, 0, 0.5);*/
+/*}*/
 
 
 
@@ -88,19 +88,6 @@ ul, li {
     color: black;
 }
 
-@media screen and (max-width: 592px) {
-    .menu-bottom {
-        position: fixed;
-        bottom: 0px;
-        margin: 0 auto;
-        left: 170px;
-    }
-    .menu-bottom__item{
-        float:left;
-        padding: 5px;
-    }
-}
-
 .main-block {
     background-color: red;
     padding:0;
@@ -143,8 +130,89 @@ ul, li {
     background-color: grey;
 }
 .account.active{
-    background-color: green;
+    background-color: forestgreen;
 }
 .account.deactivated{
-    background-color: grey;
+    background-color: darkorange;
+}
+.items-to-show{
+    display: none;
+}
+
+
+@media screen and (max-width: 592px) {
+    .menu__item{
+        background-color: currentColor;
+        padding: 10px;
+        border: 1px solid darkcyan;
+        border-radius: 8px;
+    }
+    .menu__item a, .menu-bottom__item a {
+        font-size: 18px;
+        color: white;
+    }
+    .main-container {
+        width: 100%;
+    }
+    .btn, .btn-primary, .task-deactivate, .task-activate {
+        padding: 10px;
+        font-size: 20px;
+    }
+    .account-tasks.deactivated {
+        background-color: firebrick;
+    }
+    #add-direct-task-work-only-in-night{
+        margin-left:15px;
+    }
+    .items-to-hide{
+        display: none;
+    }
+    .items-to-show{
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .account-link{
+        font-size: 26px;
+        color: black;
+        font-weight: bold;
+        width: 100%;
+        margin-left:22px;
+    }
+    .account-link.deactivated{
+        text-decoration: line-through;
+    }
+    div[class="row"] {
+        outline: 0px;
+    }
+
+    div[class^="col-"] {
+        outline: 0px;
+    }
+    .container .container-nopadding{
+        padding: 0;
+    }
+    .account-deactivate, .account-activate{
+        margin-right:22px;
+    }
+    .account{
+        margin: 3px 0;
+        border-radius: 5px;
+    }
+
+    .main-block, .header {
+        background-color: darkcyan;
+    }
+    .header{
+        padding: 5px 0;
+    }
+    .programm-text{
+        text-align: center;
+    }
+    .programm-header-info{
+        width: 100%;
+        padding: 0 22px;
+        font-size: 18px;
+    }
+
 }

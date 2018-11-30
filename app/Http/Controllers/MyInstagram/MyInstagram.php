@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\MyInstagram;
 
 use App\account;
+use App\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use InstagramAPI\Instagram;
@@ -116,6 +117,9 @@ class MyInstagram
 
             $this->accountPK = $this->instagram->account_id;
             $this->accountId = $this->account->id;
+
+            $curUserInfo = $this->instagram->account->getCurrentUser();
+            User::setProfilePictureUrl($this->accountId, $curUserInfo->getUser()->getProfilePicUrl());
 
             account::setLoginStatus([
                 'accountId' => $account->id,

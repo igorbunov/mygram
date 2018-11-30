@@ -43,10 +43,17 @@ class Kernel extends ConsoleKernel
             TaskController::disableAccountsAndTasksByEndTariff();
         })->daily();
 
-        $schedule->call(function() {
-            Log::debug('== Run chedule direct task generator == ');
-            DirectTaskCreatorController::generateDirectTasks();
-        })->everyTenMinutes();
+        if (env('PROJECT_PATH') == '/home/pata/projects/myinst') {
+//            $schedule->call(function() {
+//                Log::debug('== Run chedule direct task generator == ');
+//                DirectTaskCreatorController::generateDirectTasks();
+//            })->everyMinute();
+        } else {
+            $schedule->call(function() {
+                Log::debug('== Run chedule direct task generator == ');
+                DirectTaskCreatorController::generateDirectTasks();
+            })->everyTenMinutes();
+        }
     }
 
     /**

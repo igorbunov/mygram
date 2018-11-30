@@ -35,32 +35,38 @@ Route::group(['middleware' => 'myauth'], function () {
 
     Route::get('limits', function () {
         $curTariff = \App\Tariff::getUserCurrentTariffForMainView();
-        return view('limits', ['title' => 'Лимиты', 'activePage' => 'limits', 'currentTariff' => $curTariff]);
+        return view('limits', ['title' => 'Лимиты', 'activePage' => 'limits', 'currentTariff' => $curTariff
+            , 'accountPicture' => '']);
     });
 
     Route::get('about', function () {
         $curTariff = \App\Tariff::getUserCurrentTariffForMainView();
-        return view('about', ['title' => 'О компании', 'activePage' => 'about', 'currentTariff' => $curTariff]);
+        return view('about', ['title' => 'О компании', 'activePage' => 'about', 'currentTariff' => $curTariff
+            , 'accountPicture' => '']);
     });
 
     Route::get('support', function () {
         $curTariff = \App\Tariff::getUserCurrentTariffForMainView();
-        return view('support', ['title' => 'Поддержка', 'activePage' => 'support', 'currentTariff' => $curTariff]);
+        return view('support', ['title' => 'Поддержка', 'activePage' => 'support', 'currentTariff' => $curTariff
+            , 'accountPicture' => '']);
     });
 
     Route::get('contacts', function () {
         $curTariff = \App\Tariff::getUserCurrentTariffForMainView();
-        return view('contacts', ['title' => 'Контакты', 'activePage' => 'contacts', 'currentTariff' => $curTariff]);
+        return view('contacts', ['title' => 'Контакты', 'activePage' => 'contacts', 'currentTariff' => $curTariff
+            , 'accountPicture' => '']);
     });
 
     Route::get('agreement', function () {
         $curTariff = \App\Tariff::getUserCurrentTariffForMainView();
-        return view('agreement', ['title' => 'Соглашение', 'activePage' => 'agreement', 'currentTariff' => $curTariff]);
+        return view('agreement', ['title' => 'Соглашение', 'activePage' => 'agreement', 'currentTariff' => $curTariff
+            , 'accountPicture' => '']);
     });
 
     Route::get('return', function () {
         $curTariff = \App\Tariff::getUserCurrentTariffForMainView();
-        return view('return', ['title' => 'Условия возврата', 'activePage' => 'return', 'currentTariff' => $curTariff]);
+        return view('return', ['title' => 'Условия возврата', 'activePage' => 'return', 'currentTariff' => $curTariff
+            , 'accountPicture' => '']);
     });
 });
 
