@@ -54,23 +54,19 @@ class DirectTaskCreatorController
                             }
 
                             if ($directTask->work_only_in_night > 0 and !self::isNight()) {
-//                                Log::debug('This is night task and now is not night');
                                 continue;
+                            } else if (self::isNight()) {
+                                $currentMinutes = (int) date('i');
+                                if ( $currentMinutes%30 < 5 ) { // once on 30 minutes
+                                    FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
+                                    Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
+                                }
+                            } else {
+                                FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
+                                Log::debug('add fast direct task (at day): ' . $directTask->id . ' ' . $account->id);
                             }
-
-                            FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
-                            Log::debug('add fast direct task: ' . $directTask->id . ' ' . $account->id);
-
-//                            $preCommand = "cd " . env('PROJECT_PATH');
-//                            $command = " && " . env('PHP_PATH') . " artisan direct:send " . $directTask->id . ' ' . $account->id;
-//                            $runInBackground = " > /dev/null 2>&1";
-//
-//                            Log::debug('command: ' . $preCommand . $command . $runInBackground);
-//
-//                            exec($preCommand . $command . $runInBackground);
                         }
                     }
-
                 }
             }
         }
