@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class DirectTaskReport extends Model
 {
@@ -20,5 +21,20 @@ class DirectTaskReport extends Model
         $report->error_message = $data['error_message'];
 
         $report->save();
+    }
+
+    public static function getTodayFriendDirectMessagesCount(int $directTaskId): int
+    {
+        $res = DB::select("SELECT COUNT(1) AS cnt 
+            FROM direct_task_reports
+            WHERE direct_task_id = ? 
+                AND DATE(created_at) = CURDATE()
+            LIMIT 1", [$directTaskId]);
+
+        if (is_null($res) or count($res) == 0) {
+            return 0;
+        }
+
+        return (int) $res[0]->cnt;
     }
 }

@@ -36,27 +36,22 @@ class Kernel extends ConsoleKernel
         if (!env('SITE_ENABLED')) {
             return;
         }
-
+//
 //        $schedule->call(function() {
-//            Log::debug('== Run schedule test task generator == ');
-//            DirectTaskCreatorController::generateTestTasks();
-//        })->everyMinute();
-
-        $schedule->call(function() {
-            Log::debug('== Run chedule tariff changer == ');
-            Tariff::tariffTick();
-            TaskController::disableAccountsAndTasksByEndTariff();
-        })->daily();
-
+//            Log::debug('== Run chedule tariff changer == ');
+//            Tariff::tariffTick();
+//            TaskController::disableAccountsAndTasksByEndTariff();
+//        })->daily();
+//
         $schedule->call(function() {
             Log::debug('== Run chedule direct task generator == ');
             DirectTaskCreatorController::generateDirectTasks();
         })->everyTenMinutes();
-
-        $schedule->call(function() {
-            Log::debug('== Run schedule fast task generator == ');
-            FastTaskGenerator::generateFastTask();
-        })->everyMinute();
+//
+//        $schedule->call(function() {
+//            Log::debug('== Run schedule fast task generator == ');
+//            FastTaskGenerator::generateFastTask();
+//        })->everyMinute();
     }
 
     /**

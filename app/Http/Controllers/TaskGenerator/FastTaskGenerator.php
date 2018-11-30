@@ -23,7 +23,7 @@ class FastTaskGenerator
 
         $preCommand = "cd " . env('PROJECT_PATH');
         $command = " && " . env('PHP_PATH') . " artisan fastTask:run";
-        $runInBackground = " > /dev/null 2>&1 &";
+        $runInBackground = " > /dev/null 2>&1";
 
         Log::debug('command: ' . $preCommand . $command . $runInBackground);
 

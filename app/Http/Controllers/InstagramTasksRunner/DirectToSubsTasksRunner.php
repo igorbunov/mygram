@@ -27,8 +27,8 @@ class DirectToSubsTasksRunner
         }
 
         $sleepTime = rand(10, 180); // спим от 10 сек до 3 мин
-        sleep($sleepTime);
         Log::debug('sleep time: ' . $sleepTime);
+        sleep($sleepTime);
 
         MyInstagram::getInstanse()->login($account);
 
