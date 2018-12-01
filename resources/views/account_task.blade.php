@@ -11,7 +11,7 @@
                         <div class="p-2 ml-auto">
                             @if($currentTariff != null)
                                 @if($task->is_active == 1)
-                                    <button type="button" class="btn btn-basic task-deactivate"
+                                    <button type="button" class="btn btn-info task-deactivate"
                                             data-task-type="{{ $task->taskType }}"
                                             data-account-id="{{ $account->id }}"
                                             data-task-id="{{ $task->id }}">Деактивировать</button>

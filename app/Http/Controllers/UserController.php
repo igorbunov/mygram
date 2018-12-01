@@ -168,6 +168,9 @@ class UserController extends Controller
             $user->confirm_code = '';
             $user->save();
 
+            session(['user_id' => $user->id]);
+            session(['user_email' => $user->email]);
+
             return redirect('/');
         }
 

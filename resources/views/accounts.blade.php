@@ -21,7 +21,7 @@
                                 </div>
                             </div>
                             <div class="p-2">
-                                <button type="button" class="btn btn-basic account-deactivate"
+                                <button type="button" class="btn btn-info account-deactivate"
                                         data-account-id="{{ $account->id }}">Деактивировать</button>
                             </div>
                         @elseif($account->is_confirmed == 1)
@@ -39,10 +39,10 @@
 
                     @if($account->is_confirmed == 1)
                         <div class="row">
-                            <div class="col-lg-12 d-flex justify-content-around">
-                                <div>публикации: {{ $account->publications }}</div>
-                                <div>подпищики: {{ $account->subscribers }}</div>
-                                <div>подписки: {{ $account->subscriptions }}</div>
+                            <div class="col-lg-12 d-flex justify-content-around" style="color: black;">
+                                <div>постов: {{ $account->publications }}</div>
+                                <div>подпищиков: {{ $account->subscribers }}</div>
+                                <div>подписок: {{ $account->subscriptions }}</div>
                             </div>
                         </div>
                     @endif
