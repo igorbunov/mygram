@@ -5,26 +5,27 @@
         <header id="header" class="header">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-1"></div>
-                    <div class="col-lg-3">
-                        <h1 class="h1 programm-text">mygram</h1>
+                    <div class="col col-md-10">
+                        <span class="h1 programm-text">mygram</span>
                     </div>
+                    <div class="col col-md-1 col-md-auto"></div>
+                    <div class="col col-md-1">
+                        <a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a>
+                    </div>
+                </div>
 
+                <div class="row">
                     <div class="d-flex programm-header-info">
-                        <div class="mr-auto p-2">
+                        <div class="p-2">
                             <img  class="rounded-circle" src="{{$accountPicture}}" />
                         </div>
-                        <div class="p-2">
-
+                        <div class="mr-auto p-2">
                             {{ session('user_email') }}<br/>
                             @if($currentTariff != null)
                                 Тариф: {{ $currentTariff['name'] }}<br/>
                                 Аккаунтов: {{ $currentTariff['accounts_count'] }}<br/>
                                 Действует до: {{ $currentTariff['dt_end'] }}<br/>
                             @endif
-                            <div class="d-flex justify-content-end" style="margin-right: 5px;">
-                                <a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a><br/>
-                            </div>
                         </div>
                     </div>
                 </div>
