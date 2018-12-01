@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DirectTaskReport extends Model
 {
@@ -52,5 +53,12 @@ class DirectTaskReport extends Model
         }
 
         return (int) $res[0]->cnt;
+    }
+
+    public static function getNow()
+    {
+        $res = DB::select('select now() as now');
+
+        Log::debug('NOW is ' . $res[0]->now);
     }
 }

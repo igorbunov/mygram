@@ -46,6 +46,8 @@ class DirectTaskCreatorController
                                 continue;
                             }
 
+                            DirectTaskReport::getNow();
+
                             $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
 
                             if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
@@ -58,6 +60,8 @@ class DirectTaskCreatorController
                             if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
                                 Log::debug('direct limits per hour: ' . $lastHourDirectCount);
                                 continue;
+                            } else {
+                                Log::debug('directs per last hour: ' . $lastHourDirectCount);
                             }
 
                             if ($directTask->work_only_in_night > 0 and !self::isNight()) {
