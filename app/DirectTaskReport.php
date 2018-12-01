@@ -37,4 +37,20 @@ class DirectTaskReport extends Model
 
         return (int) $res[0]->cnt;
     }
+
+    public static function getLastHourFriendDirectMessagesCount(int $directTaskId): int
+    {
+        $res = DB::select("SELECT COUNT(1) AS cnt
+            FROM direct_task_reports r
+            WHERE r.direct_task_id = ? 
+                AND DATE(r.created_at) = CURDATE() 
+                AND r.created_at > NOW() - INTERVAL 1 HOUR
+            LIMIT 1", [$directTaskId]);
+
+        if (is_null($res) or count($res) == 0) {
+            return 0;
+        }
+
+        return (int) $res[0]->cnt;
+    }
 }
