@@ -22,7 +22,7 @@
                                 Аккаунтов: {{ $currentTariff['accounts_count'] }}<br/>
                                 Действует до: {{ $currentTariff['dt_end'] }}<br/>
                             @endif
-                            <div class="d-flex justify-content-end">
+                            <div class="d-flex justify-content-end" style="margin-right: 5px;">
                                 <a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a><br/>
                             </div>
                         </div>

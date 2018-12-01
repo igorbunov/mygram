@@ -46,7 +46,7 @@
             <div class="row">
                 <div class="col-lg-12 d-flex justify-content-around">
                     <div class="p-2">
-                        <button type="button" class="btn btn-dark" id="add-task-btn">Добавить задание</button>
+                        <button type="button" class="btn btn-dark" id="add-task-btn">Добавить</button>
                     </div>
                     <div class="p-2 ml-auto">
                         @if($onlyActiveTasks == true)

@@ -53,7 +53,7 @@
             <div class="row">
                 <div class="col-lg-12 d-flex justify-content-around">
                     <div class="p-2">
-                        <button type="button" class="btn btn-dark" id="add-account-btn">Добавить аккаунт</button>
+                        <button type="button" class="btn btn-dark" id="add-account-btn">Добавить</button>
                     </div>
                     <div class="p-2 ml-auto">
                         @if($onlyActiveAccounts == true)
