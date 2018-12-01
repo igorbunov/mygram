@@ -1,16 +1,4 @@
 
-/*div[class="row"] {*/
-    /*outline: 1px dotted rgba(0, 0, 0, 0.25);*/
-/*}*/
-
-/*div[class^="col-"] {*/
-    /*background-color: rgba(255, 0, 0, 0.2);*/
-    /*outline: 1px dotted rgba(0, 0, 0, 0.5);*/
-/*}*/
-
-
-
-
 .back, body {
     background: #e2e2e2;
     width: 100%;
@@ -172,7 +160,7 @@ ul, li {
         margin-top: 10px;
         margin-bottom: 10px;
     }
-    .account-link{
+    .account-link, .account-link-nonclicable{
         font-size: 26px;
         color: black;
         font-weight: bold;
@@ -181,13 +169,6 @@ ul, li {
     }
     .account-link.deactivated{
         text-decoration: line-through;
-    }
-    div[class="row"] {
-        outline: 0px;
-    }
-
-    div[class^="col-"] {
-        outline: 0px;
     }
     .container .container-nopadding{
         padding: 0;
@@ -219,5 +200,14 @@ ul, li {
         margin: 3px 0;
         border-radius: 5px;
     }
-
+    .account-tasks.deactivated{
+        background-color: darkorange;
+        margin: 3px 0;
+        border-radius: 5px;
+    }
+    .col-lg-12.ml-auto.direct-message-text{
+        font-size:18px;
+        font-weight:bold;
+        margin-left: 5px !important;
+    }
 }

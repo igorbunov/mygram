@@ -28,8 +28,12 @@ class User extends Model
 
         $accounts = account::getActiveAccountsByUser($userId);
 
-        if (!is_null($accounts) and count($accounts) > 0) {
-            return $accounts[0]->picture;
+        if (!is_null($accounts)) {
+            foreach ($accounts as $account) {
+                if (!is_null($account->picture) and !empty($account->picture)) {
+                    return $account->picture;
+                }
+            }
         }
 
         return '';

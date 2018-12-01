@@ -3,7 +3,7 @@
 @section('main_content')
     <div class="container container-nopadding">
         <div class="row">
-            <div class="col-lg-12 account-link  active ">
+            <div class="col-lg-12 account-link-nonclicable active ">
                 <span>@</span>{{ $account->nickname }}
             </div>
         </div>
@@ -11,31 +11,31 @@
         @foreach ($directTasks as $task)
             <section class="account-tasks @if($task->is_active) active @else deactivated @endif">
                 <div class="row">
-                    <div class="col-lg-8">
-                        <h4>{{ $task->message }}</h4>
-                    </div>
-                    <div class="col-lg-4 ml-auto">
-                        @if($currentTariff != null)
-                            @if($task->is_active == 1)
-                                <button type="button" class="btn btn-basic task-deactivate"
-                                        data-task-type="{{ $task->taskType }}"
-                                        data-account-id="{{ $account->id }}"
-                                        data-task-id="{{ $task->id }}">Деактивировать</button>
-                            @else
-                                <button type="button" class="btn btn-basic task-activate"
-                                        data-task-type="{{ $task->taskType }}"
-                                        data-account-id="{{ $account->id }}"
-                                        data-task-id="{{ $task->id }}">Активировать</button>
+                    <div class="col-lg-12 d-flex">
+                        <div class="p-2">Тип: {{ $task->taskList->title }}</div>
+
+                        <div class="p-2 ml-auto">
+                            @if($currentTariff != null)
+                                @if($task->is_active == 1)
+                                    <button type="button" class="btn btn-basic task-deactivate"
+                                            data-task-type="{{ $task->taskType }}"
+                                            data-account-id="{{ $account->id }}"
+                                            data-task-id="{{ $task->id }}">Деактивировать</button>
+                                @else
+                                    <button type="button" class="btn btn-basic task-activate"
+                                            data-task-type="{{ $task->taskType }}"
+                                            data-account-id="{{ $account->id }}"
+                                            data-task-id="{{ $task->id }}">Активировать</button>
+                                @endif
                             @endif
-                        @endif
+                        </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12 d-flex flex-row">
-                        <div class="p-2">Тип: {{ $task->taskList->title }}</div>
+                    <div class="col-lg-12 ml-auto direct-message-text">
+                        текст: {{ $task->message }}
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-lg-12 d-flex flex-row">
                         <div class="p-2">Всего: {{ $task->total_messages }}</div>

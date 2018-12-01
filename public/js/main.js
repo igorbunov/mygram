@@ -27,7 +27,11 @@ $(document).ready(function() {
     $('#add-account-btn').click(function () {
         $('#add-account-form').show();
     });
-    $('.account-link').click(function () {
+    $('.account-link-clickable').click(function () {
+        if ($(this).hasClass('deactivated')) {
+            return;
+        }
+
         var id = $(this).data('accountId');
 
         location.href = 'account/' + id;

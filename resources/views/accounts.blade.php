@@ -9,10 +9,10 @@
         </div>
 
             @foreach ($accounts as $account)
-                <section class="account @if($account->is_active) active @else deactivated @endif">
+                <section class="account-link-clickable account @if($account->is_active) active @else deactivated @endif"
+                         data-account-id="{{ $account->id }}">
                     <div class="row d-flex justify-content-end account-title-group">
-                        <div class="account-link @if($account->is_active) active @else deactivated @endif"
-                             data-account-id="{{ $account->id }}">
+                        <div class="account-link @if($account->is_active) active @else deactivated @endif">
                             <span>@</span>{{ $account->nickname }}
                         </div>
 

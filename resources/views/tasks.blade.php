@@ -10,7 +10,7 @@
 
         @foreach ($accounts as $account)
             @if($account->is_active)
-                <section class="account-link account active"
+                <section class="account-link-clickable account-link account active"
                          data-account-id="{{ $account->id }}">
                     <div class="row">
                         <div class="col-lg-12 d-flex">
