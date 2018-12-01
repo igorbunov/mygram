@@ -34,7 +34,9 @@ $(document).ready(function() {
 
         var id = $(this).data('accountId');
 
-        location.href = 'account/' + id;
+        if (typeof id != 'undefined') {
+            location.href = 'account/' + id;
+        }
     });
 
     $('.tariff-account-count-selection').change(function () {

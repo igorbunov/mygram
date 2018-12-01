@@ -10,13 +10,11 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
     <!-- Bootstrap -->
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
-    <link href="{{ asset('css/main.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ asset('css/main.css') }}@php echo '?' . rand(100,1000); @endphp" rel="stylesheet" media="screen">
     <script src="http://code.jquery.com/jquery.js"></script>
     <script type="text/javascript" src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
-
-    {{--<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" media="screen">--}}
+    <script type="text/javascript" src="{{ asset('js/main.js') }}@php echo '?' . rand(100,1000); @endphp"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
 </head>
     <body>
