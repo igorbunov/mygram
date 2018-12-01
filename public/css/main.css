@@ -226,5 +226,11 @@ ul, li {
         width: 52px;
         margin: 0 0 10px 20px;
     }
+    .refresh-account-btn{
+        width: 52px;
+        height: 52px;
+        padding: 16px;
+        border-radius: 5px;
+    }
 
 }

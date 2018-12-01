@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('.sync-account').click(function () {
+    $('.refresh-account-btn').click(function () {
         var id = $(this).data('accountId');
 
         $.ajax({
@@ -27,6 +27,10 @@ $(document).ready(function() {
     });
     $('.account-link-clickable').click(function (event) {
         if ($(this).hasClass('deactivated') || event.target.type == 'button') {
+            return;
+        }
+        if (event.target.classList.contains("refresh-account-btn") ||
+            event.target.classList.contains("fa-sync")) {
             return;
         }
 

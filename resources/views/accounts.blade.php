@@ -23,8 +23,9 @@
 
                         @if($account->is_active == 1)
                             <div class="ml-auto p-2">
-                                <button type="button" class="btn btn-dark sync-account"
-                                        data-account-id="{{ $account->id }}">Обновить</button>
+                                <div class="btn-dark refresh-account-btn" data-account-id="{{ $account->id }}">
+                                    <i class="fas fa-sync"></i>
+                                </div>
                             </div>
                         @endif
 
