@@ -117,7 +117,7 @@ class MyInstagram
 
             $this->accountPK = $this->instagram->account_id;
             $this->accountId = $this->account->id;
-
+//            $curUserInfo = $this->instagram->people->getInfoById($this->accountPK);
             $curUserInfo = $this->instagram->account->getCurrentUser();
             $profilePictureUrl = $curUserInfo->getUser()->getProfilePicUrl();
 
@@ -178,5 +178,21 @@ class MyInstagram
     public function sendDirect(string $receiverPK, string $message)
     {
         return $this->instagram->direct->sendText(['users' => [$receiverPK]], $message);
+    }
+
+    public function getInfo()
+    {
+        $result = [];
+
+        $curUser = $this->instagram->people->getInfoById($this->accountPK);
+        $curUserInfo = $curUser->getUser();
+//        Log::debug('class ' . get_class($curUserInfo));
+
+        $result['followers'] = $curUserInfo->getFollowerCount();
+        $result['following'] = $curUserInfo->getFollowingCount();
+        $result['posts'] = $curUserInfo->getMediaCount();
+        $result['picture'] = $curUserInfo->getProfilePicUrl();
+
+        return $result;
     }
 }

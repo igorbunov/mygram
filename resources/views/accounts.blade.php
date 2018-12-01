@@ -11,26 +11,35 @@
             @foreach ($accounts as $account)
                 <section class="account-link-clickable account @if($account->is_active) active @else deactivated @endif"
                          data-account-id="{{ $account->id }}">
-                    <div class="row d-flex justify-content-end account-title-group">
-                        <div class="account-link @if($account->is_active) active @else deactivated @endif">
+                    {{--<div class="row d-flex justify-content-end account-title-group">--}}
+                    <div class="row d-flex">
+                        <div class="p-2 account-link @if($account->is_active) active @else deactivated @endif">
                             <span>@</span>{{ $account->nickname }}
                         </div>
 
+                        <div class="p-2">
+                            <img src="{{ $account->picture }}" class="rounded-circle mini-profile-picture"/>
+                        </div>
+
                         @if($account->is_active == 1)
-                            <div>
-                                <button type="button" class="btn btn-dark"
+                            <div class="ml-auto p-2">
+                                <button type="button" class="btn btn-dark sync-account"
                                         data-account-id="{{ $account->id }}">Обновить</button>
                             </div>
                         @endif
-                        <div>
-                            @if($account->is_active == 1)
+
+                        @if($account->is_active == 1)
+                            <div class="p-2">
                                 <button type="button" class="btn btn-basic account-deactivate"
                                         data-account-id="{{ $account->id }}">Деактивировать</button>
-                            @else
-                                <button type="button" class="btn btn-basic account-activate"
-                                        data-account-id="{{ $account->id }}">Активировать</button>
-                            @endif
-                        </div>
+                            </div>
+                        @else
+                            <div class="ml-auto p-2">
+                            <button type="button" class="btn btn-basic account-activate"
+                                    data-account-id="{{ $account->id }}">Активировать</button>
+                            </div>
+                        @endif
+
                     </div>
                     <div class="row">
                         <div class="col-lg-12 d-flex justify-content-around">

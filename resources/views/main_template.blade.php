@@ -13,8 +13,6 @@
                     <div class="d-flex programm-header-info">
                         <div class="mr-auto p-2">
                             <img  class="rounded-circle" src="{{$accountPicture}}" />
-                            {{--<img  class="rounded-circle" src="https://instagram.fiev7-2.fna.fbcdn.net/vp/71cca77edaee7865d7d20b6e22f72b33/5CA66227/t51.2885-19/s150x150/43028258_2000942369928882_4304595538935808000_n.jpg" />--}}
-                            {{--<i class="fas fa-grin-tears profile-logo"></i>--}}
                         </div>
                         <div class="p-2">
 

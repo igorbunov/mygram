@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('.sync-account').click(function () {
-        var nickname = $(this).data('nickname');
+        var id = $(this).data('accountId');
 
         $.ajax({
             url: 'account_sync',
@@ -10,11 +10,9 @@ $(document).ready(function() {
             method: 'POST',
             dataType: 'json',
             data: {
-                account_name: nickname
+                account_id: id
             },
             success: function(data){
-                debugger;
-
                 if (data.success) {
                     //location.href = 'accounts';
                 } else {
@@ -27,8 +25,8 @@ $(document).ready(function() {
     $('#add-account-btn').click(function () {
         $('#add-account-form').show();
     });
-    $('.account-link-clickable').click(function () {
-        if ($(this).hasClass('deactivated')) {
+    $('.account-link-clickable').click(function (event) {
+        if ($(this).hasClass('deactivated') || event.target.type == 'button') {
             return;
         }
 

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use InstagramAPI\Signatures;
 
 class account extends Model
@@ -13,6 +14,21 @@ class account extends Model
             'is_confirmed' => 0,
             'response' => ''
         ])->get();
+    }
+
+    public static function setInfo(int $accountId, array $info)
+    {
+        Log::debug('setInfo ' . \json_encode($info));
+        $account = account::getAccountById($accountId);
+
+        if (!is_null($account)) {
+            $account->picture = $info['picture'];
+            $account->subscribers = $info['followers'];
+            $account->subscriptions = $info['following'];
+            $account->publications = $info['posts'];
+
+            $account->save();
+        }
     }
 
     public static function setProfilePictureUrl(int $accountId, $profileUrl)

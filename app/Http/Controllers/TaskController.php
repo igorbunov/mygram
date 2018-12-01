@@ -67,7 +67,7 @@ class TaskController extends Controller
         }
 
         return view('account_task', [
-            'title' => 'Задачи',
+            'title' => 'Задачи @' . $account->nickname,
             'activePage' => 'tasks',
             'directTasks' => $directTasks,
             'account' => $account,

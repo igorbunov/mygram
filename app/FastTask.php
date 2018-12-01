@@ -51,15 +51,15 @@ class FastTask extends Model
     public static function runTask()
     {
         $task = self::getTask();
-
+Log::debug('task ' . \json_encode($task));
         if (!is_null($task)) {
             self::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
-            Log::debug('Found fast task # ' . $task->id);
+            Log::debug('Found fast task # ' . $task->id . ' ' .$task->task_type);
 
             switch ($task->task_type) {
                 case self::TYPE_TRY_LOGIN:
                     try {
-                        AccountFirstLoginRunner::tryLogin($task->account_id, $task->id);
+                        AccountFirstLoginRunner::tryLogin($task->account_id);
                     } catch (\Exception $err) {
                         Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage());
                     }
@@ -78,6 +78,13 @@ class FastTask extends Model
 
                     break;
                 case self::TYPE_REFRESH_ACCOUNT:
+                    try {
+                        AccountFirstLoginRunner::runRefresh($task->account_id);
+                    } catch (\Exception $err) {
+                        Log::error('Error running task AccountFirstLoginRunner::runRefresh: ' . $err->getMessage());
+                    }
+
+                    FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
 
                     break;
             }

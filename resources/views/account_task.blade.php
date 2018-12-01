@@ -2,17 +2,11 @@
 
 @section('main_content')
     <div class="container container-nopadding">
-        <div class="row">
-            <div class="col-lg-12 account-link-nonclicable active ">
-                <span>@</span>{{ $account->nickname }}
-            </div>
-        </div>
-<br/>
         @foreach ($directTasks as $task)
             <section class="account-tasks @if($task->is_active) active @else deactivated @endif">
                 <div class="row">
                     <div class="col-lg-12 d-flex">
-                        <div class="p-2">Тип: {{ $task->taskList->title }}</div>
+                        <div class="p-2 account-tasks-type-title @if($task->is_active) active @else deactivated @endif">{{ $task->taskList->title }}</div>
 
                         <div class="p-2 ml-auto">
                             @if($currentTariff != null)
@@ -33,7 +27,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12 ml-auto direct-message-text">
-                        текст: {{ $task->message }}
+                        {{ $task->message }}
                     </div>
                 </div>
                 <div class="row">

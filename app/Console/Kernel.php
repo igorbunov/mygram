@@ -74,7 +74,7 @@ class Kernel extends ConsoleKernel
 //***** ( sleep 30 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
 //***** ( sleep 40 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
 //***** ( sleep 50 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
-//            Log::debug('run fast task');
+            Log::debug('run fast task');
             FastTask::runTask();
         });
     }

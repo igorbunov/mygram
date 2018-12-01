@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\Log;
 
 class AccountFirstLoginRunner
 {
-    public static function tryLogin(int $accountId, int $fastTaskId)
+    public static function tryLogin(int $accountId)
     {
-        Log::debug('runned tryLogin task for account id: ' . $accountId . ' fast task id: ' . $fastTaskId);
+        Log::debug('runned tryLogin task for account id: ' . $accountId);
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -26,5 +26,23 @@ class AccountFirstLoginRunner
         }
 
         MyInstagram::getInstanse()->login($account);
+    }
+
+    public static function runRefresh(int $accountId)
+    {
+        Log::debug('runned runRefresh task for account id: ' . $accountId);
+        $account = account::getAccountById($accountId);
+
+        if (is_null($account)) {
+            Log::error('account not found');
+            return;
+        }
+
+        MyInstagram::getInstanse()->login($account);
+
+        $info = MyInstagram::getInstanse()->getInfo();
+
+        account::setInfo($accountId, $info);
+
     }
 }

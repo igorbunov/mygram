@@ -81,13 +81,17 @@ class AccountController extends Controller
     public function sync(Request $req) {
         $userId = (int) session('user_id', 0);
 
-        $nickname = (string) $req->post('account_name', '');
+        $accountId = (int) $req->post('account_id', 0);
 
-        if ($nickname == '') {
-            return response()->json(['success' => false, 'error' => 'Не верный никнейм']);
+        if ($accountId == 0) {
+            return response()->json(['success' => false, 'error' => 'Не верный аккаунт']);
         }
-        //TODO: run sync task
-//        DB::table('accounts')->where(['nickname' => $nickname, 'user_id' => $userId])->delete();
+
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return response()->json(['success' => false, 'error' => 'Это не ваш аккаунт']);
+        }
+
+        FastTask::addTask($accountId, FastTask::TYPE_REFRESH_ACCOUNT);
 
         return response()->json(['success' => true]);
     }
