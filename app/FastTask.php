@@ -55,6 +55,7 @@ class FastTask extends Model
         if (!is_null($task)) {
             self::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
             Log::debug('Found fast task # ' . $task->id . ' ' .$task->task_type);
+            DirectTaskReport::getNow();
 
             switch ($task->task_type) {
                 case self::TYPE_TRY_LOGIN:
@@ -89,8 +90,6 @@ class FastTask extends Model
                     break;
             }
         }
-
-        DirectTaskReport::getNow();
     }
 
     public static function checkStatus(int $taskId)
