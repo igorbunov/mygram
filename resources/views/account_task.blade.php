@@ -44,14 +44,21 @@
 
         @if($currentTariff != null)
             <div class="row">
-                <div class="col-lg-12">
-                    <button type="button" class="btn btn-dark" id="add-task-btn">Добавить задание</button>
+                <div class="col-lg-12 d-flex justify-content-around">
+                    <div class="p-2">
+                        <button type="button" class="btn btn-dark" id="add-task-btn">Добавить задание</button>
+                    </div>
+                    <div class="p-2 ml-auto">
+                        @if($onlyActiveTasks == true)
+                            <button type="button" class="btn btn-dark" data-all="true" data-account-id="{{ $account->id }}" id="all-tasks-btn">Все задания</button>
+                        @else
+                            <button type="button" class="btn btn-dark" data-all="false" data-account-id="{{ $account->id }}" id="all-tasks-btn">Активные задания</button>
+                        @endif
+                    </div>
                 </div>
             </div>
 
             <div id="add-task-form">
-                {{--<form method="POST" action="create_task">--}}
-                    {{--{{ csrf_field() }}--}}
                 <form>
                     <input type="hidden" id="add-task-account-id" value="{{ $account->id }}" />
 
@@ -98,7 +105,6 @@
 
                     <div class="row">
                         <div class="col-lg-12">
-                            {{--<input class="btn btn-success" type="submit" value="Сохранить">--}}
                             <button type="button" class="btn btn-success" id="add-task-submit">Сохранить</button>
                         </div>
                     </div>

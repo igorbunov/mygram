@@ -4,7 +4,7 @@ $(document).ready(function() {
 
         var checkIsTaskDone = function () {
             $.ajax({
-                url: 'fast_task_status',
+                url: '/fast_task_status',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -43,7 +43,7 @@ $(document).ready(function() {
         $('#preloader').show();
 
         $.ajax({
-            url: 'account_sync',
+            url: '/account_sync',
             headers: {
                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -54,7 +54,7 @@ $(document).ready(function() {
             },
             success: function(data) {
                 if (data.success && data.fastTaskId > 0) {
-                    vaitForFastTaskComplete(data.fastTaskId, 'account' + id);
+                    vaitForFastTaskComplete(data.fastTaskId, '/accounts');
                 } else {
                     $('#preloader').hide();
                     alert(data.message);
@@ -127,7 +127,7 @@ $(document).ready(function() {
 
     var changeTaskStatus = function(taskId, taskType, accountId, isActive) {
         $.ajax({
-            url: 'change_task',
+            url: '/change_task',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -169,7 +169,7 @@ $(document).ready(function() {
 
     var changeAccountStatus = function(accountId, isActive) {
         $.ajax({
-            url: 'change_account',
+            url: '/change_account',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -197,7 +197,7 @@ $(document).ready(function() {
             pass = $('#account-password').val();
 
         $.ajax({
-            url: 'add_account',
+            url: '/add_account',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -209,7 +209,7 @@ $(document).ready(function() {
             },
             success: function(data) {
                 if (data.success && data.fastTaskId > 0) {
-                    vaitForFastTaskComplete(data.fastTaskId, 'accounts');
+                    vaitForFastTaskComplete(data.fastTaskId, '/accounts/all');
                 } else {
                     $('#preloader').hide();
                     alert(data.message);
@@ -253,6 +253,26 @@ $(document).ready(function() {
         });
     });
 
+    $('#all-accounts-btn').click(function () {
+        var all = $(this).data('all');
+
+        if (all) {
+            location.href = '/accounts/all';
+        } else {
+            location.href = '/accounts';
+        }
+    });
+
+    $('#all-tasks-btn').click(function () {
+        var all = $(this).data('all');
+        var accountId = $(this).data('accountId');
+
+        if (all) {
+            location.href = '/account/' + accountId + '/all';
+        } else {
+            location.href = '/account/' + accountId;
+        }
+    });
 
     $('.account-deactivate').click(function () {
         var accountId = $(this).data('accountId');

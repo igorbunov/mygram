@@ -229,7 +229,7 @@ ul, li {
     .refresh-account-btn{
         width: 52px;
         height: 52px;
-        padding: 16px;
+        padding: 16px 18px;
         border-radius: 5px;
     }
     #add-account-form{
@@ -240,6 +240,13 @@ ul, li {
     }
     .my-text-input {
         padding: 22px;
+    }
+    #show-all-accounts{
+        margin-left:5px;
+    }
+    #all-accounts-checkbox{
+        width: 126px;
+        margin: 16px 0 0 0;
     }
 }
 

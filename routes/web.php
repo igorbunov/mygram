@@ -17,17 +17,18 @@ if (!env('SITE_ENABLED')) {
 }
 
 Route::get('/', 'AccountController@index');
-Route::get('/check', 'TaskController@check');
 
 Route::post('activationsuccess', 'TariffController@paymentCallback');
 
 Route::group(['middleware' => 'myauth'], function () {
     Route::post('add_account', 'AccountController@create');
     Route::get('accounts', 'AccountController@index');
+    Route::get('accounts/all', 'AccountController@indexAll');
     Route::get('account/{id}', 'TaskController@getTasks');
+    Route::get('account/{id}/all', 'TaskController@getAllTasks');
     Route::get('tasks', 'TaskController@index');
     Route::post('create_task', 'TaskController@createTask');
-    Route::post('account/change_task', 'TaskController@changeStatus');
+    Route::post('change_task', 'TaskController@changeStatus');
     Route::post('change_account', 'AccountController@changeStatus');
     Route::post('account_sync', 'AccountController@sync');
     Route::post('fast_task_status', 'FastTaskController@checkTaskStatus');

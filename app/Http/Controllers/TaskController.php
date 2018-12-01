@@ -21,14 +21,13 @@ use Mockery\Exception;
 
 class TaskController extends Controller
 {
-    public function check()
+    public function getAllTasks(int $accountId)
     {
-        self::disableAccountsAndTasksByEndTariff();
-//        DirectTaskCreatorController::generateDirectTasks();
-//        DirectToSubsTasksRunner::sendDirectToSubscribers(1);
+        return $this->getTasks($accountId, false);
     }
 
-    public function getTasks(int $accountId) {
+    public function getTasks(int $accountId, $onlyActiveTasks = true)
+    {
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
@@ -48,14 +47,14 @@ class TaskController extends Controller
         if (is_null($account)) {
             throw new \Exception('Не найден аккаунт');
         }
-//dd($account);
+
         $avaliableTaskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
-//dd($avaliableTaskList);
+
         $directTasks = [];
 
         foreach ($avaliableTaskList as $taskListItem) {
             if ('direct' == $taskListItem->type) {
-                $directTasks = DirectTask::getDirectTasksByTaskListId($taskListItem->id,$accountId);
+                $directTasks = DirectTask::getDirectTasksByTaskListId($taskListItem->id,$accountId, $onlyActiveTasks);
 
                 foreach ($directTasks as $i => $directTask) {
                     $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
@@ -72,6 +71,7 @@ class TaskController extends Controller
             'directTasks' => $directTasks,
             'account' => $account,
             'taskList' => $taskList,
+            'onlyActiveTasks' => $onlyActiveTasks,
             'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId),
             'accountPicture' => User::getAccountPictureUrl($userId)
         ]);

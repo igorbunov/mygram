@@ -12,7 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
-    public function index($error = '')
+    public function indexAll()
+    {
+        return $this->index('', false);
+    }
+
+    public function index($error = '', $onlyActive = true)
     {
         $userId = (int) session('user_id', 0);
 
@@ -20,11 +25,12 @@ class AccountController extends Controller
             return view('main_not_logined');
         }
 
-        $accounts = User::getAccountsByUser($userId);
+        $accounts = User::getAccountsByUser($userId, $onlyActive);
 
         $res = [
-            'title' => 'Акаунты'
+            'title' => 'Ваши аккаунты'
             , 'activePage' => 'accounts'
+            , 'onlyActiveAccounts' => $onlyActive
             , 'accounts' => $accounts
             , 'accountPicture' => User::getAccountPictureUrl($userId)
         ];
@@ -78,7 +84,6 @@ class AccountController extends Controller
         $fastTaskId = FastTask::addTask($accountId, FastTask::TYPE_TRY_LOGIN);
 
         return response()->json(['success' => true, 'fastTaskId' => $fastTaskId]);
-//        return redirect('account/' . $accountId);
     }
 
     public function sync(Request $req) {

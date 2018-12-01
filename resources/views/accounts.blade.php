@@ -2,12 +2,6 @@
 
 @section('main_content')
     <div class="container container-nopadding">
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>Ваши аккаунты</h3>
-            </div>
-        </div>
-
             @foreach ($accounts as $account)
                 <section class="account-link-clickable account @if($account->is_active) active @else deactivated @endif"
                          data-account-id="{{ $account->id }}">
@@ -26,37 +20,51 @@
                                     <i class="fas fa-sync"></i>
                                 </div>
                             </div>
-                        @endif
-
-                        @if($account->is_active == 1)
                             <div class="p-2">
                                 <button type="button" class="btn btn-basic account-deactivate"
                                         data-account-id="{{ $account->id }}">Деактивировать</button>
                             </div>
-                        @else
+                        @elseif($account->is_confirmed == 1)
                             <div class="ml-auto p-2">
-                            <button type="button" class="btn btn-basic account-activate"
-                                    data-account-id="{{ $account->id }}">Активировать</button>
+                                <button type="button" class="btn btn-basic account-activate"
+                                        data-account-id="{{ $account->id }}">Активировать</button>
+                            </div>
+                        @elseif($account->is_confirmed == 0)
+                            <div style="color: darkblue;">
+                                <h3>Логин/пароль не верный</h3>
                             </div>
                         @endif
 
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12 d-flex justify-content-around">
-                            <div>публикации: {{ $account->publications }}</div>
-                            <div>подпищики: {{ $account->subscribers }}</div>
-                            <div>подписки: {{ $account->subscriptions }}</div>
+
+                    @if($account->is_confirmed == 1)
+                        <div class="row">
+                            <div class="col-lg-12 d-flex justify-content-around">
+                                <div>публикации: {{ $account->publications }}</div>
+                                <div>подпищики: {{ $account->subscribers }}</div>
+                                <div>подписки: {{ $account->subscriptions }}</div>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </section>
             @endforeach
 
         @if($currentTariff != null)
             <div class="row">
-                <div class="col-lg-12">
-                    <button type="button" class="btn btn-dark" id="add-account-btn">Добавить аккаунт</button>
+                <div class="col-lg-12 d-flex justify-content-around">
+                    <div class="p-2">
+                        <button type="button" class="btn btn-dark" id="add-account-btn">Добавить аккаунт</button>
+                    </div>
+                    <div class="p-2 ml-auto">
+                        @if($onlyActiveAccounts == true)
+                            <button type="button" class="btn btn-dark" data-all="true" id="all-accounts-btn">Все аккаунты</button>
+                        @else
+                            <button type="button" class="btn btn-dark" data-all="false"  id="all-accounts-btn">Активные аккаунты</button>
+                        @endif
+                    </div>
                 </div>
             </div>
+
 
             <div id="add-account-form">
                 <form>

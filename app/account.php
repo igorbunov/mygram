@@ -50,6 +50,7 @@ class account extends Model
         }
 
         $account->is_confirmed = ($data['isError']) ? 0 : 1;
+        $account->is_active = ($data['isError']) ? 0 : 1;
         $account->response = $data['message'];
         $account->save();
     }
