@@ -53,7 +53,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'timezone' => 'Europe/Kiev',
+            'timezone'  => '+02:00'
         ],
 
         'pgsql' => [
