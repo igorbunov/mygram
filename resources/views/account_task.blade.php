@@ -50,14 +50,14 @@
             </div>
 
             <div id="add-task-form">
-                <form method="POST" action="create_task">
-                    {{ csrf_field() }}
-
-                    <input type="hidden" name="account_id" value="{{ $account->id }}" />
+                {{--<form method="POST" action="create_task">--}}
+                    {{--{{ csrf_field() }}--}}
+                <form>
+                    <input type="hidden" id="add-task-account-id" value="{{ $account->id }}" />
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <label for="add-task-task-type">Тип задания</label>
+                            <label for="add-task-task-type" class="my-label">Тип задания</label>
                             <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="add-task-task-type" name="task_list_id">
                                 @foreach($taskList as $i => $taskListItem)
                                     @if($i == 0)
@@ -75,16 +75,14 @@
                     </div>
 
                     <selection id="add-direct-task">
-                        <h3>Директ ответ подписавшимся</h3>
-
                         <div class="row">
                             <div class="col-lg-12">
-                                <label for="add-direct-task-text">Текст сообщения</label>
+                                <label for="add-direct-task-text" class="my-label">Текст сообщения</label>
                                 <textarea class="form-control" id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
                             </div>
                             <div class="col-lg-12">
-                                <label for="add-direct-task-work-only-in-night">Работать только ночью</label>
-                                <input class="form-check-input" id="add-direct-task-work-only-in-night" type="checkbox" name="work_only_in_night" />
+                                <label for="add-direct-task-work-only-in-night" class="my-label">Работать только ночью</label>
+                                <input class="form-check-input" id="add-direct-task-work-only-in-night" type="checkbox"/>
                             </div>
                         </div>
 
@@ -98,14 +96,12 @@
                         </div>
                     </selection>
 
-
                     <div class="row">
                         <div class="col-lg-12">
-                            <input type="button" class="btn btn-success" type="submit" value="Сохранить">
+                            {{--<input class="btn btn-success" type="submit" value="Сохранить">--}}
+                            <button type="button" class="btn btn-success" id="add-task-submit">Сохранить</button>
                         </div>
                     </div>
-
-
                 </form>
             </div>
         @endif

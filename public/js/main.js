@@ -1,6 +1,46 @@
 $(document).ready(function() {
+    var vaitForFastTaskComplete = function(fastTaskId, redirectUrl) {
+        var intervalId = null;
+
+        var checkIsTaskDone = function () {
+            $.ajax({
+                url: 'fast_task_status',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    fast_task_id: fastTaskId
+                },
+                success: function (data) {
+                    if (data.success) {
+                        if (data.task_done) {
+                            $('#preloader').hide();
+                            clearInterval(intervalId);
+
+                            if (redirectUrl) {
+                                location.href = redirectUrl;
+                            }
+                        }
+                    } else {
+                        $('#preloader').hide();
+                        clearInterval(intervalId);
+                    }
+                },
+                error: function () {
+                    $('#preloader').hide();
+                    clearInterval(intervalId);
+                }
+            });
+        };
+
+        intervalId = setInterval(checkIsTaskDone, 5000);
+    };
+
     $('.refresh-account-btn').click(function () {
         var id = $(this).data('accountId');
+        $('#preloader').show();
 
         $.ajax({
             url: 'account_sync',
@@ -12,13 +52,16 @@ $(document).ready(function() {
             data: {
                 account_id: id
             },
-            success: function(data){
-                if (data.success) {
-                    //location.href = 'accounts';
+            success: function(data) {
+                if (data.success && data.fastTaskId > 0) {
+                    vaitForFastTaskComplete(data.fastTaskId, 'account' + id);
                 } else {
-                    console.log('error', data.error);
-                    debugger;
+                    $('#preloader').hide();
+                    alert(data.message);
                 }
+            },
+            error: function() {
+                $('#preloader').hide();
             }
         });
     });
@@ -146,6 +189,69 @@ $(document).ready(function() {
             }
         });
     };
+
+    $("#add-account-submit").click(function () {
+        $('#preloader').show();
+
+        var login = $('#account-name').val(),
+            pass = $('#account-password').val();
+
+        $.ajax({
+            url: 'add_account',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                account_name: login,
+                account_password: pass
+            },
+            success: function(data) {
+                if (data.success && data.fastTaskId > 0) {
+                    vaitForFastTaskComplete(data.fastTaskId, 'accounts');
+                } else {
+                    $('#preloader').hide();
+                    alert(data.message);
+                }
+            },
+            error: function() {
+                $('#preloader').hide();
+            }
+        });
+    });
+
+
+    $("#add-task-submit").click(function () {
+        var accountId = $('#add-task-account-id').val();
+        var directText = $('#add-direct-task-text').val();
+        var isWorkInNight = $('#add-direct-task-work-only-in-night').is(":checked");
+        var taskListId = $('#add-task-task-type').val();
+
+        $.ajax({
+            url: '/create_task',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                account_id: accountId,
+                direct_text: directText,
+                work_only_in_night: isWorkInNight,
+                task_list_id: taskListId,
+            },
+            success: function(data) {
+                if (data.success) {
+                    location.href = '/account/' + accountId;
+                } else {
+                    alert(data.message);
+                }
+            },
+            error: function() {
+            }
+        });
+    });
 
 
     $('.account-deactivate').click(function () {

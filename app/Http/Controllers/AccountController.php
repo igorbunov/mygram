@@ -43,26 +43,26 @@ class AccountController extends Controller
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
-            return redirect('accounts');
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
         }
 
         $tariff = Tariff::getUserCurrentTariff($userId);
 
         if (is_null($tariff)) {
-            return redirect('accounts');
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
         }
 
         $activeAccounts = account::getActiveAccountsByUser($userId);
 
         if (count($activeAccounts) >= $tariff->accounts_count) {
-            return redirect('accounts');
+            return response()->json(['success' => false, 'message' => 'Вы достигли лимита по активным аккаунтам']);
         }
 
         $nickname = (string) $req->post('account_name', '');
         $password = (string) $req->post('account_password', '');
 
         if ($nickname == '' OR $password == '') {
-            return $this->index('Пустые поля');
+            return response()->json(['success' => false, 'message' => 'Заполните все поля']);
         }
 
         $accountId = account::addNew([
@@ -71,11 +71,14 @@ class AccountController extends Controller
             'password' => Crypt::encryptString($password)
         ]);
 
-        if ($accountId > 0) {
-            FastTask::addTask($accountId, FastTask::TYPE_TRY_LOGIN);
+        if ($accountId == 0) {
+            return response()->json(['success' => false, 'message' => 'Не удалось создать аккаунт']);
         }
 
-        return redirect('account/' . $accountId);
+        $fastTaskId = FastTask::addTask($accountId, FastTask::TYPE_TRY_LOGIN);
+
+        return response()->json(['success' => true, 'fastTaskId' => $fastTaskId]);
+//        return redirect('account/' . $accountId);
     }
 
     public function sync(Request $req) {
@@ -91,9 +94,9 @@ class AccountController extends Controller
             return response()->json(['success' => false, 'error' => 'Это не ваш аккаунт']);
         }
 
-        FastTask::addTask($accountId, FastTask::TYPE_REFRESH_ACCOUNT);
+        $fastTaskId = FastTask::addTask($accountId, FastTask::TYPE_REFRESH_ACCOUNT);
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'fastTaskId' => $fastTaskId]);
     }
 
     public function changeStatus(Request $req)

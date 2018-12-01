@@ -7,79 +7,30 @@ use Illuminate\Http\Request;
 
 class FastTaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function checkTaskStatus(Request $req)
     {
-        //
-    }
+        $fastTaskId = (int) $req->post('fast_task_id', 0);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        if ($fastTaskId == 0) {
+            return response()->json(['success' => false, 'message' => 'Не верный айди задачи']);
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $userId = (int) session('user_id', 0);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\FastTask  $fastTask
-     * @return \Illuminate\Http\Response
-     */
-    public function show(FastTask $fastTask)
-    {
-        //
-    }
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Сессия потеряна. Перелогиньтесь']);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\FastTask  $fastTask
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(FastTask $fastTask)
-    {
-        //
-    }
+        $status = FastTask::checkStatus($fastTaskId);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\FastTask  $fastTask
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, FastTask $fastTask)
-    {
-        //
-    }
+        if ($status === false) {
+            return response()->json(['success' => false, 'message' => 'Ошибка получения статуса']);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\FastTask  $fastTask
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(FastTask $fastTask)
-    {
-        //
+        if ($status == FastTask::STATUS_EXECUTED) {
+            return response()->json(['success' => true, 'task_done' => true]);
+        }
+
+        return response()->json(['success' => true, 'task_done' => false]);
     }
 }

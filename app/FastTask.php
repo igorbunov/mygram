@@ -89,39 +89,16 @@ Log::debug('task ' . \json_encode($task));
                     break;
             }
         }
+    }
 
+    public static function checkStatus(int $taskId)
+    {
+        $res = self::find($taskId);
 
-//        $i = 0;
-//
-//        while($i < 10) {
-//            Log::debug('fast task run while: ' . $i);
-//
-//            if (!is_null($tasks) and count($tasks) > 0) {
-//                foreach ($tasks as $task) {
-//                    switch ($task->task_type) {
-//                        case FastTask::TYPE_TRY_LOGIN:
-//                            FastTask::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
-//
-//                            try {
-//                                AccountFirstLoginRunner::tryLogin($task->account_id, $task->id);
-//                            } catch (\Exception $err) {
-//                                Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage());
-//                            }
-//
-//                            break;
-//                        case FastTask::TYPE_DIRECT_ANSWER:
-//
-//                            break;
-//                        case FastTask::TYPE_REFRESH_ACCOUNT:
-//
-//                            break;
-//                    }
-//                }
-//            }
-//
-//            $i++;
-//
-//            sleep(5);
-//        }
+        if (is_null($res)) {
+            return false;
+        }
+
+        return $res->status;
     }
 }

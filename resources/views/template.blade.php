@@ -23,5 +23,10 @@
         @endisset
 
         @yield('content')
+
+        <div id="preloader">
+            <div id="background-preloader"></div>
+            <div id="loader"></div>
+        </div>
     </body>
 </html>

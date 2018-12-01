@@ -11,7 +11,6 @@
             @foreach ($accounts as $account)
                 <section class="account-link-clickable account @if($account->is_active) active @else deactivated @endif"
                          data-account-id="{{ $account->id }}">
-                    {{--<div class="row d-flex justify-content-end account-title-group">--}}
                     <div class="row d-flex">
                         <div class="p-2 account-link @if($account->is_active) active @else deactivated @endif">
                             <span>@</span>{{ $account->nickname }}
@@ -60,25 +59,23 @@
             </div>
 
             <div id="add-account-form">
-                <form method="POST" action="accounts">
-                    {{ csrf_field() }}
-
-
+                <form>
                     <div class="row">
                         <div class="col-lg-12">
-                            <label for="account-name">Аккаунт</label>
-                            <input type="text" id="account-name" name="account_name"/>
+                            <label for="account-name" class="my-label">Аккаунт</label>
+                            <input type="text" class="form-control my-text-input" id="account-name" name="account_name"/>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
-                            <label for="account-password">Пароль</label>
-                            <input type="password" id="account-password" name="account_password"/>
+                            <label for="account-password" class="my-label">Пароль</label>
+                            <input type="password" class="form-control my-text-input" id="account-password" name="account_password"/>
+
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" style="margin-top: 10px;">
                         <div class="col-lg-12">
-                            <input type="submit" value="Сохранить">
+                            <button type="button" class="btn btn-success" id="add-account-submit">Сохранить</button>
                         </div>
                     </div>
 

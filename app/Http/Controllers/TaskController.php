@@ -105,66 +105,69 @@ class TaskController extends Controller
     public function createTask(Request $req)
     {
         $userId = (int) session('user_id', 0);
-        $accountId = (int) $req->post('account_id', 0);
-        $taskListId = (int) $req->post('task_list_id', 0);
-        $directText = $req->post('direct_text', '');
-
-        $workOnlyInNight = $req->post('work_only_in_night', 'off');
-        $workOnlyInNight = filter_var($workOnlyInNight, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
 
         if ($userId == 0) {
-            return redirect('account/' . $accountId);
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
         }
 
-        if ($accountId == 0) {
-            throw new Exception('account not set');
-        }
-        if ($taskListId == 0) {
-            throw new Exception('task type not set');
-        }
+        try {
 
-        $tariff = Tariff::getUserCurrentTariff($userId);
+            $accountId = (int) $req->post('account_id', 0);
+            $taskListId = (int) $req->post('task_list_id', 0);
+            $directText = $req->post('direct_text', '');
 
-        if (is_null($tariff)) {
-            return redirect('account/' . $accountId);
-        }
+            $workOnlyInNight = $req->post('work_only_in_night', false);
+            $workOnlyInNight = filter_var($workOnlyInNight, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
 
-        if (!account::isAccountBelongsToUser($userId, $accountId)) {
-            return redirect('account/' . $accountId);
-        }
+            if ($accountId == 0) {
+                return response()->json(['success' => false, 'message' => 'Не найден аккаунт']);
+            }
+            if ($taskListId == 0) {
+                return response()->json(['success' => false, 'message' => 'Не указан тип задания']);
+            }
 
-        $taskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
+            $tariff = Tariff::getUserCurrentTariff($userId);
 
-        if (count($taskList) == 0) {
-            return redirect('account/' . $accountId);
-        }
+            if (is_null($tariff)) {
+                return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+            }
 
-        foreach ($taskList as $taskListItem) {
-            if ($taskListItem->id == $taskListId) {
-                if ('direct' == $taskListItem->type) {
-                    $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $accountId);
+            if (!account::isAccountBelongsToUser($userId, $accountId)) {
+                return response()->json(['success' => false, 'message' => 'Это не ваш аккаунт']);
+            }
 
-                    if (!is_null($directTask)) {
-                        throw new \Exception('У вас уже есть активное задание с таким типом');
-                    } else {
-                        //TODO: $taskListId узнать тип таска и в зависимости от него делать инсерт в нужную таблицу
-                        // сейчас реализовано только директ таск
+            $taskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
 
-                        $direct = new DirectTask();
-                        $direct->account_id = $accountId;
-                        $direct->is_active = 1;
-                        $direct->task_list_id = $taskListId;
-                        $direct->message = $directText;
-                        $direct->work_only_in_night = $workOnlyInNight ? 1 : 0;
-                        $direct->save();
+            if (count($taskList) == 0) {
+                return response()->json(['success' => false, 'message' => 'Это задание недоступно для вашего тарифа']);
+            }
 
-                        return redirect('account/' . $accountId);
+            foreach ($taskList as $taskListItem) {
+                if ($taskListItem->id == $taskListId) {
+                    if ('direct' == $taskListItem->type) {
+                        $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $accountId);
+
+                        if (!is_null($directTask)) {
+                            return response()->json(['success' => false, 'message' => 'Нельзя создавать два директ задания']);
+                        } else {
+                            $direct = new DirectTask();
+                            $direct->account_id = $accountId;
+                            $direct->is_active = 1;
+                            $direct->task_list_id = $taskListId;
+                            $direct->message = $directText;
+                            $direct->work_only_in_night = $workOnlyInNight ? 1 : 0;
+                            $direct->save();
+
+                            return response()->json(['success' => true]);
+                        }
                     }
                 }
             }
+        } catch (\Exception $err) {
+            return response()->json(['success' => false, 'message' => $err->getMessage()]);
         }
 
-        return redirect('account/' . $accountId);
+        return response()->json(['success' => false, 'message' => 'Другая ошибка']);
     }
 
     public function changeStatus(Request $req)

@@ -22,14 +22,15 @@ Route::get('/check', 'TaskController@check');
 Route::post('activationsuccess', 'TariffController@paymentCallback');
 
 Route::group(['middleware' => 'myauth'], function () {
+    Route::post('add_account', 'AccountController@create');
     Route::get('accounts', 'AccountController@index');
     Route::get('account/{id}', 'TaskController@getTasks');
     Route::get('tasks', 'TaskController@index');
-    Route::post('account/create_task', 'TaskController@createTask');
+    Route::post('create_task', 'TaskController@createTask');
     Route::post('account/change_task', 'TaskController@changeStatus');
     Route::post('change_account', 'AccountController@changeStatus');
-    Route::post('accounts', 'AccountController@create');
     Route::post('account_sync', 'AccountController@sync');
+    Route::post('fast_task_status', 'FastTaskController@checkTaskStatus');
     Route::get('tariffs', 'TariffController@index');
     Route::post('checkout', 'TariffController@checkout');
 
