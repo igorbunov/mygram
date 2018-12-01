@@ -89,6 +89,8 @@ class FastTask extends Model
                     break;
             }
         }
+
+        DirectTaskReport::getNow();
     }
 
     public static function checkStatus(int $taskId)

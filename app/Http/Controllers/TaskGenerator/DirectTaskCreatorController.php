@@ -46,8 +46,6 @@ class DirectTaskCreatorController
                                 continue;
                             }
 
-                            DirectTaskReport::getNow();
-
                             $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
 
                             if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
