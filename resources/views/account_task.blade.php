@@ -37,6 +37,7 @@
                         <div class="p-2">Ошибок: {{ $task->failure_count }}</div>
                         <div class="p-2">Сегодня: {{ $task->sendedToday }}</div>
                     </div>
+                    <div style="margin: 0 0 5px 22px;">В очереди на отправку: {{ $task->inQueue }}</div>
                 </div>
 
             </section>

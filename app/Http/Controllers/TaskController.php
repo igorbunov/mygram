@@ -58,6 +58,8 @@ class TaskController extends Controller
 
                 foreach ($directTasks as $i => $directTask) {
                     $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
+                    $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
+                    $directTasks[$i]->inQueue = count($unsendedFollowers);
                     $directTasks[$i]->taskType = $taskListItem->type;
                 }
             } else if ('unfollowing' == $taskListItem->type) {
