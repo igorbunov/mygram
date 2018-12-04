@@ -7,6 +7,34 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscribers extends Model
 {
+    public static function setSended(int $followerId, bool $isSended = true)
+    {
+        $res = self::find($followerId);
+
+        if (is_null($res)) {
+            Log::error('не смог найти субскрайбера по айди: ' . $followerId);
+            return;
+        }
+
+        $res->is_sended = ($isSended) ? 1 : 0;
+
+        $res->save();
+    }
+
+    public static function getUnsendedFollowers(int $accountId)
+    {
+        $followers = self::where([
+            'owner_account_id' => $accountId,
+            'is_sended' => 0
+        ])->orderBy('id', 'ASC')->get();
+
+        if (is_null($followers)) {
+            return [];
+        }
+
+        return $followers;
+    }
+
     public static function addUniqueArray(array $followers)
     {
         foreach ($followers as $follower) {
@@ -38,6 +66,7 @@ class AccountSubscribers extends Model
             $subs->username =  $data['username'];
             $subs->pk = $data['pk'];
             $subs->json = $data['json'];
+            $subs->is_sended = 0;
 
             $subs->save();
         } catch (\Exception $err) {
@@ -58,7 +87,7 @@ class AccountSubscribers extends Model
         $newFollowers = [];
 
         foreach ($newFollowersArr as $i => $newFollower) {
-            if ($i == 100) {
+            if ($i == 130) {
                 break;
             }
 

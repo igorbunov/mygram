@@ -46,21 +46,21 @@ class DirectTaskCreatorController
                                 continue;
                             }
 
-                            $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
-
-                            if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
-                                Log::debug('direct limits per day achieved: ' . $todayDirectCount);
-                                continue;
-                            }
-
-                            $lastHourDirectCount = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
-
-                            if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
-                                Log::debug('direct limits per hour: ' . $lastHourDirectCount);
-                                continue;
-                            } else {
-                                Log::debug('directs per last hour: ' . $lastHourDirectCount);
-                            }
+//                            $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
+//
+//                            if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
+//                                Log::debug('direct limits per day achieved: ' . $todayDirectCount);
+//                                continue;
+//                            }
+//
+//                            $lastHourDirectCount = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
+//
+//                            if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
+//                                Log::debug('direct limits per hour: ' . $lastHourDirectCount);
+//                                continue;
+//                            } else {
+//                                Log::debug('directs per last hour: ' . $lastHourDirectCount);
+//                            }
 
                             if ($directTask->work_only_in_night > 0 and !self::isNight()) {
                                 continue;

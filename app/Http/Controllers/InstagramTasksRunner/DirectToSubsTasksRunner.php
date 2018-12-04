@@ -64,22 +64,23 @@ class DirectToSubsTasksRunner
 
         Log::debug('new followers count: ' . count($followersDiff));
 
-        AccountSubscribers::deleteOldFollowers($accountId);
-
-        AccountSubscribers::addUniqueArray($followersAsArray);
-
-        Log::debug('re-added followers: ' . count($followersAsArray));
-
         if (count($followersDiff) > 0) {
-            self::sendDirectToSubscribers($directTaskId, $accountId, $followersDiff);
-
-            DirectTask::updateStatistics($directTaskId);
+            AccountSubscribers::addUniqueArray($followersDiff);
+            Log::debug('re-added followers: ' . count($followersDiff));
         }
+
+        $sendedFollowersArr = self::sendDirectToSubscribers($directTaskId, $accountId);
+
+        Log::debug('sendedFollowersArr: ' . count($sendedFollowersArr));
+
+//            AccountSubscribers::deleteOldFollowers($accountId);
+
+        DirectTask::updateStatistics($directTaskId);
 
         Log::debug('=== done ===');
     }
 
-    public static function sendDirectToSubscribers(int $directTaskId, int $accountId, array $newFollowers)
+    public static function sendDirectToSubscribers(int $directTaskId, int $accountId)
     {
         $directTask = DirectTask::getDirectTaskById($directTaskId, $accountId, true);
 
@@ -95,10 +96,28 @@ class DirectToSubsTasksRunner
 
         MyInstagram::getInstanse()->login($account);
 
-        foreach ($newFollowers as $newFollower) {
+        $sendedFollowersArr = [];
+
+        $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
+
+        foreach ($unsendedFollowers as $newFollower) {
             sleep(rand(10, 30));
 
-            $response = MyInstagram::getInstanse()->sendDirect($newFollower['pk'], $directTask->message);
+            $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
+
+            if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
+                Log::debug('direct limits per day achieved: ' . $todayDirectCount);
+                break;
+            }
+
+            $lastHourDirectCount = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
+
+            if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
+                Log::debug('direct limits per hour: ' . $lastHourDirectCount);
+                break;
+            }
+
+            $response = MyInstagram::getInstanse()->sendDirect($newFollower->pk, $directTask->message);
 
             $resultArr = [
                 'direct_task_id' => $directTaskId,
@@ -107,15 +126,20 @@ class DirectToSubsTasksRunner
                 'error_message' => ''
             ];
 
+            $sendedFollowersArr[] = $newFollower;
+            AccountSubscribers::setSended($newFollower->id, true);
+
             if (!$response->isOk()) {
                 $resultArr['success'] = 0;
                 $resultArr['error_message'] = $response->getMessage();
-                Log::error('error send message to: ' . $newFollower['username'] . ' ' . $resultArr['error_message']);
+                Log::error('error send message to: ' . $newFollower->username . ' ' . $resultArr['error_message']);
             } else {
-                Log::debug('message sended to: ' . $newFollower['username']);
+                Log::debug('message sended to: ' . $newFollower->username);
             }
 
             DirectTaskReport::writeStatistics($resultArr);
         }
+
+        return $sendedFollowersArr;
     }
 }
