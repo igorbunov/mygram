@@ -45,31 +45,40 @@ class DirectTaskCreatorController
 
             Log::debug("found active accounts: " . count($accounts));
 
-            foreach ($accounts as $account) {
-                foreach ($tasksTypes as $taskType) {
-                    if ('direct' == $taskType->type) {
-                        $taskListId = $taskType->id;
-                        $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id);
+            try {
+                foreach ($accounts as $account) {
+                    foreach ($tasksTypes as $taskType) {
+                        if ('direct' == $taskType->type) {
+                            $taskListId = $taskType->id;
+                            $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id);
 
-                        if (is_null($directTask)) {
-                            Log::debug('No direct tasks found ' . $taskListId . ' ' . $account->id);
-                            continue;
-                        }
+                            if (is_null($directTask)) {
+                                Log::debug('No direct tasks found ' . $taskListId . ' ' . $account->id);
+                                continue;
+                            }
 
-                        if ($directTask->work_only_in_night > 0 and !self::isNight()) {
-                            continue;
-                        } else if (self::isNight()) {
-                            $currentMinutes = (int) date('i');
-                            if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
+                            if ($directTask->work_only_in_night > 0 and !self::isNight()) {
+                                Log::debug('not working in the night');
+                                continue;
+                            } else if (self::isNight()) {
+//                                $currentMinutes = (int) date('i');
+//                                if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
+                                    FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
+                                    Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
+//                                } else {
+//                                    Log::debug('in night working only once in 30 mins');
+//                                }
+                            } else {
                                 FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
-                                Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
+                                Log::debug('add fast direct task (at day): ' . $directTask->id . ' ' . $account->id);
                             }
                         } else {
-                            FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
-                            Log::debug('add fast direct task (at day): ' . $directTask->id . ' ' . $account->id);
+                            Log::error("bad task type: " . $taskType->type);
                         }
                     }
                 }
+            } catch (\Exception $err) {
+                Log::error('error: ' => $err->getMessage());
             }
         }
 
