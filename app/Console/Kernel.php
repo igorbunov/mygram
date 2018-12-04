@@ -52,7 +52,7 @@ class Kernel extends ConsoleKernel
             $schedule->call(function() {
                 Log::debug('== Run chedule direct task generator == ');
                 DirectTaskCreatorController::generateDirectTasks();
-            })->everyMinute();//TODO: remove
+            })->everyTenMinutes();//TODO: remove
         }
     }
 
