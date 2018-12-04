@@ -43,6 +43,8 @@ class DirectTaskCreatorController
 
             $accounts = account::getActiveAccountsByUser($user->id);
 
+            Log::debug("found active accounts: " . count($accounts));
+
             foreach ($accounts as $account) {
                 foreach ($tasksTypes as $taskType) {
                     if ('direct' == $taskType->type) {
