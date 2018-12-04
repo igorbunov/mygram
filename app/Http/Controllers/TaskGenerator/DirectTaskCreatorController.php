@@ -24,6 +24,8 @@ class DirectTaskCreatorController
         Log::debug('generate tasks');
         $users = User::where(['is_confirmed' => 1])->get();
 
+        Log::debug('found users: ' . count($users));
+
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
 
