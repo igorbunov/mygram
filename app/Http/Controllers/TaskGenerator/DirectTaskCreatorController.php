@@ -78,7 +78,7 @@ class DirectTaskCreatorController
                     }
                 }
             } catch (\Exception $err) {
-                Log::error('error: ' => $err->getMessage());
+                Log::error('error: ' . $err->getMessage());
             }
         }
 
