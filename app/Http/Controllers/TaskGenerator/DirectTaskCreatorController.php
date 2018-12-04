@@ -22,7 +22,7 @@ class DirectTaskCreatorController
     public static function generateDirectTasks()
     {
         Log::debug('generate tasks');
-        $users = User::where(['is_confirmed' => 1, 'is_active' => 1])->get();
+        $users = User::where(['is_confirmed' => 1])->get();
 
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
