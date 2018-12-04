@@ -22,63 +22,54 @@ class DirectTaskCreatorController
     public static function generateDirectTasks()
     {
         Log::debug('generate tasks');
-        $users = User::where(['is_confirmed' => 1])->get();
+        $users = User::where(['is_confirmed' => 1, 'is_active' => 1])->get();
 
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
 
             if (is_null($tariff)) {
+                Log::debug('tariff is not valid for user: ' . $user->id);
                 continue;
             }
 
             $tasksTypes = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
 
-            if (count($tasksTypes) > 0) {
-                $accounts = account::getActiveAccountsByUser($user->id);
+            if (count($tasksTypes) == 0) {
+                Log::debug('task types not found: ' . $tariff->tariff_list_id);
+                continue;
+            }
 
-                foreach ($accounts as $account) {
-                    foreach ($tasksTypes as $taskType) {
-                        if ('direct' == $taskType->type) {
-                            $taskListId = $taskType->id;
-                            $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id);
+            $accounts = account::getActiveAccountsByUser($user->id);
 
-                            if (is_null($directTask)) {
-                                continue;
-                            }
+            foreach ($accounts as $account) {
+                foreach ($tasksTypes as $taskType) {
+                    if ('direct' == $taskType->type) {
+                        $taskListId = $taskType->id;
+                        $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id);
 
-//                            $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
-//
-//                            if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
-//                                Log::debug('direct limits per day achieved: ' . $todayDirectCount);
-//                                continue;
-//                            }
-//
-//                            $lastHourDirectCount = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
-//
-//                            if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
-//                                Log::debug('direct limits per hour: ' . $lastHourDirectCount);
-//                                continue;
-//                            } else {
-//                                Log::debug('directs per last hour: ' . $lastHourDirectCount);
-//                            }
+                        if (is_null($directTask)) {
+                            Log::debug('No direct tasks found ' . $taskListId . ' ' . $account->id);
+                            continue;
+                        }
 
-                            if ($directTask->work_only_in_night > 0 and !self::isNight()) {
-                                continue;
-                            } else if (self::isNight()) {
-                                $currentMinutes = (int) date('i');
-                                if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
-                                    FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
-                                    Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
-                                }
-                            } else {
+                        if ($directTask->work_only_in_night > 0 and !self::isNight()) {
+                            continue;
+                        } else if (self::isNight()) {
+                            $currentMinutes = (int) date('i');
+                            if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
                                 FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
-                                Log::debug('add fast direct task (at day): ' . $directTask->id . ' ' . $account->id);
+                                Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
                             }
+                        } else {
+                            FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
+                            Log::debug('add fast direct task (at day): ' . $directTask->id . ' ' . $account->id);
                         }
                     }
                 }
             }
         }
+
+        Log::debug('generate tasks end');
     }
 
     public static function isNight()
