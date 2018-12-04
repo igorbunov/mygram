@@ -61,13 +61,13 @@ class DirectTaskCreatorController
                                 Log::debug('not working in the night');
                                 continue;
                             } else if (self::isNight()) {
-//                                $currentMinutes = (int) date('i');
-//                                if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
+                                $currentMinutes = (int) date('i');
+                                if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
                                     FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
                                     Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
-//                                } else {
-//                                    Log::debug('in night working only once in 30 mins');
-//                                }
+                                } else {
+                                    Log::debug('in night working only once in 30 mins');
+                                }
                             } else {
                                 FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
                                 Log::debug('add fast direct task (at day): ' . $directTask->id . ' ' . $account->id);

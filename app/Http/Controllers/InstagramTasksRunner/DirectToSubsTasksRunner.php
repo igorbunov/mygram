@@ -103,6 +103,11 @@ class DirectToSubsTasksRunner
         foreach ($unsendedFollowers as $newFollower) {
             sleep(rand(10, 30));
 
+            if (AccountSubscribers::isSended($newFollower->id)) { //TODO: сделать проверку за последние 5 мин
+                Log::debug('дубль ' . $newFollower->id);
+                continue;
+            }
+
             $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
 
             if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {

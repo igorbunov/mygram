@@ -7,6 +7,18 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscribers extends Model
 {
+    public static function isSended(int $followerId)
+    {
+        $res = self::find($followerId);
+
+        if (is_null($res)) {
+            Log::error('не смог найти субскрайбера по айди: ' . $followerId);
+            return true;
+        }
+
+        return ($res->is_sended == 1);
+    }
+
     public static function setSended(int $followerId, bool $isSended = true)
     {
         $res = self::find($followerId);
