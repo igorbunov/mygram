@@ -113,22 +113,26 @@ ul, li {
 }
 .account-tasks.active{
     background-color: green;
+    border: 1px solid white;
 }
 .account-tasks.deactivated{
     background-color: grey;
+    border: 1px solid white;
 }
 .account.active{
     background-color: forestgreen;
+    border: 1px solid white;
 }
 .account.deactivated{
     background-color: darkorange;
+    border: 1px solid white;
 }
 .items-to-show{
     display: none;
 }
 
 
-@media screen and (max-width: 592px) {
+@media screen and (max-width: 1400px) {
     .menu__item{
         background-color: currentColor;
         padding: 10px;
