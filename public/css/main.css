@@ -332,6 +332,16 @@ ul, li {
 }
 .sidenav-trigger{
     display: none !important;
+    padding: 5px;
+}
+.fa-bars{
+    font-size: 32px;
+}
+
+.slide-out-close-menu{
+    display: flex;
+    justify-content: flex-end;
+    padding: 0px 15px 15px 0;
 }
 
 /* Small devices (tablets, 768px and up) */

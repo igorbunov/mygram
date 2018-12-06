@@ -11,7 +11,7 @@ $(document).ready(function() {
         location.href = '/';
     });
 
-    $("#sidenav-overlay").click(function () {
+    $("#sidenav-overlay, .slide-close-menu").click(function () {
         $('#slide-out').removeClass('sidenav-animate');
         $('.sidenav-overlay').removeClass('sidenav-overlay-show');
     });

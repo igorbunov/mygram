@@ -85,6 +85,9 @@
     <div id="sidenav-overlay" class="sidenav-overlay"></div>
 
     <ul id="slide-out" class="sidenav">
+        <div class="slide-out-close-menu">
+            <i class="fas fa-bars slide-close-menu"></i>
+        </div>
         <div class="col-lg-3">
             <nav>
                 <ul class="menu">
