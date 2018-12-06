@@ -1,4 +1,14 @@
 $(document).ready(function() {
+    $('.sidenav-trigger').click(function () {
+        $('#slide-out').addClass('sidenav-animate');
+        $('.sidenav-overlay').addClass('sidenav-overlay-show');
+    });
+
+    $("#sidenav-overlay").click(function () {
+        $('#slide-out').removeClass('sidenav-animate');
+        $('.sidenav-overlay').removeClass('sidenav-overlay-show');
+    });
+    
     var vaitForFastTaskComplete = function(fastTaskId, redirectUrl) {
         var intervalId = null;
 

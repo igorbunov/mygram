@@ -1,12 +1,10 @@
-
 .back, body {
-    background: #e2e2e2;
+    background: darkcyan;
     width: 100%;
     position: absolute;
     top: 0;
     bottom: 0;
 }
-
 .div-center {
     width: 400px;
     height: 400px;
@@ -24,83 +22,51 @@
     border-bottom: 2px solid #ccc;
     display: table;
 }
-
-
 div.content {
     display: table-cell;
     vertical-align: middle;
 }
-
-
-
 .header {
     background-color: yellow;
     padding: 30px 0;
 }
-
-.main-container {
-    width: 800px;
-    margin: 0 auto;
-}
-
 ul, li {
     display: block;
     padding: 0;
     margin: 0;
 }
-
-.menu {
-
-}
-
 .profile-logo {
     font-size: 69px;
 }
-
 .h1{
     text-transform: uppercase;
 }
-
 .main-logo {
     width: 200px;
     height:100px;
 }
-
-.menu__item {
-    /*margin: 0 30px;*/
-}
-
-.menu__item a, .menu-bottom__item a {
-    font-size: 16px;
-    font-weight:bold;
-    color: black;
-}
-
 .main-block {
     background-color: red;
     padding:0;
 }
-
 .secondary-block{
     background-color: gray;
     padding:50px 0;
 }
-
 .active_link {
-    color: black !important;
+    color: white !important;
+    text-decoration: underline;
+    font-weight: bold;
 }
-
 .current-page {
     text-align: center;
 }
-
 #add-account-form{
     display:none;
 }
 .account-link{
     cursor: pointer;
 }
-
 #add-task-form {
     display: none;
     margin-top: 25px;
@@ -115,10 +81,6 @@ ul, li {
     background-color: green;
     border: 1px solid white;
 }
-.account-tasks.deactivated{
-    background-color: grey;
-    border: 1px solid white;
-}
 .account.active{
     background-color: forestgreen;
     border: 1px solid white;
@@ -127,137 +89,116 @@ ul, li {
     background-color: darkorange;
     border: 1px solid white;
 }
-.items-to-show{
-    display: none;
+.menu__item{
+    background-color: currentColor;
+    padding: 10px;
+    border: 1px solid darkcyan;
+    border-radius: 8px;
 }
-
-
-@media screen and (max-width: 1400px) {
-    .menu__item{
-        background-color: currentColor;
-        padding: 10px;
-        border: 1px solid darkcyan;
-        border-radius: 8px;
-    }
-    .menu__item a, .menu-bottom__item a {
-        font-size: 18px;
-        color: white;
-    }
-    .main-container {
-        width: 100%;
-    }
-    .btn, .btn-primary, .task-deactivate, .task-activate {
-        padding: 10px;
-        font-size: 20px;
-    }
-    .account-tasks.deactivated {
-        background-color: firebrick;
-    }
-    #add-direct-task-work-only-in-night{
-        margin:15px;
-    }
-    .items-to-hide{
-        display: none;
-    }
-    .items-to-show{
-        display: block;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    .account-link, .account-link-nonclicable{
-        font-size: 26px;
-        color: black;
-        font-weight: bold;
-        width: 100%;
-        margin-left:22px;
-    }
-    .account-link.deactivated{
-        text-decoration: line-through;
-    }
-    .container .container-nopadding{
-        padding: 0;
-    }
-    .account-deactivate, .account-activate{
-        margin-right:22px;
-    }
-    .account{
-        margin: 3px 0;
-        border-radius: 5px;
-    }
-
-    .main-block, .header {
-        background-color: darkcyan;
-    }
-    .header{
-        padding: 5px 0;
-    }
-    .programm-text{
-        text-align: center;
-    }
-    .programm-header-info{
-        width: 100%;
-        padding: 0 22px;
-        font-size: 18px;
-    }
-    .account-tasks.active{
-        background-color: green;
-        margin: 3px 0;
-        color: black;
-        border-radius: 5px;
-    }
-    .account-tasks.deactivated{
-        background-color: darkorange;
-        margin: 3px 0;
-        border-radius: 5px;
-    }
-    .col-lg-12.ml-auto.direct-message-text{
-        font-size:18px;
-        font-weight:bold;
-        margin-left: 5px !important;
-    }
-    .account-tasks-type-title.active {
-        font-size: 18px;
-        font-weight: bold;
-        margin: 11px 0;
-    }
-    .account-tasks-type-title.deactivated {
-        font-size: 18px;
-        font-weight: bold;
-        text-decoration: line-through;
-        margin: 11px 0;
-    }
-    .mini-profile-picture{
-        width: 52px;
-        margin: 0 0 10px 20px;
-    }
-    .refresh-account-btn{
-        width: 52px;
-        height: 52px;
-        padding: 16px 18px;
-        border-radius: 5px;
-    }
-    #add-account-form{
-        margin: 10px 0;
-    }
-    .my-label {
-        font-size: 26px;
-    }
-    .my-text-input {
-        padding: 22px;
-    }
-    #show-all-accounts{
-        margin-left:5px;
-    }
-    #all-accounts-checkbox{
-        width: 126px;
-        margin: 16px 0 0 0;
-    }
+.menu__item a, .menu-bottom__item a {
+    font-size: 18px;
+    color: white;
 }
-
-
-
-body {
-    background-color: #222;
+.main-container {
+    width: 100%;
+}
+.btn, .btn-primary, .task-deactivate, .task-activate {
+    padding: 10px;
+    font-size: 20px;
+}
+.account-tasks.deactivated {
+    background-color: firebrick;
+}
+#add-direct-task-work-only-in-night{
+    margin:15px;
+}
+.account-link, .account-link-nonclicable{
+    font-size: 26px;
+    color: black;
+    font-weight: bold;
+    width: 100%;
+    margin-left:22px;
+}
+.account-link.deactivated{
+    text-decoration: line-through;
+}
+.container .container-nopadding{
+    padding: 0;
+}
+.account-deactivate, .account-activate{
+    margin-right:22px;
+}
+.account{
+    margin: 3px 0;
+    border-radius: 5px;
+}
+.main-block, .header {
+    background-color: darkcyan;
+}
+.header{
+    padding: 5px 0;
+}
+.programm-text{
+    text-align: center;
+}
+.programm-header-info{
+    width: 100%;
+    padding: 0 22px;
+    font-size: 18px;
+}
+.account-tasks.active{
+    background-color: forestgreen;
+    margin: 3px 0;
+    color: black;
+    border-radius: 5px;
+}
+.account-tasks.deactivated{
+    background-color: darkorange;
+    margin: 3px 0;
+    border-radius: 5px;
+}
+.col-lg-12.ml-auto.direct-message-text{
+    font-size:18px;
+    font-weight:bold;
+    margin-left: 5px !important;
+}
+.account-tasks-type-title.active {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 11px 0;
+}
+.account-tasks-type-title.deactivated {
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: line-through;
+    margin: 11px 0;
+}
+.mini-profile-picture{
+    width: 52px;
+    margin: 0 0 10px 20px;
+}
+.refresh-account-btn{
+    width: 52px;
+    height: 52px;
+    padding: 16px 18px;
+    border-radius: 5px;
+}
+#add-account-form{
+    margin: 10px 0;
+    display:none;
+}
+.my-label {
+    font-size: 26px;
+}
+.my-text-input {
+    padding: 22px;
+}
+#show-all-accounts{
+    margin-left:5px;
+}
+#all-accounts-checkbox{
+    width: 126px;
+    margin: 16px 0 0 0;
 }
 #preloader {
     position: fixed;
@@ -333,11 +274,70 @@ body {
 #preloader{
     display: none;;
 }
-
 #background-preloader{
     width: 100%;
     height: 100%;
     opacity: 0.5;
     position: absolute;
     background-color: black;
+}
+.sidenav-overlay{
+    display: none;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 997;
+}
+.sidenav-overlay-show{
+    display: block;
+    opacity: 1;
+}
+.sidenav-animate{
+    transform: translateX(0%) !important;
+    -webkit-transform: translateX(0%) !important;
+    transform: translateX(0%) !important;
+    -webkit-transform: translateX(0%) !important;
+    transform: translateX(0%) !important;
+    transition: 1s;
+}
+
+.sidenav{
+    position: fixed;
+    width: 300px;
+    left: 0;
+    top: 0;
+    margin: 0;
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    height: 100%;
+    height: calc(100% + 60px);
+    height: -moz-calc(100%);
+    padding-bottom: 60px;
+    background-color: #fff;
+    z-index: 999;
+    overflow-y: auto;
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateX(-105%);
+    transform: translateX(-105%);
+}
+
+.sidenav-trigger{
+    display: none !important;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media screen and (max-width: 1000px) {
+    .items-to-hide{
+        display: none;
+    }
+    .sidenav-trigger{
+        display: block !important;
+    }
+
 }
