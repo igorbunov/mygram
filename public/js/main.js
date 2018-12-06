@@ -4,6 +4,13 @@ $(document).ready(function() {
         $('.sidenav-overlay').addClass('sidenav-overlay-show');
     });
 
+    $('.programm-text').click(function () {
+        location.href = '/';
+    });
+    $('.main-profile-icon').click(function () {
+        location.href = '/';
+    });
+
     $("#sidenav-overlay").click(function () {
         $('#slide-out').removeClass('sidenav-animate');
         $('.sidenav-overlay').removeClass('sidenav-overlay-show');

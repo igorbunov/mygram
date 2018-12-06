@@ -326,7 +326,10 @@ ul, li {
     -webkit-transform: translateX(-105%);
     transform: translateX(-105%);
 }
-
+#slide-out{
+    background-color: darkslategray;
+    padding-top: 25px;
+}
 .sidenav-trigger{
     display: none !important;
 }

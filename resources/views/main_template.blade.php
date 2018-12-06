@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="d-flex programm-header-info">
                         <div class="p-2">
-                            <img  class="rounded-circle" src="{{$accountPicture}}" />
+                            <img class="main-profile-icon rounded-circle" src="{{$accountPicture}}" />
                         </div>
                         <div class="mr-auto p-2">
                             {{ session('user_email') }}<br/>
