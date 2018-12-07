@@ -328,11 +328,11 @@ ul, li {
 }
 #slide-out{
     background-color: darkslategray;
-    padding-top: 25px;
+    padding-top: 10px;
 }
 .sidenav-trigger{
     display: none !important;
-    padding: 5px;
+    padding: 5px 0 3px 14px;
 }
 .fa-bars{
     font-size: 32px;
