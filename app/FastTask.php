@@ -123,7 +123,7 @@ class FastTask extends Model
         $nightStartTime = env('NIGHT_TIME_START_HOUR', '23');
         $nightEndTime = env('NIGHT_TIME_END_HOUR', '5');
 
-        $curHour = date("H");
+        $curHour = (int) date("H");
 
         $isNight = (($nightStartTime >= 21 and $curHour >= $nightStartTime) or $curHour <= $nightEndTime);
         $isNightText = ($isNight) ? 'yes' : 'no';
