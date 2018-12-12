@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscribers extends Model
 {
+    public static function clearQueue(int $accountId)
+    {
+        self::where([
+            'owner_account_id' => $accountId,
+            'is_sended' => 0
+        ])->delete();
+    }
+
     public static function isSended(int $followerId)
     {
         $res = self::find($followerId);

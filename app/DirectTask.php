@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 class DirectTask extends Model
 {
+    const STATUS_ACTIVE = 'active';
+    const STATUS_DEACTIVATED = 'deactivated';
+    const STATUS_PAUSED = 'paused';
+
+    public static function isValidStatus($status)
+    {
+        return in_array($status, [self::STATUS_ACTIVE, self::STATUS_DEACTIVATED, self::STATUS_PAUSED]);
+    }
+
     public function taskList() {
         return $this->belongsTo('App\TaskList', 'task_list_id', 'id');
     }
@@ -24,7 +33,7 @@ class DirectTask extends Model
     {
         $filter = [
             'account_id' => $accountId,
-            'is_active' => 1
+            'status' => self::STATUS_ACTIVE
         ];
 
         $res = self::where($filter)->get();
@@ -40,7 +49,7 @@ class DirectTask extends Model
         ];
 
         if ($onlyActive) {
-            $filter['is_active'] = 1;
+            $filter['status'] = self::STATUS_ACTIVE;
         }
 
         $res = self::where($filter)->first();
@@ -60,11 +69,13 @@ class DirectTask extends Model
             'task_list_id' => $taskListId
         ];
 
-        if ($onlyActive) {
-            $filter['is_active'] = 1;
-        }
+        $res = null;
 
-        $res = self::where($filter)->get();
+        if ($onlyActive) {
+            $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->get();
+        } else {
+            $res = self::where($filter)->get();
+        }
 
         if (!$asArray) {
             return $res;
@@ -79,13 +90,21 @@ class DirectTask extends Model
         return $result;
     }
 
-    public static function getActiveDirectTaskByTaskListId(int $taskListId, int $accountId, bool $asArray = false)
+    public static function getActiveDirectTaskByTaskListId(int $taskListId, int $accountId, bool $activeAndPaused = false, bool $asArray = false)
     {
-        $res = self::where([
+        $res = null;
+        $filter = [
             'account_id' => $accountId,
-            'is_active' => 1,
             'task_list_id' => $taskListId
-        ])->first();
+        ];
+
+        if ($activeAndPaused) {
+            $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->first();
+        } else {
+            $filter['status'] = self::STATUS_ACTIVE;
+
+            $res = self::where($filter)->first();
+        }
 
         if (!$asArray) {
             return $res;

@@ -113,7 +113,6 @@ class TaskController extends Controller
         }
 
         try {
-
             $accountId = (int) $req->post('account_id', 0);
             $taskListId = (int) $req->post('task_list_id', 0);
             $directText = $req->post('direct_text', '');
@@ -144,14 +143,14 @@ class TaskController extends Controller
             foreach ($taskList as $taskListItem) {
                 if ($taskListItem->id == $taskListId) {
                     if ('direct' == $taskListItem->type) {
-                        $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $accountId);
+                        $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $accountId, true);
 
                         if (!is_null($directTask)) {
                             return response()->json(['success' => false, 'message' => 'Нельзя создавать два директ задания']);
                         } else {
                             $direct = new DirectTask();
                             $direct->account_id = $accountId;
-                            $direct->is_active = 1;
+                            $direct->status = DirectTask::STATUS_ACTIVE;
                             $direct->task_list_id = $taskListId;
                             $direct->message = $directText;
                             $direct->save();
@@ -171,13 +170,14 @@ class TaskController extends Controller
     public function changeStatus(Request $req)
     {
         $taskId = (int) $req->post('task_id', 0);
-        $isActive = (int) $req->post('is_active', -1);
+        $status = (string) $req->post('status', 'active');
         $accountId = (int) $req->post('account_id', 0);
         $taskType = $req->post('task_type', '');
 
-        if ($isActive == -1) {
-            return response()->json(['success' => false, 'error' => 'not set status']);
+        if (!DirectTask::isValidStatus($status)) {
+            return response()->json(['success' => false, 'error' => 'not valid status']);
         }
+
         if ($accountId == 0) {
             return response()->json(['success' => false, 'error' => 'not set account id']);
         }
@@ -195,7 +195,7 @@ class TaskController extends Controller
         if ($taskType == 'direct') {
             $activeTaskCount = DirectTask::getActiveTasksCountByAccountId($accountId);
 
-            if ($isActive > 0 and $activeTaskCount > 0) {
+            if ($status == DirectTask::STATUS_ACTIVE and $activeTaskCount > 0) {
                 return response()->json([
                     'success' => false,
                     'error' => 'У аккаунта уже есть одно активное задание. Сначала деактивируйте его.'
@@ -208,10 +208,10 @@ class TaskController extends Controller
                 return response()->json(['success' => false, 'error' => 'Задание не найдено']);
             }
 
-            $direct->is_active = $isActive;
+            $direct->status = $status;
             $direct->save();
 
-            if (0 == $isActive) {
+            if ($status == DirectTask::STATUS_DEACTIVATED) {
                 AccountSubscribers::deleteOldFollowers($accountId);
             }
 

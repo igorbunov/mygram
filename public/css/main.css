@@ -77,10 +77,6 @@ ul, li {
 #add-unfollowing-task {
     display: none;
 }
-.account-tasks.active{
-    background-color: forestgreen;
-    border: 1px solid white;
-}
 .safelist-container{
     background-color: forestgreen;
     border: 1px solid white;
@@ -110,12 +106,9 @@ ul, li {
 .main-container {
     width: 100%;
 }
-.btn, .btn-primary, .task-deactivate, .task-activate {
+.btn, .btn-primary, .task-activate {
     padding: 10px;
     font-size: 20px;
-}
-.account-tasks.deactivated {
-    background-color: firebrick;
 }
 #add-direct-task-work-only-in-night{
     margin:15px;
@@ -155,22 +148,37 @@ ul, li {
     font-size: 18px;
 }
 .account-tasks.active{
+    border: 1px solid white;
     background-color: forestgreen;
     margin: 3px 0;
     color: black;
     border-radius: 5px;
+    padding: 0 0 6px 0;
+}
+.clear-direct-queue, .task-deactivate{
+    background-color: #17a2b8;
+}
+.account-tasks.paused{
+    border: 1px solid white;
+    background-color: grey;
+    margin: 3px 0;
+    color: black;
+    border-radius: 5px;
+    padding: 0 0 6px 0;
 }
 .account-tasks.deactivated{
-    background-color: darkorange;
+    border: 1px solid white;
+    background-color: firebrick;
     margin: 3px 0;
     border-radius: 5px;
+    padding: 0 0 6px 0;
 }
 .col-lg-12.ml-auto.direct-message-text{
     font-size:18px;
     font-weight:bold;
     margin-left: 5px !important;
 }
-.account-tasks-type-title.active {
+.account-tasks-type-title.active, .account-tasks-type-title.paused {
     font-size: 18px;
     font-weight: bold;
     margin: 11px 0;
@@ -195,11 +203,20 @@ ul, li {
     border-radius: 5px;
     padding: 10px
 }
-.refresh-account-btn{
+.my-btn{
     width: 52px;
     height: 52px;
     padding: 16px 18px;
     border-radius: 5px;
+    cursor: pointer;
+}
+.my-btn-small{
+    width: 38px;
+    height: 38px;
+    padding: 9px 0 0 13px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
 }
 .refresh-follow-list{
     width: 224px;

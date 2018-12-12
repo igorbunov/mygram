@@ -16,7 +16,7 @@
 
                         @if($account->is_active == 1)
                             <div class="ml-auto p-2">
-                                <div class="btn-dark refresh-account-btn" data-account-id="{{ $account->id }}">
+                                <div class="btn-dark my-btn refresh-account-btn" data-account-id="{{ $account->id }}">
                                     <i class="fas fa-sync"></i>
                                 </div>
                             </div>

@@ -54,7 +54,7 @@ class FastTask extends Model
     public static function runTask()
     {
         $task = self::getTask();
-//Log::debug('task ' . \json_encode($task));
+
         if (!is_null($task)) {
             self::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
             Log::debug('Found fast task # ' . $task->id . ' ' .$task->task_type);
@@ -125,6 +125,11 @@ class FastTask extends Model
 
         $curHour = date("H");
 
-        return ($curHour >= $nightStartTime or $curHour <= $nightEndTime);
+        $isNight = ($curHour >= $nightStartTime or $curHour <= $nightEndTime);
+        $isNightText = ($isNight) ? 'yes' : 'no';
+        Log::debug('isNight: ' . $isNightText . ' curHour: ' . $curHour .
+            ' NIGHT_TIME_START_HOUR: ' . $nightStartTime . ' NIGHT_TIME_END_HOUR: ' . $nightEndTime);
+
+        return $isNight;
     }
 }

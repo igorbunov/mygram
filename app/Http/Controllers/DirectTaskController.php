@@ -2,84 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\account;
+use App\AccountSubscribers;
 use App\DirectTask;
 use Illuminate\Http\Request;
 
 class DirectTaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function clearDirectQueue(Request $req)
     {
-        //
-    }
+        $taskId = (int) $req->post('task_id', 0);
+        $accountId = (int) $req->post('account_id', 0);
+        $taskType = $req->post('task_type', '');
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        if ($accountId == 0) {
+            return response()->json(['success' => false, 'error' => 'not set account id']);
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $userId = (int) session('user_id', 0);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\DirectTask  $directTask
-     * @return \Illuminate\Http\Response
-     */
-    public function show(DirectTask $directTask)
-    {
-        //
-    }
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'error' => 'Необходимо авторизоваться']);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\DirectTask  $directTask
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DirectTask $directTask)
-    {
-        //
-    }
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return response()->json(['success' => false, 'error' => 'Это не ваш аккаунт']);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\DirectTask  $directTask
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, DirectTask $directTask)
-    {
-        //
-    }
+        if ($taskType == 'direct') {
+            $direct = DirectTask::getDirectTaskById($taskId, $accountId, false);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\DirectTask  $directTask
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DirectTask $directTask)
-    {
-        //
+            if (is_null($direct)) {
+                return response()->json(['success' => false, 'error' => 'Задание не найдено']);
+            }
+
+            AccountSubscribers::clearQueue($accountId);
+
+            return response()->json([
+                'success' => true,
+                'accountId' => $direct->account_id
+            ]);
+        }
+
+        return response()->json(['success' => false, 'error' => 'not set task type']);
     }
 }

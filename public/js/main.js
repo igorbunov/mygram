@@ -1,4 +1,50 @@
 $(document).ready(function() {
+
+
+    $('.clear-direct-queue').click(function () {
+        var taskId = $(this).data('taskId')
+            , accountId = $(this).data('accountId')
+            , taskType = $(this).data('taskType');
+
+        // changeTaskStatus(taskId, taskType, accountId, 'paused');
+        $.ajax({
+            url: '/clear_direct_queue',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                task_id: taskId,
+                task_type: taskType,
+                account_id: accountId
+            },
+            success: function(data) {
+                if (data.success) {
+                    location.href = '/account/' + data.accountId;
+                } else {
+                    // console.log('error', data.error);
+                    alert(data.error);
+                }
+            }
+        });
+    });
+
+    $('.pause-task').click(function () {
+        var taskId = $(this).data('taskId')
+            , accountId = $(this).data('accountId')
+            , taskType = $(this).data('taskType');
+
+        changeTaskStatus(taskId, taskType, accountId, 'paused');
+    });
+    $('.unpause-task').click(function () {
+        var taskId = $(this).data('taskId')
+            , accountId = $(this).data('accountId')
+            , taskType = $(this).data('taskType');
+
+        changeTaskStatus(taskId, taskType, accountId, 'active');
+    });
+
     $('.account-safelist-link-clickable').click(function () {
         var id = $(this).data('accountId');
 
@@ -151,7 +197,7 @@ $(document).ready(function() {
         if ($(this).hasClass('deactivated') || event.target.type == 'button') {
             return;
         }
-        if (event.target.classList.contains("refresh-account-btn") ||
+        if (event.target.classList.contains("my-btn") ||
             event.target.classList.contains("fa-sync")) {
             return;
         }
@@ -204,7 +250,7 @@ $(document).ready(function() {
 
     });
 
-    var changeTaskStatus = function(taskId, taskType, accountId, isActive) {
+    var changeTaskStatus = function(taskId, taskType, accountId, status) {
         $.ajax({
             url: '/change_task',
             headers: {
@@ -214,7 +260,7 @@ $(document).ready(function() {
             dataType: 'json',
             data: {
                 task_id: taskId,
-                is_active: isActive,
+                status: status,
                 task_type: taskType,
                 account_id: accountId
             },
@@ -234,7 +280,7 @@ $(document).ready(function() {
             , accountId = $(this).data('accountId')
             , taskType = $(this).data('taskType');
 
-        changeTaskStatus(taskId, taskType, accountId, 0);
+        changeTaskStatus(taskId, taskType, accountId, 'deactivated');
     });
 
     $('.task-activate').click(function () {
@@ -242,7 +288,7 @@ $(document).ready(function() {
             , accountId = $(this).data('accountId')
             , taskType = $(this).data('taskType');
 
-        changeTaskStatus(taskId, taskType, accountId, 1);
+        changeTaskStatus(taskId, taskType, accountId, 'active');
     });
 
 

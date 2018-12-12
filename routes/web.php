@@ -25,6 +25,7 @@ Route::group(['middleware' => 'myauth'], function () {
     Route::get('accounts', 'AccountController@index');
     Route::get('safelist', 'SafelistController@index');
     Route::post('safelist_update', 'SafelistController@updateList');
+    Route::post('clear_direct_queue', 'DirectTaskController@clearDirectQueue');
     Route::get('safelist/{id}', 'SafelistController@getSafelist');
     Route::get('accounts/all', 'AccountController@indexAll');
     Route::get('account/{id}', 'TaskController@getTasks');
