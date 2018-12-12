@@ -78,9 +78,17 @@ ul, li {
     display: none;
 }
 .account-tasks.active{
-    background-color: green;
+    background-color: forestgreen;
     border: 1px solid white;
 }
+.safelist-container{
+    background-color: forestgreen;
+    border: 1px solid white;
+    margin: 3px 0;
+    border-radius: 5px;
+    padding: 10px;
+}
+
 .account.active{
     background-color: forestgreen;
     border: 1px solid white;
@@ -177,11 +185,29 @@ ul, li {
     width: 52px;
     margin: 0 0 10px 20px;
 }
+.icon-btn{
+    width: 52px;
+    height: 52px;
+    padding: 16px 18px;
+    border-radius: 5px;
+}
+.search-field{
+    border-radius: 5px;
+    padding: 10px
+}
 .refresh-account-btn{
     width: 52px;
     height: 52px;
     padding: 16px 18px;
     border-radius: 5px;
+}
+.refresh-follow-list{
+    width: 224px;
+    height: 52px;
+    padding: 16px 18px;
+    border-radius: 5px;
+    display:flex;
+    align-items: center;
 }
 #add-account-form{
     margin: 10px 0;
@@ -332,7 +358,7 @@ ul, li {
 }
 .sidenav-trigger{
     display: none !important;
-    padding: 5px 0 3px 14px;
+    padding: 6px 0 3px 14px;
 }
 .fa-bars{
     font-size: 32px;
@@ -342,6 +368,19 @@ ul, li {
     display: flex;
     justify-content: flex-end;
     padding: 0px 15px 15px 0;
+}
+.toggle-btn{
+    font-size: 24px;
+}
+#toggle-on{
+    display: none;
+    cursor: pointer;
+}
+
+.btn-dark.refresh-follow-list.disabled{
+    background-color: lightseagreen;
+    cursor: auto;
+
 }
 
 /* Small devices (tablets, 768px and up) */

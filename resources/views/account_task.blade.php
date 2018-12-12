@@ -88,10 +88,6 @@
                                 <label for="add-direct-task-text" class="my-label">Текст сообщения</label>
                                 <textarea class="form-control" id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
                             </div>
-                            <div class="col-lg-12">
-                                <label for="add-direct-task-work-only-in-night" class="my-label">Работать только ночью</label>
-                                <input class="form-check-input" id="add-direct-task-work-only-in-night" type="checkbox"/>
-                            </div>
                         </div>
 
                     </selection>

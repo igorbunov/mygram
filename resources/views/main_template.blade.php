@@ -49,6 +49,9 @@
                                         <a href="{{ url('tasks') }}" @if($activePage == 'tasks') class="active_link" @endif>Задачи</a>
                                     </li>
                                     <li class="menu__item">
+                                        <a href="{{ url('safelist') }}" @if($activePage == 'safelist') class="active_link" @endif>Белый список</a>
+                                    </li>
+                                    <li class="menu__item">
                                         <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
                                     </li>
                                     <li class="menu__item">
@@ -96,6 +99,9 @@
                     </li>
                     <li class="menu__item">
                         <a href="{{ url('tasks') }}" @if($activePage == 'tasks') class="active_link" @endif>Задачи</a>
+                    </li>
+                    <li class="menu__item">
+                        <a href="{{ url('safelist') }}" @if($activePage == 'safelist') class="active_link" @endif>Белый список</a>
                     </li>
                     <li class="menu__item">
                         <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>

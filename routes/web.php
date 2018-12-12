@@ -23,6 +23,9 @@ Route::post('activationsuccess', 'TariffController@paymentCallback');
 Route::group(['middleware' => 'myauth'], function () {
     Route::post('add_account', 'AccountController@create');
     Route::get('accounts', 'AccountController@index');
+    Route::get('safelist', 'SafelistController@index');
+    Route::post('safelist_update', 'SafelistController@updateList');
+    Route::get('safelist/{id}', 'SafelistController@getSafelist');
     Route::get('accounts/all', 'AccountController@indexAll');
     Route::get('account/{id}', 'TaskController@getTasks');
     Route::get('account/{id}/all', 'TaskController@getAllTasks');

@@ -195,4 +195,67 @@ class MyInstagram
 
         return $result;
     }
+
+    public function getAllSelfFollowing()
+    {
+        $followersAsArray = array();
+        $nextMaxId = null;
+        $userIds = [];
+
+        try {
+            do {
+                $userFeed = $this->instagram->people->getSelfFollowing($this->rankToken, null, $nextMaxId);
+//                Log::debug('user feed: ' . \json_encode($userFeed));
+                $followings = $userFeed->getUsers();
+
+//                Log::debug('$followings: ' . \json_encode($followings));
+
+                foreach($followings as $user) {
+                    $userName = $user->getUsername();
+                    $userPk = $user->getPk();
+                    $userIds[] = $userPk;
+
+                    $followersAsArray[] = [
+                        'owner_account_id' => $this->accountId,
+                        'username' => $userName,
+                        'pk' => $userPk,
+                        'json' => \json_encode($user),
+                        'is_my_subscriber' => 0,
+                        'is_in_safelist' => 0,
+                        'picture' => $user->getProfilePicUrl()
+                    ];
+                }
+                $sleepTime = rand(20, 50); // спим от 10 сек до 3 мин
+                Log::debug('sleep getAllSelfFollowing: ' . $sleepTime);
+                sleep($sleepTime);
+            } while($nextMaxId=$userFeed->getNextMaxId());
+
+            Log::debug('$nextMaxId: ' . $nextMaxId);
+
+        } catch (\Exception $err) {
+            Log::error('error get all following: ' . $err->getMessage());
+        }
+
+
+//        $friendStatusesResponse = $this->instagram->people->getFriendships($userIds);
+//        $friendStatuses = $friendStatusesResponse->getFriendshipStatuses()->getData();
+//        Log::debug('$friendStatuses: ' . \json_encode($friendStatuses));
+//
+//        foreach($followersAsArray as $i => $follower) {
+//            $response = $this->instagram->people->getFriendship($follower['pk']);
+//            $followersAsArray[$i]['is_my_subscriber'] = ($response->getFollowedBy()) ? 1 : 0;
+//
+//            $sleepTime = rand(1, 3);
+//            sleep($sleepTime);
+//
+//            if (array_key_exists($follower['pk'], $friendStatuses)) {
+//                $followersAsArray[$i]['is_my_subscriber'] = $friendStatuses[$follower['pk']]->getFollowing();
+//                $followersAsArray[$i]['followed_by'] = $friendStatuses[$follower['pk']]->getFollowedBy();
+//            }
+//        }
+//
+//        Log::debug('$followings as array: ' . \json_encode($followersAsArray));
+
+        return $followersAsArray;
+    }
 }

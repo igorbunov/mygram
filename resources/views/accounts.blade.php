@@ -65,7 +65,6 @@
                 </div>
             </div>
 
-
             <div id="add-account-form">
                 <form>
                     <div class="row">

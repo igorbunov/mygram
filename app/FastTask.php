@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
+use App\Http\Controllers\InstagramTasksRunner\AccountWhiteListRunner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,8 @@ class FastTask extends Model
     const TYPE_DIRECT_ANSWER = 'direct_answer';
     const TYPE_TRY_LOGIN = 'try_login';
     const TYPE_REFRESH_ACCOUNT = 'refresh_account';
+    const TYPE_UNSUBSCRIBE = 'unsubscribe';
+    const TYPE_REFRESH_WHITELIST = 'refresh_whitelist';
 
     public static function addTask(int $accountId, string $taskType, int $taskId = 0)
     {
@@ -88,6 +91,16 @@ class FastTask extends Model
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
 
                     break;
+                case self::TYPE_REFRESH_WHITELIST:
+                    try {
+                        AccountWhiteListRunner::runRefresh($task->id);
+                    } catch (\Exception $err) {
+                        Log::error('Error running task AccountWhiteListRunner::runRefresh: ' . $err->getMessage());
+                    }
+
+                    FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
+
+                    break;
             }
         }
     }
@@ -101,5 +114,17 @@ class FastTask extends Model
         }
 
         return $res->status;
+    }
+
+    public static function isNight()
+    {
+        date_default_timezone_set('Europe/Kiev');
+
+        $nightStartTime = env('NIGHT_TIME_START_HOUR', '23');
+        $nightEndTime = env('NIGHT_TIME_END_HOUR', '4');
+
+        $curHour = date("H");
+
+        return ($curHour >= $nightStartTime or $curHour <= $nightEndTime);
     }
 }

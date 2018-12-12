@@ -75,7 +75,7 @@ class TaskController extends Controller
             'taskList' => $taskList,
             'onlyActiveTasks' => $onlyActiveTasks,
             'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId),
-            'accountPicture' => User::getAccountPictureUrl($userId)
+            'accountPicture' => User::getAccountPictureUrl($userId, $accountId)
         ]);
     }
 
@@ -118,9 +118,6 @@ class TaskController extends Controller
             $taskListId = (int) $req->post('task_list_id', 0);
             $directText = $req->post('direct_text', '');
 
-            $workOnlyInNight = $req->post('work_only_in_night', false);
-            $workOnlyInNight = filter_var($workOnlyInNight, FILTER_VALIDATE_BOOLEAN, array('flags' => FILTER_NULL_ON_FAILURE));
-
             if ($accountId == 0) {
                 return response()->json(['success' => false, 'message' => 'Не найден аккаунт']);
             }
@@ -157,7 +154,6 @@ class TaskController extends Controller
                             $direct->is_active = 1;
                             $direct->task_list_id = $taskListId;
                             $direct->message = $directText;
-                            $direct->work_only_in_night = $workOnlyInNight ? 1 : 0;
                             $direct->save();
 
                             return response()->json(['success' => true]);

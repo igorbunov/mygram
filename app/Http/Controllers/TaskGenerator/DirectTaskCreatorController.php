@@ -57,10 +57,7 @@ class DirectTaskCreatorController
                                 continue;
                             }
 
-                            if ($directTask->work_only_in_night > 0 and !self::isNight()) {
-                                Log::debug('not working in the night');
-                                continue;
-                            } else if (self::isNight()) {
+                            if (FastTask::isNight()) {
                                 $currentMinutes = (int) date('i');
                                 if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
                                     FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
@@ -83,17 +80,5 @@ class DirectTaskCreatorController
         }
 
         Log::debug('generate tasks end');
-    }
-
-    public static function isNight()
-    {
-        date_default_timezone_set('Europe/Kiev');
-
-        $nightStartTime = 23;
-        $nightEndTime = 6;
-
-        $curHour = date("H");
-
-        return ($curHour >= $nightStartTime or $curHour <= $nightEndTime);
     }
 }

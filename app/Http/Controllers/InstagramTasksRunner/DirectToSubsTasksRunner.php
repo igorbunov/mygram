@@ -10,6 +10,7 @@ use App\account;
 use App\AccountSubscribers;
 use App\DirectTask;
 use App\DirectTaskReport;
+use App\FastTask;
 use App\Http\Controllers\MyInstagram\MyInstagram;
 use App\Tariff;
 use App\TaskList;
@@ -98,7 +99,13 @@ class DirectToSubsTasksRunner
 
         $sendedFollowersArr = [];
 
+        if (FastTask::isNight()) {
+            return $sendedFollowersArr;
+        }
+
         $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
+
+        $sendedCount = 0;
 
         foreach ($unsendedFollowers as $newFollower) {
             sleep(rand(10, 30));
@@ -143,6 +150,12 @@ class DirectToSubsTasksRunner
             }
 
             DirectTaskReport::writeStatistics($resultArr);
+
+            $sendedCount++;
+
+            if ($sendedCount >= env('DIRECT_SEND_BY_ONCE_LIMIT', '5')) {
+                break;
+            }
         }
 
         return $sendedFollowersArr;

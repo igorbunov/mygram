@@ -16,7 +16,7 @@ class User extends Model
         return $this->hasMany('App\Tariff', 'user_id', 'id');
     }
 
-    public static function getAccountPictureUrl(int $userId = 0)
+    public static function getAccountPictureUrl(int $userId = 0, int $accountId = 0)
     {
         if ($userId == 0) {
             $userId = (int) session('user_id', 0);
@@ -27,16 +27,21 @@ class User extends Model
         }
 
         $accounts = account::getActiveAccountsByUser($userId);
+        $picture = '';
 
         if (!is_null($accounts)) {
             foreach ($accounts as $account) {
                 if (!is_null($account->picture) and !empty($account->picture)) {
-                    return $account->picture;
+                    $picture = $account->picture;
+                }
+
+                if ($accountId == $account->id and $picture != '') {
+                    break;
                 }
             }
         }
 
-        return '';
+        return $picture;
     }
 
     public static function getAccountsByUser(int $userId, bool $activeOnly = false, bool $asArray = false)

@@ -1,4 +1,66 @@
 $(document).ready(function() {
+    $('.account-safelist-link-clickable').click(function () {
+        var id = $(this).data('accountId');
+
+        if (typeof id != 'undefined') {
+            location.href = '/safelist/' + id;
+        }
+    });
+
+    $("#toggle-off").click(function () {
+        $(this).hide();
+        $("#toggle-on").show();
+    });
+    $("#toggle-on").click(function () {
+        $(this).hide();
+        $("#toggle-off").show();
+    });
+
+
+    $(".refresh-follow-list").click(function () {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+
+        var accountId = $(this).data('accountId');
+// debugger;
+        $.ajax({
+            url: '/safelist_update',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                account_id: accountId
+            },
+            success: function (data) {
+                // location.href = '/safelist/' + accountId;
+
+                if (data.success) {
+                //     if (data.task_done) {
+                //         $('#preloader').hide();
+                //         clearInterval(intervalId);
+                //
+                //         if (redirectUrl) {
+                //             location.href = redirectUrl;
+                //         }
+                //     }
+                } else {
+                    alert(data.message);
+                    // $('#preloader').hide();
+                    // clearInterval(intervalId);
+                }
+            },
+            error: function () {
+                // $('#preloader').hide();
+                // clearInterval(intervalId);
+            }
+        });
+    });
+
+
+
     $('.sidenav-trigger').click(function () {
         $('#slide-out').addClass('sidenav-animate');
         $('.sidenav-overlay').addClass('sidenav-overlay-show');
@@ -255,8 +317,7 @@ $(document).ready(function() {
             data: {
                 account_id: accountId,
                 direct_text: directText,
-                work_only_in_night: isWorkInNight,
-                task_list_id: taskListId,
+                task_list_id: taskListId
             },
             success: function(data) {
                 if (data.success) {
