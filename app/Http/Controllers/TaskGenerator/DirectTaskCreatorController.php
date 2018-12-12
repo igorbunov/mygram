@@ -50,7 +50,7 @@ class DirectTaskCreatorController
                     foreach ($tasksTypes as $taskType) {
                         if ('direct' == $taskType->type) {
                             $taskListId = $taskType->id;
-                            $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id, false);
+                            $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id, true);
 
                             if (is_null($directTask)) {
                                 Log::debug('No direct tasks found ' . $taskListId . ' ' . $account->id);
