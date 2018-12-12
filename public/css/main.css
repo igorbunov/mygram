@@ -155,7 +155,7 @@ ul, li {
     border-radius: 5px;
     padding: 0 0 6px 0;
 }
-.clear-direct-queue, .task-deactivate{
+.clear-direct-queue, .task-deactivate, .account-deactivate{
     background-color: #17a2b8;
 }
 .account-tasks.paused{
@@ -178,15 +178,9 @@ ul, li {
     font-weight:bold;
     margin-left: 5px !important;
 }
-.account-tasks-type-title.active, .account-tasks-type-title.paused {
+.account-tasks-type-title, .account-tasks-type-title {
     font-size: 18px;
     font-weight: bold;
-    margin: 11px 0;
-}
-.account-tasks-type-title.deactivated {
-    font-size: 18px;
-    font-weight: bold;
-    text-decoration: line-through;
     margin: 11px 0;
 }
 .mini-profile-picture{

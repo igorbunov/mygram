@@ -66,7 +66,9 @@
                         <div class="btn-dark my-btn-small clear-direct-queue"
                              data-task-type="{{ $task->taskType }}"
                              data-account-id="{{ $account->id }}"
-                             data-task-id="{{ $task->id }}">
+                             data-task-id="{{ $task->id }}"
+                             {{--data-toggle="modal" data-target="#exampleModalCenter"--}}
+                            >
                             <i class="fas fa-trash"></i>
                         </div>
                     </div>

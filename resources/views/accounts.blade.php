@@ -21,8 +21,12 @@
                                 </div>
                             </div>
                             <div class="p-2">
-                                <button type="button" class="btn btn-info account-deactivate"
-                                        data-account-id="{{ $account->id }}">Деактивировать</button>
+                                <div class="btn-dark my-btn btn-info account-deactivate"
+                                     data-account-id="{{ $account->id }}">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                {{--<button type="button" class="btn btn-info account-deactivate"--}}
+                                        {{--data-account-id="{{ $account->id }}">Деактивировать</button>--}}
                             </div>
                         @elseif($account->is_confirmed == 1)
                             <div class="ml-auto p-2">

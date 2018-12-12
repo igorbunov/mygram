@@ -125,7 +125,7 @@ class FastTask extends Model
 
         $curHour = date("H");
 
-        $isNight = ($curHour >= $nightStartTime or $curHour <= $nightEndTime);
+        $isNight = (($nightStartTime >= 21 and $curHour >= $nightStartTime) or $curHour <= $nightEndTime);
         $isNightText = ($isNight) ? 'yes' : 'no';
         Log::debug('isNight: ' . $isNightText . ' curHour: ' . $curHour .
             ' NIGHT_TIME_START_HOUR: ' . $nightStartTime . ' NIGHT_TIME_END_HOUR: ' . $nightEndTime);

@@ -1,12 +1,14 @@
 $(document).ready(function() {
-
-
     $('.clear-direct-queue').click(function () {
+        if (!confirm('Вы действительно хотите очистить очередь?')) {
+            console.log('no');
+            return;
+        }
+
         var taskId = $(this).data('taskId')
             , accountId = $(this).data('accountId')
             , taskType = $(this).data('taskType');
 
-        // changeTaskStatus(taskId, taskType, accountId, 'paused');
         $.ajax({
             url: '/clear_direct_queue',
             headers: {
@@ -31,6 +33,11 @@ $(document).ready(function() {
     });
 
     $('.pause-task').click(function () {
+        if (!confirm('Вы действительно хотите остановить отправку сообщений?')) {
+            console.log('no');
+            return;
+        }
+
         var taskId = $(this).data('taskId')
             , accountId = $(this).data('accountId')
             , taskType = $(this).data('taskType');
@@ -276,6 +283,11 @@ $(document).ready(function() {
     };
 
     $('.task-deactivate').click(function () {
+        if (!confirm('Вы действительно хотите деактивировать задание?')) {
+            console.log('no');
+            return;
+        }
+
         var taskId = $(this).data('taskId')
             , accountId = $(this).data('accountId')
             , taskType = $(this).data('taskType');
@@ -399,6 +411,11 @@ $(document).ready(function() {
     });
 
     $('.account-deactivate').click(function () {
+        if (!confirm('Вы действительно хотите деактивировать аккаунт?')) {
+            console.log('no');
+            return;
+        }
+
         var accountId = $(this).data('accountId');
 
         changeAccountStatus(accountId, 0);
