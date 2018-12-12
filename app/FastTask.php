@@ -121,7 +121,7 @@ class FastTask extends Model
         date_default_timezone_set('Europe/Kiev');
 
         $nightStartTime = env('NIGHT_TIME_START_HOUR', '23');
-        $nightEndTime = env('NIGHT_TIME_END_HOUR', '4');
+        $nightEndTime = env('NIGHT_TIME_END_HOUR', '5');
 
         $curHour = date("H");
 

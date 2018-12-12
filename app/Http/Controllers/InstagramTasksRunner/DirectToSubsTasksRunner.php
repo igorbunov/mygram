@@ -83,6 +83,13 @@ class DirectToSubsTasksRunner
 
     public static function sendDirectToSubscribers(int $directTaskId, int $accountId)
     {
+        $sendedFollowersArr = [];
+
+        if (FastTask::isNight()) {
+            Log::debug('Stoped sending at night');
+            return $sendedFollowersArr;
+        }
+
         $directTask = DirectTask::getDirectTaskById($directTaskId, $accountId, true);
 
         if (is_null($directTask)) {
@@ -96,12 +103,6 @@ class DirectToSubsTasksRunner
         }
 
         MyInstagram::getInstanse()->login($account);
-
-        $sendedFollowersArr = [];
-
-        if (FastTask::isNight()) {
-            return $sendedFollowersArr;
-        }
 
         $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
 
