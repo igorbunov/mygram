@@ -16,6 +16,13 @@ class User extends Model
         return $this->hasMany('App\Tariff', 'user_id', 'id');
     }
 
+    public static function getUserById(int $userId)
+    {
+        $res = self::find($userId);
+
+        return $res;
+    }
+
     public static function getAccountPictureUrl(int $userId = 0, int $accountId = 0)
     {
         if ($userId == 0) {

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
 use App\Http\Controllers\InstagramTasksRunner\AccountWhiteListRunner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
@@ -65,7 +66,11 @@ class FastTask extends Model
                     try {
                         AccountFirstLoginRunner::tryLogin($task->account_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage() . ' ' . $err->getTraceAsString());
+                        $errorMessage = $err->getMessage();
+
+                        Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $errorMessage );
+
+                        self::mailToDeveloper('ошибка выполнения задачи tryLogin', $errorMessage);
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
@@ -75,7 +80,23 @@ class FastTask extends Model
                     try {
                         DirectToSubsTasksRunner::runDirectTasks($task->task_id, $task->account_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $err->getMessage() . ' ' . $err->getTraceAsString());
+                        $errorMessage = $err->getMessage();
+//InstagramAPI\Response\DirectSendItemResponse: Feedback required
+
+                        if (strpos($errorMessage, 'Feedback required') !== false) {
+                            $direct = DirectTask::getDirectTaskById($task->task_id, $task->account_id, false);
+
+                            if (!is_null($direct)) {
+                                $direct->status = DirectTask::STATUS_PAUSED;
+                                $direct->save();
+
+                                AccountController::mailToClient($task->account_id, 'Ошибка директ автоответа', 'При попытке отправить директ сообщение возникла ошибка. Задача рассылки автоматически приостановлена.');
+                            }
+                        }
+
+                        Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage);
+
+                        self::mailToDeveloper('ошибка выполнения задачи runDirectTasks', $errorMessage);
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
@@ -85,7 +106,11 @@ class FastTask extends Model
                     try {
                         AccountFirstLoginRunner::runRefresh($task->account_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task AccountFirstLoginRunner::runRefresh: ' . $err->getMessage() . ' ' . $err->getTraceAsString());
+                        $errorMessage = $err->getMessage();
+
+                        Log::error('Error running task AccountFirstLoginRunner::runRefresh: ' . $errorMessage);
+
+                        self::mailToDeveloper('ошибка выполнения задачи runRefresh', $errorMessage);
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
@@ -95,7 +120,11 @@ class FastTask extends Model
                     try {
                         AccountWhiteListRunner::runRefresh($task->task_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task AccountWhiteListRunner::runRefresh: ' . $err->getMessage());
+                        $errorMessage = $err->getMessage();
+
+                        Log::error('Error running task AccountWhiteListRunner::refreshWhitelist: ' . $errorMessage);
+
+                        self::mailToDeveloper('ошибка выполнения задачи refreshWhitelist', $errorMessage);
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
@@ -131,5 +160,10 @@ class FastTask extends Model
             ' NIGHT_TIME_START_HOUR: ' . $nightStartTime . ' NIGHT_TIME_END_HOUR: ' . $nightEndTime);
 
         return $isNight;
+    }
+
+    public static function mailToDeveloper($subject, $message)
+    {
+        \mail(env('DEVELOPER_EMAIL'), $subject, $message);
     }
 }

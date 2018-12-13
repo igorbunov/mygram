@@ -12,6 +12,23 @@ use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
+    public static function mailToClient(int $accountId, $subject, $message)
+    {
+        $account = account::getAccountById($accountId);
+
+        if (is_null($account)) {
+            return;
+        }
+
+        $user = User::getUserById($account->user_id);
+
+        if (is_null($user)) {
+            return;
+        }
+
+        \mail($user->email, $subject, $message);
+    }
+
     public function indexAll()
     {
         return $this->index('', false);
