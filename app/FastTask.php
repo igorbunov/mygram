@@ -94,7 +94,7 @@ class FastTask extends Model
                             }
                         }
 
-                        Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage);
+                        Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage . ' ' . $err->getTraceAsString());
 
                         self::mailToDeveloper('ошибка выполнения задачи runDirectTasks', $errorMessage);
                     }
