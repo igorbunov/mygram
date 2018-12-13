@@ -2,7 +2,7 @@
 
 @section('main_content')
     <div class="container container-nopadding">
-        <section class="safelist-container">
+        <section id="safelist-instruction" class="safelist-container">
             <div class="row">
                 <div class="col-lg-12">
                     <p>Белый список - это ваши подписки, от которых задание на массовую отписку никогда не отпишется.</p>
@@ -12,21 +12,19 @@
             </div>
             <div class="row">
                 <div style="display: flex; padding: 5px 15px;">
-                        @if($status == \App\Safelist::STATUS_UPDATING)
-                            <div class="btn-dark refresh-follow-list disabled" data-account-id="{{ $accountId }}">
-                                <i class="fas fa-sync"></i>
-                                <span style="margin-left: 20px;">Загрузка списка ...</span>
-                            </div>
-                        @else
-                            <div class="btn-dark refresh-follow-list" data-account-id="{{ $accountId }}">
-                                <i class="fas fa-sync"></i>
-                                <span style="margin-left: 20px;">Загрузить подписки</span>
-                            </div>
-                        @endif
-                    <div>
-                        <div class="btn-dark" style="padding: 14px;border-radius: 5px;margin-left: 5px;">
-                            Очистить список избранных
+                    @if($status == \App\Safelist::STATUS_UPDATING)
+                        <div class="btn-dark refresh-follow-list disabled" data-account-id="{{ $accountId }}">
+                            <i class="fas fa-sync"></i>
+                            <span style="margin-left: 20px;">Загрузка списка ...</span>
                         </div>
+                    @else
+                        <div class="btn-dark refresh-follow-list" data-account-id="{{ $accountId }}">
+                            <i class="fas fa-sync"></i>
+                            <span style="margin-left: 20px;">Загрузить подписки</span>
+                        </div>
+                    @endif
+                    <div class="btn-dark" style="padding: 14px;border-radius: 5px;margin-left: 5px;">
+                        Очистить список избранных
                     </div>
                 </div>
             </div>
@@ -50,17 +48,26 @@
             </div>
         </section>
 
-        <selection id="safelist">
+        <section id="safelist" data-account-id="{{ $accountId }}">
             @foreach($safelist as $listUser)
-                <div class="row">
+                <div>
                     <div>
                         <img style="width: 50px; height: 50px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />
                     </div>
                     <div>
                         {{ $listUser['username'] }}
                     </div>
+                    @if($listUser['is_in_safelist'] == 1)
+                        <div class="checkbox-checked">
+                            <i class="fa fa-check"></i>
+                        </div>
+                    @else
+                        <div class="checkbox-unchecked">
+                            <i class="fa fa-check"></i>
+                        </div>
+                    @endif
                 </div>
             @endforeach
-        </selection>
+        </section>
     </div>
 @stop

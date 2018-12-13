@@ -84,6 +84,36 @@ ul, li {
     border-radius: 5px;
     padding: 10px;
 }
+#safelist{
+    /*border: 1px solid black;*/
+    border-radius: 5px;
+    padding: 5px;
+    /*background-color: darkseagreen;*/
+}
+#safelist > div{
+    display: flex;
+    align-items: center;
+    border: 1px solid white;
+    border-radius: 5px;
+    margin: 5px 0;
+    padding: 5px;
+    background-color: darkseagreen;
+}
+#safelist > div > div:nth-child(2n){
+    padding: 5px;
+    flex-grow: 1;
+    font-size: 26px;
+}
+#safelist > div > div:nth-child(3n){
+    padding-right: 15px;
+    font-size: 40px;
+}
+.checkbox-unchecked{
+    color: aqua;
+}
+.checkbox-checked{
+    color: black;
+}
 
 .account.active{
     background-color: forestgreen;

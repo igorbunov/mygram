@@ -1,4 +1,37 @@
 $(document).ready(function() {
+    $("#safelist > div").click(function () {
+        var accountId = $("#safelist").data("accountId"),
+            nickname = $(this).text().trim(),
+            isChecked = 0;
+
+        if ($(this).children(3).hasClass('checkbox-unchecked')) {
+            isChecked = 1;
+        }
+
+        console.log('aa', accountId, nickname, isChecked);
+        $.ajax({
+            url: '/safelist_toggle_user',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                account_id: accountId,
+                nickname: nickname,
+                isChecked: isChecked
+            },
+            success: function(data) {
+                if (data.success) {
+                    location.href = '/safelist/' + data.accountId;
+                } else {
+                    // console.log('error', data.error);
+                    alert(data.error);
+                }
+            }
+        });
+    });
+
     $('.clear-direct-queue').click(function () {
         if (!confirm('Вы действительно хотите очистить очередь?')) {
             console.log('no');

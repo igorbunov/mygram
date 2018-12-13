@@ -12,6 +12,37 @@ use Illuminate\Http\Request;
 
 class SafelistController extends Controller
 {
+    public function toggleUser(Request $req)
+    {
+        $userId = (int) session('user_id', 0);
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+        }
+
+        $accountId = (int) $req->post('account_id', 0);
+
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return response()->json(['success' => false, 'message' => 'Это не ваш аккаунт']);
+        }
+
+        $safeList = Safelist::getByAccountId($accountId);
+
+        if (is_null($safeList)) {
+            return response()->json(['success' => false, 'message' => 'Ошибка получения списка']);
+        }
+
+
+
+        return response()->json(['success' => true, 'accountId' => $accountId]);
+    }
+
     public function updateList(Request $req)
     {
         $userId = (int) session('user_id', 0);

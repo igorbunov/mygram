@@ -75,7 +75,7 @@ class FastTask extends Model
                     try {
                         DirectToSubsTasksRunner::runDirectTasks($task->task_id, $task->account_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage());
+                        Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $err->getMessage());
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
@@ -93,7 +93,7 @@ class FastTask extends Model
                     break;
                 case self::TYPE_REFRESH_WHITELIST:
                     try {
-                        AccountWhiteListRunner::runRefresh($task->id);
+                        AccountWhiteListRunner::runRefresh($task->task_id);
                     } catch (\Exception $err) {
                         Log::error('Error running task AccountWhiteListRunner::runRefresh: ' . $err->getMessage());
                     }
