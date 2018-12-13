@@ -93,13 +93,13 @@ class DirectToSubsTasksRunner
         $directTask = DirectTask::getDirectTaskById($directTaskId, $accountId, true);
 
         if (is_null($directTask)) {
-            return;
+            return $sendedFollowersArr;
         }
 
         $account = account::getAccountById($accountId, true);
 
         if (is_null($account)) {
-            return;
+            return $sendedFollowersArr;
         }
 
         MyInstagram::getInstanse()->login($account);
