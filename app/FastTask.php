@@ -65,7 +65,7 @@ class FastTask extends Model
                     try {
                         AccountFirstLoginRunner::tryLogin($task->account_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage());
+                        Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $err->getMessage() . ' ' . $err->getTraceAsString());
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
@@ -75,7 +75,7 @@ class FastTask extends Model
                     try {
                         DirectToSubsTasksRunner::runDirectTasks($task->task_id, $task->account_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $err->getMessage());
+                        Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $err->getMessage() . ' ' . $err->getTraceAsString());
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
@@ -85,7 +85,7 @@ class FastTask extends Model
                     try {
                         AccountFirstLoginRunner::runRefresh($task->account_id);
                     } catch (\Exception $err) {
-                        Log::error('Error running task AccountFirstLoginRunner::runRefresh: ' . $err->getMessage());
+                        Log::error('Error running task AccountFirstLoginRunner::runRefresh: ' . $err->getMessage() . ' ' . $err->getTraceAsString());
                     }
 
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);

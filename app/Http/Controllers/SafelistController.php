@@ -38,7 +38,15 @@ class SafelistController extends Controller
             return response()->json(['success' => false, 'message' => 'Ошибка получения списка']);
         }
 
+        $nickname = (string) $req->post('account_id', '');
+        $isChecked = (int) $req->post('account_id', -1);
 
+        if ($nickname == '') {
+            return response()->json(['success' => false, 'message' => 'Не указан никнейм']);
+        }
+        if ($isChecked == -1) {
+            return response()->json(['success' => false, 'message' => 'Не указан статус']);
+        }
 
         return response()->json(['success' => true, 'accountId' => $accountId]);
     }

@@ -104,7 +104,7 @@ class MyInstagram
         try {
             $this->account = $account;
 
-            $this->instagram = new Instagram();
+            $this->instagram = new Instagram(true);
             $respose = '';
 
             try {
