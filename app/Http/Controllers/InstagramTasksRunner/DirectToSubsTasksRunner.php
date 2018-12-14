@@ -56,8 +56,12 @@ class DirectToSubsTasksRunner
         Log::debug('followers count in DB: ' . $followersCountInDB);
 
         if ($followersCountInDB == 0) {
+            foreach($followersAsArray as $i => $follower) {
+                $followersAsArray[$i]['is_sended'] = 1;
+            }
+
             AccountSubscribers::addUniqueArray($followersAsArray);
-            Log::debug('done');
+            Log::debug('done create first subs list');
             return;
         }
 

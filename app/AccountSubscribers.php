@@ -86,7 +86,7 @@ class AccountSubscribers extends Model
             $subs->username =  $data['username'];
             $subs->pk = $data['pk'];
             $subs->json = $data['json'];
-            $subs->is_sended = 0;
+            $subs->is_sended = isset($data['is_sended']) ? (int) $data['is_sended'] : 0;
 
             $subs->save();
         } catch (\Exception $err) {
