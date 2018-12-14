@@ -23,7 +23,7 @@
                             <span style="margin-left: 20px;">Загрузить подписки</span>
                         </div>
                     @endif
-                    <div class="btn-dark" style="padding: 14px;border-radius: 5px;margin-left: 5px;">
+                    <div class="btn-dark clear-safelist-users">
                         Очистить список избранных
                     </div>
                 </div>
@@ -33,11 +33,16 @@
                     <input type="text" placeholder="Найти аккаунт" class="search-field">
                     <i class="fas fa-search" style="margin: 16px 0 0 -26px"></i>
                 </div>
-                <div style="padding: 15px">
-                    Все
-                    <i class="fas fa-toggle-off toggle-btn" id="toggle-off"></i>
-                    <i class="fas fa-toggle-on toggle-btn" id="toggle-on"></i>
-                    Только выбранные
+                <div class="safelist-toggle-on-off">
+                    <span>Все</span>
+                    @if($is_all == 0)
+                        <i class="fas fa-toggle-off toggle-btn" id="toggle-off" style="display: none;"></i>
+                        <i class="fas fa-toggle-on toggle-btn" id="toggle-on"></i>
+                    @else
+                        <i class="fas fa-toggle-off toggle-btn" id="toggle-off"></i>
+                        <i class="fas fa-toggle-on toggle-btn" id="toggle-on" style="display: none;"></i>
+                    @endif
+                    <span>Только выбранные</span>
                 </div>
             </div>
             <div class="row">
@@ -48,26 +53,8 @@
             </div>
         </section>
 
-        <section id="safelist" data-account-id="{{ $accountId }}">
-            @foreach($safelist as $listUser)
-                <div>
-                    <div>
-                        <img style="width: 50px; height: 50px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />
-                    </div>
-                    <div>
-                        {{ $listUser['username'] }}
-                    </div>
-                    @if($listUser['is_in_safelist'] == 1)
-                        <div class="checkbox-checked">
-                            <i class="fa fa-check"></i>
-                        </div>
-                    @else
-                        <div class="checkbox-unchecked">
-                            <i class="fa fa-check"></i>
-                        </div>
-                    @endif
-                </div>
-            @endforeach
-        </section>
+        <div id="safelist-container">
+            @include('safelist.safelist_item')
+        </div>
     </div>
 @stop

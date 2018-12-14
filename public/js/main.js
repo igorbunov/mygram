@@ -1,14 +1,37 @@
 $(document).ready(function() {
+    $('.clear-safelist-users').click(function () {
+        var accountId = $("#safelist").data("accountId");
+
+        $.ajax({
+            url: '/safelist_clear_users',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                account_id: accountId
+            },
+            success: function(data) {
+                if (data.success) {
+                    location.href = '/safelist/' + data.accountId + '/all';
+                } else {
+                    alert(data.message);
+                }
+            }
+        });
+    });
+
     $("#safelist > div").click(function () {
         var accountId = $("#safelist").data("accountId"),
             nickname = $(this).text().trim(),
-            isChecked = 0;
+            isChecked = 0,
+            checkbox = $(this).children('.my-checkbox');
 
-        if ($(this).children(3).hasClass('checkbox-unchecked')) {
+        if (checkbox.hasClass('checkbox-unchecked')) {
             isChecked = 1;
         }
 
-        console.log('aa', accountId, nickname, isChecked);
         $.ajax({
             url: '/safelist_toggle_user',
             headers: {
@@ -23,10 +46,13 @@ $(document).ready(function() {
             },
             success: function(data) {
                 if (data.success) {
-                    location.href = '/safelist/' + data.accountId;
+                    if (data.is_checked == 1) {
+                        checkbox.removeClass('checkbox-unchecked').addClass('checkbox-checked');
+                    } else {
+                        checkbox.removeClass('checkbox-checked').addClass('checkbox-unchecked');
+                    }
                 } else {
-                    // console.log('error', data.error);
-                    alert(data.error);
+                    alert(data.message);
                 }
             }
         });
@@ -89,17 +115,24 @@ $(document).ready(function() {
         var id = $(this).data('accountId');
 
         if (typeof id != 'undefined') {
-            location.href = '/safelist/' + id;
+            location.href = '/safelist/' + id + '/all';
         }
     });
 
-    $("#toggle-off").click(function () {
-        $(this).hide();
-        $("#toggle-on").show();
-    });
-    $("#toggle-on").click(function () {
-        $(this).hide();
-        $("#toggle-off").show();
+    $('.safelist-toggle-on-off').click(function () {
+        var id = $("#safelist").data('accountId');
+// debugger;
+        if ($("#toggle-off").is(":visible")) {
+            $("#toggle-off").hide();
+            $("#toggle-on").show();
+
+            location.href = '/safelist/' + id + '/selected';
+        } else {
+            $("#toggle-off").show();
+            $("#toggle-on").hide();
+
+            location.href = '/safelist/' + id + '/all';
+        }
     });
 
 

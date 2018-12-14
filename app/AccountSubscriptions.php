@@ -7,11 +7,39 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscriptions extends Model
 {
-    public static function getAll(int $accountId, bool $asArray = false)
+    public static function setAllNotInSafelist(int $accountId)
+    {
+        self::where(['owner_account_id' => $accountId])->update(['is_in_safelist' => 0]);
+    }
+
+    public static function setIsInSafelist(int $accountId, string $nickname, int $isChecked)
     {
         $res = self::where([
+            'owner_account_id' => $accountId,
+            'username' => $nickname
+        ])->first();
+
+        if (is_null($res)) {
+            return false;
+        }
+
+        $res->is_in_safelist = $isChecked;
+        $res->save();
+
+        return true;
+    }
+
+    public static function getAll(int $accountId, bool $isAll, bool $asArray = false)
+    {
+        $filter = [
             'owner_account_id' => $accountId
-        ])->get();
+        ];
+
+        if (!$isAll) {
+            $filter['is_in_safelist'] = 1;
+        }
+
+        $res = self::where($filter)->get();
 
         if (!$asArray) {
             return is_null($res) ? [] : $res;

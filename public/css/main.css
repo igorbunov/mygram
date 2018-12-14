@@ -114,6 +114,15 @@ ul, li {
 .checkbox-checked{
     color: black;
 }
+.safelist-toggle-on-off{
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.safelist-toggle-on-off > span{
+    padding: 5px;
+}
 
 .account.active{
     background-color: forestgreen;
@@ -413,10 +422,16 @@ ul, li {
 .toggle-btn{
     font-size: 24px;
 }
-#toggle-on{
-    display: none;
+.clear-safelist-users{
+    padding: 14px;
+    border-radius: 5px;
+    margin-left: 5px;
     cursor: pointer;
 }
+/*#toggle-on{*/
+    /*display: none;*/
+    /*cursor: pointer;*/
+/*}*/
 
 .btn-dark.refresh-follow-list.disabled{
     background-color: lightseagreen;

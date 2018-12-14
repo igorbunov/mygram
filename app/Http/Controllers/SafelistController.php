@@ -12,9 +12,10 @@ use Illuminate\Http\Request;
 
 class SafelistController extends Controller
 {
-    public function toggleUser(Request $req)
+    public function clearUsers(Request $req)
     {
         $userId = (int) session('user_id', 0);
+        $accountId = (int) $req->post('account_id', 0);
 
         if ($userId == 0) {
             return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
@@ -26,7 +27,37 @@ class SafelistController extends Controller
             return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
         }
 
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return response()->json(['success' => false, 'message' => 'Это не ваш аккаунт']);
+        }
+
+        $safeList = Safelist::getByAccountId($accountId);
+
+        if (is_null($safeList)) {
+            return response()->json(['success' => false, 'message' => 'Ошибка получения списка']);
+        }
+
+        AccountSubscriptions::setAllNotInSafelist($accountId);
+
+        return response()->json(['success' => true, 'accountId' => $accountId]);
+    }
+
+    public function toggleUser(Request $req)
+    {
+        $userId = (int) session('user_id', 0);
         $accountId = (int) $req->post('account_id', 0);
+        $nickname = (string) $req->post('nickname', '');
+        $isChecked = (int) $req->post('isChecked', -1);
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+        }
 
         if (!account::isAccountBelongsToUser($userId, $accountId)) {
             return response()->json(['success' => false, 'message' => 'Это не ваш аккаунт']);
@@ -38,9 +69,6 @@ class SafelistController extends Controller
             return response()->json(['success' => false, 'message' => 'Ошибка получения списка']);
         }
 
-        $nickname = (string) $req->post('account_id', '');
-        $isChecked = (int) $req->post('account_id', -1);
-
         if ($nickname == '') {
             return response()->json(['success' => false, 'message' => 'Не указан никнейм']);
         }
@@ -48,7 +76,13 @@ class SafelistController extends Controller
             return response()->json(['success' => false, 'message' => 'Не указан статус']);
         }
 
-        return response()->json(['success' => true, 'accountId' => $accountId]);
+        $res = AccountSubscriptions::setIsInSafelist($accountId, $nickname, $isChecked);
+
+        if (!$res) {
+            return response()->json(['success' => false,'message' => 'Ошибка, не удалось изменить статус']);
+        }
+
+        return response()->json(['success' => true, 'is_checked' => $isChecked, 'accountId' => $accountId]);
     }
 
     public function updateList(Request $req)
@@ -109,7 +143,7 @@ class SafelistController extends Controller
         return view('safelist.accounts_list', $res);
     }
 
-    public function getSafelist(int $accountId)
+    public function getSafelist(int $accountId, string $isAll)
     {
         $userId = (int) session('user_id', 0);
 
@@ -129,7 +163,9 @@ class SafelistController extends Controller
 
         $safelist = Safelist::getOrCreate($accountId);
 
-        $allSubscibtions = AccountSubscriptions::getAll($accountId);
+        $isAll = ('all' == $isAll);
+
+        $allSubscibtions = AccountSubscriptions::getAll($accountId, $isAll);
 
         $res = [
             'title' => 'Белый список @' . $account->nickname
@@ -139,10 +175,11 @@ class SafelistController extends Controller
             , 'selectedAccounts' => $safelist->selected_accounts
             , 'status' => $safelist->status
             , 'safelist' => $allSubscibtions
+            , 'is_all' => ($isAll) ? 1 : 0
             , 'accountPicture' => User::getAccountPictureUrl($userId, $accountId)
             , 'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
         ];
-
+//dd($res);
         return view('safelist.main', $res);
     }
 }
