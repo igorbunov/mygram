@@ -43,7 +43,11 @@ class FastTask extends Model
 
         Log::debug('res' . \json_encode($row));
 
-        if ($row->cnt >= (env('FRIEND_DIRECT_LIMITS_BY_HOUR', '9') - 1) ) {
+        if ($row->cnt >= (env('FRIEND_DIRECT_LIMITS_BY_HOUR', '10') - 1) ) {
+            if ($row->cnt > env('FRIEND_DIRECT_LIMITS_BY_HOUR', '10')) {
+                return false;
+            }
+
             return ($row->is_rest > 0);
         }
 
