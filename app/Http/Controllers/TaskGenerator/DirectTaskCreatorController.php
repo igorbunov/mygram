@@ -111,7 +111,7 @@ class DirectTaskCreatorController
             return false;
         }
 
-        $randomDelayMinutes = rand(4, 7);
+        $randomDelayMinutes = rand(4, 8);
 
         if (!FastTask::isHadRestInLastOneAndHalfHoursDirectTasks($directTask->account_id)) {
             $randomDelayMinutes = rand(40, 60);
