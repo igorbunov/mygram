@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 
 class SafelistController extends Controller
 {
+    const SAFELIST_LIMIT = 50;
+
     public function clearUsers(Request $req)
     {
         $userId = (int) session('user_id', 0);
@@ -39,7 +41,17 @@ class SafelistController extends Controller
 
         AccountSubscriptions::setAllNotInSafelist($accountId);
 
-        return response()->json(['success' => true, 'accountId' => $accountId]);
+
+        $allSubscibtions = AccountSubscriptions::getAll($accountId, true);
+
+        $view = view('safelist.safelist_item', [
+            'safelist' => $allSubscibtions,
+            'accountId' => $accountId
+        ]);
+
+        return $view;
+
+//        return response()->json(['success' => true, 'accountId' => $accountId]);
     }
 
     public function toggleUser(Request $req)
@@ -143,7 +155,47 @@ class SafelistController extends Controller
         return view('safelist.accounts_list', $res);
     }
 
-    public function getSafelist(int $accountId, string $isAll)
+    public function getSafelistAjax(Request $req)
+    {
+        $userId = (int) session('user_id', 0);
+        $accountId = (int) $req->post('account_id', 0);
+        $isAll = (int) $req->post('is_all', 1);
+        $start = (int) $req->post('start', 0);
+        $limit = self::SAFELIST_LIMIT;
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+        }
+
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return response()->json(['success' => false, 'message' => 'Это не ваш аккаунт']);
+        }
+
+        $safeList = Safelist::getByAccountId($accountId);
+
+        if (is_null($safeList)) {
+            return response()->json(['success' => false, 'message' => 'Ошибка получения списка']);
+        }
+
+        $allSubscibtions = AccountSubscriptions::getAll($accountId, ($isAll > 0), false, $start, $limit);
+
+        return view('safelist.safelist_item', [
+            'accountId' => $accountId,
+            'safelist' => $allSubscibtions['data'],
+            'safelistTotal' => $allSubscibtions['total'],
+            'start' => $start,
+            'limit' => $limit,
+            'is_all' => 1
+        ]);
+    }
+
+    public function getSafelist(int $accountId)
     {
         $userId = (int) session('user_id', 0);
 
@@ -162,10 +214,10 @@ class SafelistController extends Controller
         }
 
         $safelist = Safelist::getOrCreate($accountId);
+        $start = 0;
+        $limit = self::SAFELIST_LIMIT;
 
-        $isAll = ('all' == $isAll);
-
-        $allSubscibtions = AccountSubscriptions::getAll($accountId, $isAll);
+        $allSubscibtions = AccountSubscriptions::getAll($accountId, true, false, $start, $limit);
 
         $res = [
             'title' => 'Белый список @' . $account->nickname
@@ -174,8 +226,11 @@ class SafelistController extends Controller
             , 'totalSubscriptions' => $safelist->total_subscriptions
             , 'selectedAccounts' => $safelist->selected_accounts
             , 'status' => $safelist->status
-            , 'safelist' => $allSubscibtions
-            , 'is_all' => ($isAll) ? 1 : 0
+            , 'safelist' => $allSubscibtions['data']
+            , 'safelistTotal' => $allSubscibtions['total']
+            , 'start' => $start
+            , 'limit' => $limit
+            , 'is_all' => 1
             , 'accountPicture' => User::getAccountPictureUrl($userId, $accountId)
             , 'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
         ];

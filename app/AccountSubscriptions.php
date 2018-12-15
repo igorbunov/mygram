@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AccountSubscriptions extends Model
@@ -29,7 +30,7 @@ class AccountSubscriptions extends Model
         return true;
     }
 
-    public static function getAll(int $accountId, bool $isAll, bool $asArray = false)
+    public static function getAll(int $accountId, bool $isAll, bool $asArray = false, int $start = 0, int $limit = 50)
     {
         $filter = [
             'owner_account_id' => $accountId
@@ -39,13 +40,19 @@ class AccountSubscriptions extends Model
             $filter['is_in_safelist'] = 1;
         }
 
-        $res = self::where($filter)->get();
+        $res = self::select(array(DB::raw('SQL_CALC_FOUND_ROWS *')))
+            ->where($filter)
+            ->offset($start)
+            ->limit($limit)
+            ->get();
+
+        $total = DB::selectOne(DB::raw("SELECT FOUND_ROWS() AS total"))->total;
 
         if (!$asArray) {
-            return is_null($res) ? [] : $res;
+            return is_null($res) ? ['data' => null, 'total' => 0] : ['data' => $res, 'total' => $total];
         }
 
-        return is_null($res) ? [] : $res->toArray();
+        return is_null($res) ? ['data' => null, 'total' => 0] : ['data' => $res->toArray(), 'total' => $total];
     }
 
     public static function getSelected(int $accountId)

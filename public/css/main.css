@@ -85,10 +85,12 @@ ul, li {
     padding: 10px;
 }
 #safelist{
-    /*border: 1px solid black;*/
     border-radius: 5px;
-    padding: 5px;
-    /*background-color: darkseagreen;*/
+}
+.safelist-pagination{
+    justify-content: center;
+    margin: 12px 0;
+    display: flex;
 }
 #safelist > div{
     display: flex;
@@ -102,8 +104,9 @@ ul, li {
 #safelist > div > div:nth-child(2n){
     padding: 5px;
     flex-grow: 1;
-    font-size: 26px;
+    font-size: 30px;
 }
+
 #safelist > div > div:nth-child(3n){
     padding-right: 15px;
     font-size: 40px;
@@ -165,7 +168,15 @@ ul, li {
 .container .container-nopadding{
     padding: 0;
 }
-.account-deactivate, .account-activate{
+.clear-direct-queue, .task-deactivate, .account-deactivate,
+.account-activate, .clear-safelist-users{
+    background-color: #17a2b8;
+    cursor: pointer;
+}
+.clear-safelist-users{
+    margin: 0 10px;
+}
+.account-deactivate{
     margin-right:22px;
 }
 .account{
@@ -193,9 +204,6 @@ ul, li {
     color: black;
     border-radius: 5px;
     padding: 0 0 6px 0;
-}
-.clear-direct-queue, .task-deactivate, .account-deactivate{
-    background-color: #17a2b8;
 }
 .account-tasks.paused{
     border: 1px solid white;
@@ -251,13 +259,17 @@ ul, li {
     cursor: pointer;
     font-size: 14px;
 }
-.refresh-follow-list{
+.btn-dark.refresh-follow-list{
     width: 224px;
     height: 52px;
     padding: 16px 18px;
     border-radius: 5px;
     display:flex;
     align-items: center;
+}
+.btn-dark.my-btn.refresh-follow-list{
+    width: 52px;
+    display: none;
 }
 #add-account-form{
     margin: 10px 0;
@@ -420,13 +432,7 @@ ul, li {
     padding: 0px 15px 15px 0;
 }
 .toggle-btn{
-    font-size: 24px;
-}
-.clear-safelist-users{
-    padding: 14px;
-    border-radius: 5px;
-    margin-left: 5px;
-    cursor: pointer;
+    font-size: 32px;
 }
 /*#toggle-on{*/
     /*display: none;*/
@@ -447,5 +453,18 @@ ul, li {
     .sidenav-trigger{
         display: block !important;
     }
-
+}@media screen and (max-width: 770px) {
+    .btn-dark.refresh-follow-list{
+        display: none;
+    }
+    .btn-dark.my-btn.refresh-follow-list{
+        display: block;
+    }
+}
+@media screen and (max-width: 460px) {
+    #safelist > div > div:nth-child(2n){
+        padding: 5px;
+        flex-grow: 1;
+        font-size: 24px;
+    }
 }

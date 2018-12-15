@@ -1,10 +1,18 @@
+@include('safelist.pagination')
+
+@if(($start + $limit) < $safelistTotal)
+<div style="display: flex;justify-content: flex-end;">записи с {{ $start }} по {{ $start + $limit }}, всего {{ $safelistTotal }}</div>
+@else
+<div style="display: flex;justify-content: flex-end;">записи с {{ $start }} по {{ $safelistTotal }}, всего {{ $safelistTotal }}</div>
+@endif
+
 <section id="safelist" data-account-id="{{ $accountId }}">
     @foreach($safelist as $listUser)
-        <div>
+        <div onclick="onSafelistClick(this);">
             <div>
                 <img style="width: 50px; height: 50px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />
             </div>
-            <div>
+            <div class="safelist-nickname">
                 {{ $listUser['username'] }}
             </div>
             @if($listUser['is_in_safelist'] == 1)
@@ -19,3 +27,5 @@
         </div>
     @endforeach
 </section>
+
+@include('safelist.pagination')

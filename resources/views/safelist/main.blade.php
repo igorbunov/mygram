@@ -10,29 +10,24 @@
                     <p>После чего можно будет выбрать избранные аккаунты, от которых не будет происходить отписка.</p>
                 </div>
             </div>
-            <div class="row">
-                <div style="display: flex; padding: 5px 15px;">
-                    @if($status == \App\Safelist::STATUS_UPDATING)
-                        <div class="btn-dark refresh-follow-list disabled" data-account-id="{{ $accountId }}">
-                            <i class="fas fa-sync"></i>
-                            <span style="margin-left: 20px;">Загрузка списка ...</span>
-                        </div>
-                    @else
-                        <div class="btn-dark refresh-follow-list" data-account-id="{{ $accountId }}">
-                            <i class="fas fa-sync"></i>
-                            <span style="margin-left: 20px;">Загрузить подписки</span>
-                        </div>
-                    @endif
-                    <div class="btn-dark clear-safelist-users">
-                        Очистить список избранных
+            <div style="display: flex; padding: 5px 15px; justify-content: space-between;">
+                @if($status == \App\Safelist::STATUS_UPDATING)
+                    <div class="btn-dark refresh-follow-list disabled" data-account-id="{{ $accountId }}">
+                        <i class="fas fa-sync"></i>
+                        <span style="margin-left: 20px;">Загрузка списка ...</span>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div style="display: flex; padding: 5px 15px;">
-                    <input type="text" placeholder="Найти аккаунт" class="search-field">
-                    <i class="fas fa-search" style="margin: 16px 0 0 -26px"></i>
-                </div>
+                    <div class="btn-dark my-btn refresh-follow-list" data-account-id="{{ $accountId }}">
+                        ...
+                    </div>
+                @else
+                    <div class="btn-dark refresh-follow-list" data-account-id="{{ $accountId }}">
+                        <i class="fas fa-sync"></i>
+                        <span style="margin-left: 20px;">Загрузить подписки</span>
+                    </div>
+                    <div class="btn-dark my-btn refresh-follow-list" data-account-id="{{ $accountId }}">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                @endif
                 <div class="safelist-toggle-on-off">
                     <span>Все</span>
                     @if($is_all == 0)
@@ -43,6 +38,9 @@
                         <i class="fas fa-toggle-on toggle-btn" id="toggle-on" style="display: none;"></i>
                     @endif
                     <span>Только выбранные</span>
+                </div>
+                <div class="btn-dark my-btn btn-info clear-safelist-users">
+                    <i class="fas fa-trash"></i>
                 </div>
             </div>
             <div class="row">

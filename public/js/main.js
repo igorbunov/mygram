@@ -1,5 +1,102 @@
 $(document).ready(function() {
+    var loadWithPagination = function (accountId, isAll, start) {
+        $.ajax({
+            url: '/get_safelist',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'html',
+            data: {
+                account_id: accountId,
+                is_all: isAll,
+                start: start
+            },
+            success: function(data) {
+                $("#safelist-container").empty();
+                $("#safelist-container").html(data);
+            }
+        });
+    };
+
+    safelistPaginateBack = function (me, start, limit) {
+        var accountId = $("#safelist").data('accountId'),
+            isAll = 1,
+            type = {
+                all : 1,
+                onlySelected: 0
+            };
+
+        if ($("#toggle-off").is(":visible")) {
+            isAll = type.all;
+        } else {
+            isAll = type.onlySelected;
+        }
+
+        loadWithPagination(accountId, isAll, start - limit);
+    };
+
+    safelistPaginateForward = function (me, start, limit) {
+        var accountId = $("#safelist").data('accountId'),
+            isAll = 1,
+            type = {
+                all : 1,
+                onlySelected: 0
+            };
+
+        if ($("#toggle-off").is(":visible")) {
+            isAll = type.all;
+        } else {
+            isAll = type.onlySelected;
+        }
+
+        loadWithPagination(accountId, isAll, start + limit);
+    };
+
+    $('.safelist-toggle-on-off').click(function () {
+        var id = $("#safelist").data('accountId'),
+            type = {
+                all : 1,
+                onlySelected: 0
+            },
+            loadSafelistByFilter = function (accountId, isAll) {
+                $.ajax({
+                    url: '/get_safelist',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    method: 'POST',
+                    dataType: 'html',
+                    data: {
+                        account_id: accountId,
+                        is_all: isAll
+                    },
+                    success: function(data) {
+                        $("#safelist-container").empty();
+                        $("#safelist-container").html(data);
+                    }
+                });
+            };
+
+        if ($("#toggle-off").is(":visible")) {
+            $("#toggle-off").hide();
+            $("#toggle-on").show();
+
+            loadSafelistByFilter(id, type.onlySelected);
+        } else {
+            $("#toggle-off").show();
+            $("#toggle-on").hide();
+
+            loadSafelistByFilter(id, type.all);
+        }
+    });
+
     $('.clear-safelist-users').click(function () {
+        if (!confirm('Вы действительно хотите очистить избранных клиентов?')) {
+            console.log('no');
+            return;
+        }
+
         var accountId = $("#safelist").data("accountId");
 
         $.ajax({
@@ -8,25 +105,22 @@ $(document).ready(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             method: 'POST',
-            dataType: 'json',
+            dataType: 'html',
             data: {
                 account_id: accountId
             },
             success: function(data) {
-                if (data.success) {
-                    location.href = '/safelist/' + data.accountId + '/all';
-                } else {
-                    alert(data.message);
-                }
+                $("#safelist-container").empty();
+                $("#safelist-container").html(data);
             }
         });
     });
 
-    $("#safelist > div").click(function () {
+    onSafelistClick = function (el) {
         var accountId = $("#safelist").data("accountId"),
-            nickname = $(this).text().trim(),
+            nickname = $(el).children('.safelist-nickname').text().trim(),
             isChecked = 0,
-            checkbox = $(this).children('.my-checkbox');
+            checkbox = $(el).children('.my-checkbox');
 
         if (checkbox.hasClass('checkbox-unchecked')) {
             isChecked = 1;
@@ -56,7 +150,7 @@ $(document).ready(function() {
                 }
             }
         });
-    });
+    };
 
     $('.clear-direct-queue').click(function () {
         if (!confirm('Вы действительно хотите очистить очередь?')) {
@@ -103,6 +197,7 @@ $(document).ready(function() {
 
         changeTaskStatus(taskId, taskType, accountId, 'paused');
     });
+
     $('.unpause-task').click(function () {
         var taskId = $(this).data('taskId')
             , accountId = $(this).data('accountId')
@@ -115,26 +210,9 @@ $(document).ready(function() {
         var id = $(this).data('accountId');
 
         if (typeof id != 'undefined') {
-            location.href = '/safelist/' + id + '/all';
+            location.href = '/safelist/' + id;
         }
     });
-
-    $('.safelist-toggle-on-off').click(function () {
-        var id = $("#safelist").data('accountId');
-// debugger;
-        if ($("#toggle-off").is(":visible")) {
-            $("#toggle-off").hide();
-            $("#toggle-on").show();
-
-            location.href = '/safelist/' + id + '/selected';
-        } else {
-            $("#toggle-off").show();
-            $("#toggle-on").hide();
-
-            location.href = '/safelist/' + id + '/all';
-        }
-    });
-
 
     $(".refresh-follow-list").click(function () {
         if ($(this).hasClass('disabled')) {
@@ -142,7 +220,7 @@ $(document).ready(function() {
         }
 
         var accountId = $(this).data('accountId');
-// debugger;
+
         $.ajax({
             url: '/safelist_update',
             headers: {
@@ -154,21 +232,10 @@ $(document).ready(function() {
                 account_id: accountId
             },
             success: function (data) {
-                // location.href = '/safelist/' + accountId;
-
                 if (data.success) {
-                //     if (data.task_done) {
-                //         $('#preloader').hide();
-                //         clearInterval(intervalId);
-                //
-                //         if (redirectUrl) {
-                //             location.href = redirectUrl;
-                //         }
-                //     }
+debugger;
                 } else {
                     alert(data.message);
-                    // $('#preloader').hide();
-                    // clearInterval(intervalId);
                 }
             },
             error: function () {
@@ -178,8 +245,6 @@ $(document).ready(function() {
         });
     });
 
-
-
     $('.sidenav-trigger').click(function () {
         $('#slide-out').addClass('sidenav-animate');
         $('.sidenav-overlay').addClass('sidenav-overlay-show');
@@ -188,6 +253,7 @@ $(document).ready(function() {
     $('.programm-text').click(function () {
         location.href = '/';
     });
+
     $('.main-profile-icon').click(function () {
         location.href = '/';
     });
@@ -263,9 +329,11 @@ $(document).ready(function() {
             }
         });
     });
+
     $('#add-account-btn').click(function () {
         $('#add-account-form').show();
     });
+
     $('.account-link-clickable').click(function (event) {
         if ($(this).hasClass('deactivated') || event.target.type == 'button') {
             return;
@@ -369,7 +437,6 @@ $(document).ready(function() {
         changeTaskStatus(taskId, taskType, accountId, 'active');
     });
 
-
     var changeAccountStatus = function(accountId, isActive) {
         $.ajax({
             url: '/change_account',
@@ -423,7 +490,6 @@ $(document).ready(function() {
             }
         });
     });
-
 
     $("#add-task-submit").click(function () {
         var accountId = $('#add-task-account-id').val();
