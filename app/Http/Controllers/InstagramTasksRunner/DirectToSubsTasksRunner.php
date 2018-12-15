@@ -30,108 +30,24 @@ class DirectToSubsTasksRunner
             return;
         }
 
-        $sleepTime = rand(10, 180); // спим от 10 сек до 3 мин
-        Log::debug('sleep time: ' . $sleepTime);
-        sleep($sleepTime);
-
-        MyInstagram::getInstanse()->login($account);
-
-        Log::debug('account_id ' . MyInstagram::getInstanse()->getInstagram()->account_id .
-            ', get rank token ' . MyInstagram::getInstanse()->getRankToken());
-
-        $followersAsArray = [];
-
-        try {
-            $followers = MyInstagram::getInstanse()->getLast200Followers();
-            $followersAsArray = MyInstagram::getInstanse()->convertFollowersToArray($followers);
-
-            Log::debug('Received new: ' . count($followersAsArray) . ' followers from instagram');
-        } catch (\Exception $err) {
-            Log::error($err->getMessage());
-            return;
-        }
-
-        $followersCountInDB = AccountSubscribers::getCurrentFollowersCount($accountId);
-
-        Log::debug('followers count in DB: ' . $followersCountInDB);
-
-        if ($followersCountInDB == 0) {
-            foreach($followersAsArray as $i => $follower) {
-                $followersAsArray[$i]['is_sended'] = 1;
-            }
-
-            AccountSubscribers::addUniqueArray($followersAsArray);
-            Log::debug('done create first subs list');
-            return;
-        }
-
-        $followersDiff = AccountSubscribers::getNewFollowers($accountId, $followersAsArray);
-
-        Log::debug('new followers count: ' . count($followersDiff));
-
-        if (count($followersDiff) > 0) {
-            AccountSubscribers::addUniqueArray($followersDiff);
-            Log::debug('re-added followers: ' . count($followersDiff));
-        }
-
-        $sendedFollowersArr = self::sendDirectToSubscribers($directTaskId, $accountId);
-
-        Log::debug('sendedFollowersArr: ' . count($sendedFollowersArr));
-
-//            AccountSubscribers::deleteOldFollowers($accountId);
-
-        DirectTask::updateStatistics($directTaskId);
-
-        Log::debug('=== done ===');
-    }
-
-    public static function sendDirectToSubscribers(int $directTaskId, int $accountId)
-    {
-        $sendedFollowersArr = [];
-
-        if (FastTask::isNight()) {
-            Log::debug('Stoped sending at night');
-            return $sendedFollowersArr;
-        }
-
         $directTask = DirectTask::getDirectTaskById($directTaskId, $accountId, true);
 
         if (is_null($directTask)) {
-            return $sendedFollowersArr;
-        }
-
-        $account = account::getAccountById($accountId, true);
-
-        if (is_null($account)) {
-            return $sendedFollowersArr;
+            return;
         }
 
         MyInstagram::getInstanse()->login($account);
 
-        $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
-
-        $sendedCount = 0;
+        $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId, 3);
 
         foreach ($unsendedFollowers as $newFollower) {
-            sleep(rand(10, 30));
+            $sleepTime = rand(5, 25);
+            Log::debug('Sleep: ' . $sleepTime);
+            sleep($sleepTime);
 
             if (AccountSubscribers::isSended($newFollower->id)) { //TODO: сделать проверку за последние 5 мин
                 Log::debug('дубль ' . $newFollower->id);
                 continue;
-            }
-
-            $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
-
-            if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
-                Log::debug('direct limits per day achieved: ' . $todayDirectCount);
-                break;
-            }
-
-            $lastHourDirectCount = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
-
-            if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
-                Log::debug('direct limits per hour: ' . $lastHourDirectCount);
-                break;
             }
 
             $response = MyInstagram::getInstanse()->sendDirect($newFollower->pk, $directTask->message);
@@ -143,7 +59,6 @@ class DirectToSubsTasksRunner
                 'error_message' => ''
             ];
 
-            $sendedFollowersArr[] = $newFollower;
             AccountSubscribers::setSended($newFollower->id, true);
 
             if (!$response->isOk()) {
@@ -156,13 +71,11 @@ class DirectToSubsTasksRunner
 
             DirectTaskReport::writeStatistics($resultArr);
 
-            $sendedCount++;
-
-            if ($sendedCount >= env('DIRECT_SEND_BY_ONCE_LIMIT', '5')) {
-                break;
-            }
+            break;
         }
 
-        return $sendedFollowersArr;
+        DirectTask::updateStatistics($directTaskId);
+
+        Log::debug('=== done ===');
     }
 }

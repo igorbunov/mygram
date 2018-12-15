@@ -41,12 +41,19 @@ class AccountSubscribers extends Model
         $res->save();
     }
 
-    public static function getUnsendedFollowers(int $accountId)
+    public static function getUnsendedFollowers(int $accountId, int $limit = -1)
     {
-        $followers = self::where([
+        $followers = null;
+        $filter = [
             'owner_account_id' => $accountId,
             'is_sended' => 0
-        ])->orderBy('id', 'ASC')->get();
+        ];
+
+        if ($limit == -1) {
+            $followers = self::where($filter)->get();
+        } else {
+            $followers = self::where($filter)->orderBy('id', 'ASC')->limit($limit)->get();
+        }
 
         if (is_null($followers)) {
             return [];

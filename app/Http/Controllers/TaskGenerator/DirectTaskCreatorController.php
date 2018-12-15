@@ -19,12 +19,16 @@ use Illuminate\Support\Facades\Log;
 
 class DirectTaskCreatorController
 {
-    public static function generateDirectTasks()
+    /*
+     * Вызывает генератор получения новых подпищиков и генератор директ ответов
+     * генератор подпищиков работает только если есть активный директ таск
+     */
+    public static function tasksGenerator()
     {
-        Log::debug('generate tasks');
+//        Log::debug('generate tasks');
         $users = User::where(['is_confirmed' => 1])->get();
 
-        Log::debug('found users: ' . count($users));
+//        Log::debug('found users: ' . count($users));
 
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
@@ -43,7 +47,7 @@ class DirectTaskCreatorController
 
             $accounts = account::getActiveAccountsByUser($user->id);
 
-            Log::debug("found active accounts: " . count($accounts));
+//            Log::debug("found active accounts: " . count($accounts));
 
             try {
                 foreach ($accounts as $account) {
@@ -53,21 +57,20 @@ class DirectTaskCreatorController
                             $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id, true);
 
                             if (is_null($directTask)) {
-                                Log::debug('No direct tasks found ' . $taskListId . ' ' . $account->id);
+//                                Log::debug('No direct tasks found ' . $taskListId . ' ' . $account->id);
                                 continue;
                             }
 
-                            if (FastTask::isNight()) {
-                                $currentMinutes = (int) date('i');
-                                if ( $currentMinutes%30 < 10 ) { // once on 30 minutes
-                                    FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
-                                    Log::debug('add fast direct task (at night): ' . $directTask->id . ' ' . $account->id);
-                                } else {
-                                    Log::debug('in night working only once in 30 mins');
+                            // run get subs task
+                            if (GetNewSubsTaskCreatorController::generateGetSubsTask($directTask)) {
+                                Log::debug("get subs task added to fast tasks: " . $directTask->id);
+                            }
+
+                            if ($directTask->status == DirectTask::STATUS_ACTIVE) {
+                                // run generate direct task
+                                if (self::generateDirectTask($directTask)) {
+                                    Log::debug("direct task added to fast tasks: " . $directTask->id);
                                 }
-                            } else {
-                                FastTask::addTask($account->id, FastTask::TYPE_DIRECT_ANSWER, $directTask->id);
-                                Log::debug('add fast direct task (at day): ' . $directTask->id . ' ' . $account->id);
                             }
                         } else {
                             Log::error("bad task type: " . $taskType->type);
@@ -79,6 +82,46 @@ class DirectTaskCreatorController
             }
         }
 
-        Log::debug('generate tasks end');
+//        Log::debug('generate tasks end');
+    }
+
+    private static function generateDirectTask(DirectTask $directTask): bool
+    {
+        if (is_null($directTask)) {
+            return false;
+        }
+
+        if (FastTask::isNight()) {
+            return false;
+        }
+
+        $todayDirectCount = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
+
+        if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
+            return false;
+        }
+
+        if (!FastTask::isCanRun($directTask->account_id, FastTask::TYPE_DIRECT_ANSWER)) {
+            return false;
+        }
+
+        $lastHourDirectCount = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
+
+        if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
+            return false;
+        }
+
+        $randomDelayMinutes = rand(4, 7);
+
+        if (!FastTask::isHadRestInLastOneAndHalfHoursDirectTasks($directTask->account_id)) {
+            $randomDelayMinutes = rand(40, 60);
+        }
+
+        FastTask::addTask($directTask->account_id,
+            FastTask::TYPE_DIRECT_ANSWER,
+            $directTask->id,
+            $randomDelayMinutes);
+
+        return true;
     }
 }

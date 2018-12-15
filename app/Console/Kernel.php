@@ -46,13 +46,14 @@ class Kernel extends ConsoleKernel
         if (env('PROJECT_PATH') == '/home/pata/projects/myinst') {
 //            $schedule->call(function() {
 //                Log::debug('== Run chedule direct task generator == ');
-//                DirectTaskCreatorController::generateDirectTasks();
+//                DirectTaskCreatorController::tasksGenerator();
 //            })->everyMinute();
         } else {
             $schedule->call(function() {
                 Log::debug('== Run chedule direct task generator == ');
-                DirectTaskCreatorController::generateDirectTasks();
-            })->everyTenMinutes();//TODO: remove
+
+                DirectTaskCreatorController::tasksGenerator();
+            })->everyMinute();//TODO: remove
         }
     }
 
@@ -68,6 +69,14 @@ class Kernel extends ConsoleKernel
         require base_path('routes/console.php');
 
         Artisan::command('fastTask:run', function() {
+//* * * * * ( cd /home/pata/projects/myinst/ && /usr/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//* * * * * ( sleep 10 ; cd /home/pata/projects/myinst/ && /usr/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//* * * * * ( sleep 20 ; cd /home/pata/projects/myinst/ && /usr/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//* * * * * ( sleep 30 ; cd /home/pata/projects/myinst/ && /usr/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//* * * * * ( sleep 40 ; cd /home/pata/projects/myinst/ && /usr/bin/php artisan fastTask:run > /dev/null 2>&1 )
+//* * * * * ( sleep 50 ; cd /home/pata/projects/myinst/ && /usr/bin/php artisan fastTask:run > /dev/null 2>&1 )
+
+
 //***** ( cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
 //***** ( sleep 10 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
 //***** ( sleep 20 ; cd /home/fhsjewrv/mygram.in.ua/ && /usr/local/bin/php artisan fastTask:run > /dev/null 2>&1 )
