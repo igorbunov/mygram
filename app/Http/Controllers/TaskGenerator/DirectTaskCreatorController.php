@@ -111,10 +111,10 @@ class DirectTaskCreatorController
             return false;
         }
 
-        $randomDelayMinutes = rand(4, 8);
+        $randomDelayMinutes = rand(env('MESSAGE_DELAY_MIN_SLEEP', '3'), env('MESSAGE_DELAY_MAX_SLEEP', '5'));
 
         if (!FastTask::isHadRestInLastOneAndHalfHoursDirectTasks($directTask->account_id)) {
-            $randomDelayMinutes = rand(40, 60);
+            $randomDelayMinutes = rand(40, 50);
         }
 
         FastTask::addTask($directTask->account_id,
