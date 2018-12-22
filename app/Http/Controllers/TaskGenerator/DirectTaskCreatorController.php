@@ -105,13 +105,26 @@ class DirectTaskCreatorController
             return false;
         }
 
+        $lastTask = FastTask::getLastTask($directTask->account_id, FastTask::TYPE_DIRECT_ANSWER);
+        $lastDelay = 0;
+
+        if (!is_null($lastTask)) {
+            $lastDelay = $lastTask->delay;
+        }
+
         $lastHourDirectCount = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
 
         if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
             return false;
         }
 
-        $randomDelayMinutes = rand(env('MESSAGE_DELAY_MIN_SLEEP', '3'), env('MESSAGE_DELAY_MAX_SLEEP', '5'));
+        for($i = 0; $i < 5; $i++) {
+            $randomDelayMinutes = rand(env('MESSAGE_DELAY_MIN_SLEEP', '3'), env('MESSAGE_DELAY_MAX_SLEEP', '5'));
+
+            if ($lastDelay != $randomDelayMinutes) {
+                break;
+            }
+        }
 
         if (!FastTask::isHadRestInLastOneAndHalfHoursDirectTasks($directTask->account_id)) {
             $randomDelayMinutes = rand(40, 50);
