@@ -220,6 +220,7 @@ $(document).ready(function() {
         }
 
         var accountId = $(this).data('accountId');
+        $('#preloader').show();
 
         $.ajax({
             url: '/safelist_update',
@@ -233,14 +234,14 @@ $(document).ready(function() {
             },
             success: function (data) {
                 if (data.success) {
-debugger;
+                    vaitForFastTaskComplete(data.fastTaskId, '/safelist/' + accountId);
                 } else {
+                    $('#preloader').hide();
                     alert(data.message);
                 }
             },
             error: function () {
-                // $('#preloader').hide();
-                // clearInterval(intervalId);
+                $('#preloader').hide();
             }
         });
     });

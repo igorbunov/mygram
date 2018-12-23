@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskList extends Model
 {
+    const TYPE_DIRECT = 'direct';
+    const TYPE_UNSUBSCRIBE = 'unsubscribe';
+
     public function directTasks() {
         return $this->hasMany('App\DirectTask', 'task_list_id', 'id');
     }

@@ -7,6 +7,7 @@ use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
 use App\Http\Controllers\InstagramTasksRunner\AccountSubscribersRunner;
 use App\Http\Controllers\InstagramTasksRunner\AccountWhiteListRunner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
+use App\Http\Controllers\InstagramTasksRunner\UnsubscribeTaskRunner;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -205,6 +206,20 @@ class FastTask extends Model
                     Log::error('Error running task get new subscribers: ' . $errorMessage);
 
                     self::mailToDeveloper('ошибка выполнения задачи subscribers', $errorMessage);
+                } finally {
+                    FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
+                }
+
+                break;
+            case self::TYPE_UNSUBSCRIBE:
+                try {
+                    UnsubscribeTaskRunner::runUnsubscribeTasks($task->task_id, $task->account_id);
+                } catch (\Exception $err) {
+                    $errorMessage = $err->getMessage();
+
+                    Log::error('Error running task unsubscribe: ' . $errorMessage);
+
+                    self::mailToDeveloper('ошибка выполнения задачи unsubscribe', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }

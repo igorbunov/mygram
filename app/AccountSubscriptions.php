@@ -8,6 +8,45 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscriptions extends Model
 {
+    public static function getNotUnsubscribedFollowers(int $accountId)
+    {
+        $filter = [
+            'owner_account_id' => $accountId,
+            'is_unsubscribed' => 0,
+            'is_in_safelist' => 0
+        ];
+
+        $res = self::where($filter)->get();
+
+        return $res;
+    }
+
+    public static function isUnsubscribed(int $followerId)
+    {
+        $res = self::find($followerId);
+
+        if (is_null($res)) {
+            Log::error('не смог найти подписку по айди: ' . $followerId);
+            return true;
+        }
+
+        return ($res->is_unsubscribed == 1);
+    }
+
+    public static function setUnsubscribed(int $followerId, bool $isUnsubscribed = true)
+    {
+        $res = self::find($followerId);
+
+        if (is_null($res)) {
+            Log::error('не смог найти субскрайбера по айди: ' . $followerId);
+            return;
+        }
+
+        $res->is_unsubscribed = ($isUnsubscribed) ? 1 : 0;
+
+        $res->save();
+    }
+
     public static function setAllNotInSafelist(int $accountId)
     {
         self::where(['owner_account_id' => $accountId])->update(['is_in_safelist' => 0]);
@@ -33,7 +72,8 @@ class AccountSubscriptions extends Model
     public static function getAll(int $accountId, bool $isAll, bool $asArray = false, int $start = 0, int $limit = 50)
     {
         $filter = [
-            'owner_account_id' => $accountId
+            'owner_account_id' => $accountId,
+            'is_unsubscribed' => 0
         ];
 
         if (!$isAll) {

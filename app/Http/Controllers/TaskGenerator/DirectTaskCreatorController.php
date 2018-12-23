@@ -52,7 +52,7 @@ class DirectTaskCreatorController
             try {
                 foreach ($accounts as $account) {
                     foreach ($tasksTypes as $taskType) {
-                        if ('direct' == $taskType->type) {
+                        if (TaskList::TYPE_DIRECT == $taskType->type) {
                             $taskListId = $taskType->id;
                             $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id, true);
 
@@ -72,8 +72,6 @@ class DirectTaskCreatorController
                                     Log::debug("direct task added to fast tasks: " . $directTask->id);
                                 }
                             }
-                        } else {
-                            Log::error("bad task type: " . $taskType->type);
                         }
                     }
                 }
@@ -118,7 +116,7 @@ class DirectTaskCreatorController
             return false;
         }
 
-        for($i = 0; $i < 5; $i++) {
+        for($i = 0; $i < 20; $i++) {
             $randomDelayMinutes = rand(env('MESSAGE_DELAY_MIN_SLEEP', '3'), env('MESSAGE_DELAY_MAX_SLEEP', '5'));
 
             if ($lastDelay != $randomDelayMinutes) {
@@ -129,6 +127,8 @@ class DirectTaskCreatorController
         if (!FastTask::isHadRestInLastOneAndHalfHoursDirectTasks($directTask->account_id)) {
             $randomDelayMinutes = rand(40, 50);
         }
+
+        Log::debug('Delay time (minutes): ' . $randomDelayMinutes);
 
         FastTask::addTask($directTask->account_id,
             FastTask::TYPE_DIRECT_ANSWER,

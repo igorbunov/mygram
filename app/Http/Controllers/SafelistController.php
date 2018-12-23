@@ -125,9 +125,9 @@ class SafelistController extends Controller
 
         Safelist::setStatus($safeList->id, Safelist::STATUS_UPDATING);
 
-        FastTask::addTask($accountId, FastTask::TYPE_REFRESH_WHITELIST, $safeList->id);
+        $fastTaskId = FastTask::addTask($accountId, FastTask::TYPE_REFRESH_WHITELIST, $safeList->id);
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'fastTaskId' => $fastTaskId]);
     }
 
     public function index()

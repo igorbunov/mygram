@@ -180,6 +180,11 @@ class MyInstagram
         return $this->instagram->direct->sendText(['users' => [$receiverPK]], $message);
     }
 
+    public function unsubscribe(string $userPK)
+    {
+        return $this->instagram->people->unfollow($userPK);
+    }
+
     public function getInfo()
     {
         $result = [];

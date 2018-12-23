@@ -8,6 +8,7 @@ use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Http\Controllers\TaskGenerator\FastTaskGenerator;
+use App\Http\Controllers\TaskGenerator\UnsubscribeTaskCreatorController;
 use App\Tariff;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -43,16 +44,24 @@ class Kernel extends ConsoleKernel
             TaskController::disableAccountsAndTasksByEndTariff();
         })->daily();
 
-        if (env('PROJECT_PATH') == '/home/pata/projects/myinst') {
-//            $schedule->call(function() {
-//                Log::debug('== Run chedule direct task generator == ');
+        if (env('PROJECT_PATH') == '/home/pata/projects/myinst/') {
+            $schedule->call(function() {
+                Log::debug('== Run schedule tasks generator == ');
+
 //                DirectTaskCreatorController::tasksGenerator();
-//            })->everyMinute();
+//                UnsubscribeTaskCreatorController::tasksGenerator();
+            })->everyMinute();
         } else {
             $schedule->call(function() {
-                Log::debug('== Run chedule direct task generator == ');
+                Log::debug('== Run schedule direct task generator == ');
 
-                DirectTaskCreatorController::tasksGenerator();
+                if (env('IS_DIRECT_WORKS', false)) {
+                    DirectTaskCreatorController::tasksGenerator();
+                }
+
+                if (env('IS_UNSUBSCRIBE_WORKS', false)) {
+                    UnsubscribeTaskCreatorController::tasksGenerator();
+                }
             })->everyMinute();//TODO: remove
         }
     }
