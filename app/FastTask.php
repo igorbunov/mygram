@@ -34,7 +34,7 @@ class FastTask extends Model
                IFNULL(SUM(IF(delay > 15, 1, 0)), 0) AS is_rest
             FROM fast_tasks
             WHERE task_type = :type AND account_id = :accountId
-                AND updated_at > (NOW() - INTERVAL 80 MINUTE) 
+                AND updated_at > (NOW() - INTERVAL 100 MINUTE) 
             ORDER BY id DESC
             LIMIT {$runsPerHour}", [':type' => self::TYPE_UNSUBSCRIBE, ':accountId' => $accountId]);
 
