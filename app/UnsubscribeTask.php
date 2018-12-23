@@ -38,11 +38,11 @@ class UnsubscribeTask extends Model
             'account_id' => $accountId,
             'task_list_id' => $taskListId
         ];
-
+//dd($activeAndPaused);
         if ($activeAndPaused) {
             $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->first();
         } else {
-            $filter['status'] = self::STATUS_ACTIVE;
+//            $filter['status'] = self::STATUS_ACTIVE;
 
             $res = self::where($filter)->first();
         }

@@ -77,71 +77,6 @@
             </section>
         @endforeach
 
-        @if($currentTariff != null)
-            <div class="row">
-                <div class="col-lg-12 d-flex justify-content-around">
-                    <div class="p-2">
-                        <button type="button" class="btn btn-dark" id="add-task-btn">Добавить</button>
-                    </div>
-                    <div class="p-2 ml-auto">
-                        @if($onlyActiveTasks == true)
-                            <button type="button" class="btn btn-dark" data-all="true" data-account-id="{{ $account->id }}" id="all-tasks-btn">Все задания</button>
-                        @else
-                            <button type="button" class="btn btn-dark" data-all="false" data-account-id="{{ $account->id }}" id="all-tasks-btn">Активные задания</button>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <div id="add-task-form">
-                <form>
-                    <input type="hidden" id="add-task-account-id" value="{{ $account->id }}" />
-
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <label for="add-task-task-type" class="my-label">Тип задания</label>
-                            <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="add-task-task-type" name="task_list_id">
-                                @foreach($taskList as $i => $taskListItem)
-                                    @if($i == 0)
-                                        <option selected value="{{ $taskListItem->id }}"
-                                                data-task-type="{{ $taskListItem->type }}">
-                                            {{ $taskListItem->title }}</option>
-                                    @else
-                                        <option value="{{ $taskListItem->id }}"
-                                                data-task-type="{{ $taskListItem->type }}">
-                                            {{ $taskListItem->title }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <selection id="add-direct-task">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <label for="add-direct-task-text" class="my-label">Текст сообщения</label>
-                                <textarea class="form-control" id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
-                            </div>
-                        </div>
-
-                    </selection>
-
-                    <selection id="add-unfollowing-task">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <h3>unfollowing task</h3>
-                            </div>
-                        </div>
-                    </selection>
-
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <button type="button" class="btn btn-success" id="add-task-submit">Сохранить</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        @endif
 
 
         @if($unsubscribeTask != null)
@@ -211,5 +146,72 @@
                 </section>
 
         @endif
+
+
+            @if($currentTariff != null)
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-around">
+                        <div class="p-2">
+                            <button type="button" class="btn btn-dark" id="add-task-btn">Добавить</button>
+                        </div>
+                        <div class="p-2 ml-auto">
+                            @if($onlyActiveTasks == true)
+                                <button type="button" class="btn btn-dark" data-all="true" data-account-id="{{ $account->id }}" id="all-tasks-btn">Все задания</button>
+                            @else
+                                <button type="button" class="btn btn-dark" data-all="false" data-account-id="{{ $account->id }}" id="all-tasks-btn">Активные задания</button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div id="add-task-form">
+                    <form>
+                        <input type="hidden" id="add-task-account-id" value="{{ $account->id }}" />
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <label for="add-task-task-type" class="my-label">Тип задания</label>
+                                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="add-task-task-type" name="task_list_id">
+                                    @foreach($taskList as $i => $taskListItem)
+                                        @if($i == 0)
+                                            <option selected value="{{ $taskListItem->id }}"
+                                                    data-task-type="{{ $taskListItem->type }}">
+                                                {{ $taskListItem->title }}</option>
+                                        @else
+                                            <option value="{{ $taskListItem->id }}"
+                                                    data-task-type="{{ $taskListItem->type }}">
+                                                {{ $taskListItem->title }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <selection id="add-direct-task">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <label for="add-direct-task-text" class="my-label">Текст сообщения</label>
+                                    <textarea class="form-control" id="add-direct-task-text" name="direct_text" style="width: 100%; height: 100px;"></textarea>
+                                </div>
+                            </div>
+
+                        </selection>
+
+                        <selection id="add-unfollowing-task">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h3>unfollowing task</h3>
+                                </div>
+                            </div>
+                        </selection>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" class="btn btn-success" id="add-task-submit">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            @endif
     </div>
 @stop
