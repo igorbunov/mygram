@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\account;
 use App\AccountSubscribers;
+use App\AccountSubscriptions;
 use App\DirectTask;
 use App\DirectTaskReport;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
@@ -77,7 +78,9 @@ class TaskController extends Controller
                 }
 
                 $unsubscribeTask->taskList = $taskListItem;
-                $unsubscribeTask->safelist = Safelist::getByAccountId($accountId);
+                $unsubscribeTask->safelistStats = AccountSubscriptions::getStatistics($accountId);
+//                dd($unsubscribeTask->safelistStats);
+//                $unsubscribeTask->safelist = Safelist::getByAccountId($accountId);
 
 //                foreach ($unsubscribeTask as $i => $directTask) {
 //                    $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);

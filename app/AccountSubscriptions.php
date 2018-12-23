@@ -8,6 +8,20 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscriptions extends Model
 {
+    public static function getStatistics(int $accountId)
+    {
+        $res = DB::select("SELECT COUNT(1) AS total
+                , SUM(is_in_safelist) AS selected
+                , SUM(is_unsubscribed) AS unsubscribed 
+            FROM account_subscriptions WHERE owner_account_id = ?", [$accountId]);
+
+        if (is_null($res) or count($res) == 0) {
+            return $res;
+        }
+
+        return $res[0];
+    }
+
     public static function getNotUnsubscribedFollowers(int $accountId)
     {
         $filter = [
