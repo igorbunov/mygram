@@ -123,9 +123,9 @@ class UnsubscribeTaskCreatorController
         }
 
         //TODO:
-//        if (!FastTask::isHadRestInLastOneAndHalfHoursDirectTasks($unsubscribeTask->account_id)) {
-//            $randomDelayMinutes = rand(20, 30);
-//        }
+        if (!FastTask::isHadRestInLastOneAndHalfHoursUnsubscribeTasks($unsubscribeTask->account_id)) {
+            $randomDelayMinutes = rand(20, 30);
+        }
 
         Log::debug('Delay time (minutes): ' . $randomDelayMinutes);
 

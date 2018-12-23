@@ -25,6 +25,34 @@ class FastTask extends Model
     const TYPE_REFRESH_WHITELIST = 'refresh_whitelist';
     const TYPE_GET_NEW_SUBSCRIBERS = 'get_new_subscribers';
 
+    public static function isHadRestInLastOneAndHalfHoursUnsubscribeTasks(int $accountId): bool
+    {
+        $runsPerHour = (int) 60 / env('UNSUBSCRIBE_DELAY_MIN_SLEEP', 3);
+
+        $res = DB::select("SELECT
+               COUNT(1) AS cnt,
+               IFNULL(SUM(IF(delay > 15, 1, 0)), 0) AS is_rest
+            FROM fast_tasks
+            WHERE task_type = :type AND account_id = :accountId
+                AND updated_at > (NOW() - INTERVAL 80 MINUTE) 
+            ORDER BY id DESC
+            LIMIT {$runsPerHour}", [':type' => self::TYPE_UNSUBSCRIBE, ':accountId' => $accountId]);
+
+        if (is_null($res) or count($res) == 0) {
+            Log::debug('is had rest: zero');
+            return true;
+        }
+
+        $row = $res[0];
+
+        Log::debug('runsPerHour: ' . $runsPerHour . ' res: ' . \json_encode($row));
+
+        if ($row->cnt > ($runsPerHour - 2)) {
+            return ($row->is_rest > 0);
+        }
+
+        return true;
+    }
     public static function isHadRestInLastOneAndHalfHoursDirectTasks(int $accountId): bool
     {
         $res = DB::select("SELECT

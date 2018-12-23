@@ -79,18 +79,9 @@ class TaskController extends Controller
 
                 $unsubscribeTask->taskList = $taskListItem;
                 $unsubscribeTask->safelistStats = AccountSubscriptions::getStatistics($accountId);
-//                dd($unsubscribeTask->safelistStats);
-//                $unsubscribeTask->safelist = Safelist::getByAccountId($accountId);
-
-//                foreach ($unsubscribeTask as $i => $directTask) {
-//                    $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
-//                    $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
-//                    $directTasks[$i]->inQueue = count($unsendedFollowers);
-//                    $directTasks[$i]->taskType = $taskListItem->type;
-//                }
             }
         }
-//dd($unsubscribeTask->safelist->toArray());
+
         return view('account_task', [
             'title' => 'Задачи @' . $account->nickname,
             'activePage' => 'tasks',
