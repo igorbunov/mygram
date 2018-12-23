@@ -8,10 +8,12 @@ use App\DirectTask;
 use App\DirectTaskReport;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
+use App\Safelist;
 use App\Tariff;
 use App\TariffList;
 use App\Task;
 use App\TaskList;
+use App\UnsubscribeTask;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -51,10 +53,15 @@ class TaskController extends Controller
         $avaliableTaskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
 
         $directTasks = [];
+        $unsubscribeTask = [];
 
         foreach ($avaliableTaskList as $taskListItem) {
-            if ('direct' == $taskListItem->type) {
-                $directTasks = DirectTask::getDirectTasksByTaskListId($taskListItem->id,$accountId, $onlyActiveTasks);
+            if (TaskList::TYPE_DIRECT == $taskListItem->type) {
+                $directTasks = DirectTask::getDirectTasksByTaskListId($taskListItem->id, $accountId, $onlyActiveTasks);
+
+                if (is_null($directTasks)) {
+                    continue;
+                }
 
                 foreach ($directTasks as $i => $directTask) {
                     $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
@@ -62,15 +69,30 @@ class TaskController extends Controller
                     $directTasks[$i]->inQueue = count($unsendedFollowers);
                     $directTasks[$i]->taskType = $taskListItem->type;
                 }
-            } else if ('unfollowing' == $taskListItem->type) {
+            } else if (TaskList::TYPE_UNSUBSCRIBE == $taskListItem->type) {
+                $unsubscribeTask = UnsubscribeTask::getActiveUnsubscribeTaskByTaskListId($taskListItem->id, $accountId, $onlyActiveTasks);
 
+                if (is_null($unsubscribeTask)) {
+                    continue;
+                }
+
+                $unsubscribeTask->taskList = $taskListItem;
+                $unsubscribeTask->safelist = Safelist::getByAccountId($accountId);
+
+//                foreach ($unsubscribeTask as $i => $directTask) {
+//                    $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
+//                    $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
+//                    $directTasks[$i]->inQueue = count($unsendedFollowers);
+//                    $directTasks[$i]->taskType = $taskListItem->type;
+//                }
             }
         }
-
+//dd($unsubscribeTask->safelist->toArray());
         return view('account_task', [
             'title' => 'Задачи @' . $account->nickname,
             'activePage' => 'tasks',
             'directTasks' => $directTasks,
+            'unsubscribeTask' => $unsubscribeTask,
             'account' => $account,
             'taskList' => $taskList,
             'onlyActiveTasks' => $onlyActiveTasks,

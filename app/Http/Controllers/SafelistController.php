@@ -94,6 +94,8 @@ class SafelistController extends Controller
             return response()->json(['success' => false,'message' => 'Ошибка, не удалось изменить статус']);
         }
 
+        Safelist::updateStatistics($safeList->id);
+
         return response()->json(['success' => true, 'is_checked' => $isChecked, 'accountId' => $accountId]);
     }
 

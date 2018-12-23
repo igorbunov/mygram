@@ -11,6 +11,20 @@ class Safelist extends Model
     const STATUS_UPDATING = 'updating';
     const STATUS_SYNCHRONIZED = 'synchronized';
 
+    public static function updateStatistics(int $safelistId)
+    {
+        $res = self::find($safelistId);
+
+        if (is_null($res)) {
+            return;
+        }
+
+        $selected = AccountSubscriptions::getSelected($res->account_id);
+
+        $res->selected_accounts = count($selected);
+        $res->save();
+    }
+
     public static function getOrCreate(int $accountId, bool $asArray = false)
     {
         $res = self::where([

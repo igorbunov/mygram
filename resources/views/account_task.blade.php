@@ -142,5 +142,74 @@
                 </form>
             </div>
         @endif
+
+
+        @if($unsubscribeTask != null)
+                {{--"id" => 1--}}
+                {{--"account_id" => 2--}}
+                {{--"status" => "active"--}}
+                {{--"task_list_id" => 3--}}
+                {{--"total" => 6--}}
+                {{--"success_count" => 6--}}
+                {{--"failure_count" => 0--}}
+                {{--"created_at" => null--}}
+                {{--"updated_at" => "2018-12-23 14:37:25"--}}
+                <section class="account-tasks {{ $unsubscribeTask->status }}">
+                    <div class="row">
+                        <div class="col-lg-12 d-flex">
+                            <div class="p-2 account-tasks-type-title">{{ $unsubscribeTask->taskList->title }}</div>
+
+                            {{--<div class="p-2 ml-auto">--}}
+                                {{--@if($currentTariff != null)--}}
+                                    {{--@if($unsubscribeTask->status == \App\DirectTask::STATUS_ACTIVE)--}}
+                                        {{--<div class="btn-dark my-btn pause-task"--}}
+                                             {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
+                                             {{--data-account-id="{{ $account->id }}"--}}
+                                             {{--data-task-id="{{ $unsubscribeTask->id }}">--}}
+                                            {{--<i class="fas fa-pause"></i>--}}
+                                        {{--</div>--}}
+                                    {{--@elseif($unsubscribeTask->status == \App\DirectTask::STATUS_PAUSED)--}}
+                                        {{--<div class="btn-dark my-btn unpause-task"--}}
+                                             {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
+                                             {{--data-account-id="{{ $account->id }}"--}}
+                                             {{--data-task-id="{{ $unsubscribeTask->id }}">--}}
+                                            {{--<i class="fas fa-play"></i>--}}
+                                        {{--</div>--}}
+                                    {{--@endif--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+
+                            {{--<div class="p-2">--}}
+                                {{--@if($currentTariff != null)--}}
+                                    {{--@if($unsubscribeTask->status != \App\DirectTask::STATUS_DEACTIVATED)--}}
+                                        {{--<div class="btn-dark my-btn task-deactivate"--}}
+                                             {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
+                                             {{--data-account-id="{{ $account->id }}"--}}
+                                             {{--data-task-id="{{ $unsubscribeTask->id }}">--}}
+                                            {{--<i class="fas fa-trash"></i>--}}
+                                        {{--</div>--}}
+                                    {{--@elseif($unsubscribeTask->status == \App\DirectTask::STATUS_DEACTIVATED)--}}
+                                        {{--<button type="button" class="btn btn-basic task-activate"--}}
+                                                {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
+                                                {{--data-account-id="{{ $account->id }}"--}}
+                                                {{--data-task-id="{{ $unsubscribeTask->id }}">Активировать</button>--}}
+                                    {{--@endif--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 d-flex flex-row">
+                            <div class="p-2">Подписок: {{ $unsubscribeTask->safelist->total_subscriptions }}</div>
+                            <div class="p-2">В белом списке: {{ $unsubscribeTask->safelist->selected_accounts }}</div>
+                            <div class="p-2">Всего: {{ $unsubscribeTask->total }}</div>
+                            <div class="p-2">Удачно: {{ $unsubscribeTask->success_count }}</div>
+                            <div class="p-2">Ошибок: {{ $unsubscribeTask->failure_count }}</div>
+                        </div>
+                    </div>
+
+                </section>
+
+        @endif
     </div>
 @stop
