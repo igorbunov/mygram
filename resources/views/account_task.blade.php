@@ -105,23 +105,23 @@
                                 @endif
                             </div>
 
-                            {{--<div class="p-2">--}}
-                                {{--@if($currentTariff != null)--}}
-                                    {{--@if($unsubscribeTask->status != \App\DirectTask::STATUS_DEACTIVATED)--}}
-                                        {{--<div class="btn-dark my-btn task-deactivate"--}}
-                                             {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
-                                             {{--data-account-id="{{ $account->id }}"--}}
-                                             {{--data-task-id="{{ $unsubscribeTask->id }}">--}}
-                                            {{--<i class="fas fa-trash"></i>--}}
-                                        {{--</div>--}}
-                                    {{--@elseif($unsubscribeTask->status == \App\DirectTask::STATUS_DEACTIVATED)--}}
-                                        {{--<button type="button" class="btn btn-basic task-activate"--}}
-                                                {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
-                                                {{--data-account-id="{{ $account->id }}"--}}
-                                                {{--data-task-id="{{ $unsubscribeTask->id }}">Активировать</button>--}}
-                                    {{--@endif--}}
-                                {{--@endif--}}
-                            {{--</div>--}}
+                            <div class="p-2">
+                                @if($currentTariff != null)
+                                    @if($unsubscribeTask->status != \App\DirectTask::STATUS_DEACTIVATED)
+                                        <div class="btn-dark my-btn task-deactivate"
+                                             data-task-type="{{ $unsubscribeTask->taskType }}"
+                                             data-account-id="{{ $account->id }}"
+                                             data-task-id="{{ $unsubscribeTask->id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </div>
+                                    @elseif($unsubscribeTask->status == \App\DirectTask::STATUS_DEACTIVATED)
+                                        <button type="button" class="btn btn-basic task-activate"
+                                                data-task-type="{{ $unsubscribeTask->taskType }}"
+                                                data-account-id="{{ $account->id }}"
+                                                data-task-id="{{ $unsubscribeTask->id }}">Активировать</button>
+                                    @endif
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <div class="row">
