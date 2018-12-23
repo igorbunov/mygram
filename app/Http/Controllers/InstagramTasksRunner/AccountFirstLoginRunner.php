@@ -18,7 +18,7 @@ class AccountFirstLoginRunner
     public static function tryLogin(int $accountId)
     {
         Log::debug('runned tryLogin task for account id: ' . $accountId);
-        $account = account::getAccountById($accountId);
+        $account = account::getAccountById($accountId, false);
 
         if (is_null($account)) {
             Log::error('account not found');
