@@ -8,6 +8,21 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscriptions extends Model
 {
+    public static function isTaskDone(int $accountId)
+    {
+        $res = DB::select("SELECT COUNT(1) AS cnt
+            FROM account_subscriptions 
+            WHERE owner_account_id = ? 
+                AND is_unsubscribed = 0 
+                AND is_in_safelist = 0", [$accountId]);
+
+        if (is_null($res) or count($res) == 0) {
+            return true;
+        }
+
+        return ($res[0]->cnt > 0);
+    }
+
     public static function getStatistics(int $accountId)
     {
         $res = DB::select("SELECT COUNT(1) AS total

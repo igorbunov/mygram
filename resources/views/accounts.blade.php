@@ -37,6 +37,11 @@
                             <div style="color: darkblue;">
                                 <h3>Логин/пароль не верный</h3>
                             </div>
+                            <div class="ml-auto p-2">
+                                <button type="button" class="btn btn-basic account-relogin"
+                                        data-account-id="{{ $account->id }}"
+                                    >Войти</button>
+                            </div>
                         @endif
 
                     </div>
@@ -71,6 +76,7 @@
 
             <div id="add-account-form">
                 <form>
+                    <input type="hidden" id="add-account-account-id" value="0" />
                     <div class="row">
                         <div class="col-lg-12">
                             <label for="account-name" class="my-label">Аккаунт</label>

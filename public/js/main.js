@@ -289,6 +289,11 @@ $(document).ready(function() {
                             $('#preloader').hide();
                             clearInterval(intervalId);
 
+                            // if (data.is_two_factor_login) {
+                            //     debugger;
+                            //     return;
+                            // }
+
                             if (redirectUrl) {
                                 location.href = redirectUrl;
                             }
@@ -466,11 +471,19 @@ $(document).ready(function() {
         });
     };
 
+    $('.account-relogin').click(function () {
+        var accountId = $(this).data('accountId');
+
+        $('#add-account-form').show();
+        $("#add-account-account-id").val(accountId);
+    });
+
     $("#add-account-submit").click(function () {
         $('#preloader').show();
 
         var login = $('#account-name').val(),
-            pass = $('#account-password').val();
+            pass = $('#account-password').val(),
+            accountId = $("#add-account-account-id").val();
 
         $.ajax({
             url: '/add_account',
@@ -481,7 +494,8 @@ $(document).ready(function() {
             dataType: 'json',
             data: {
                 account_name: login,
-                account_password: pass
+                account_password: pass,
+                account_id: accountId
             },
             success: function(data) {
                 if (data.success && data.fastTaskId > 0) {
@@ -501,7 +515,6 @@ $(document).ready(function() {
         var taskType = $("#add-task-task-type").find(':selected').data('taskType');
         var accountId = $('#add-task-account-id').val();
         var directText = $('#add-direct-task-text').val();
-        var isWorkInNight = $('#add-direct-task-work-only-in-night').is(":checked");
         var taskListId = $('#add-task-task-type').val();
 
         $.ajax({

@@ -11,6 +11,7 @@ namespace App\Http\Controllers\InstagramTasksRunner;
 use App\account;
 use App\AccountSubscriptions;
 use App\Http\Controllers\MyInstagram\MyInstagram;
+use App\Safelist;
 use App\UnsubscribeTask;
 use App\UnsubscribeTaskReport;
 use Illuminate\Support\Facades\Log;
@@ -78,11 +79,13 @@ class UnsubscribeTaskRunner
             UnsubscribeTaskReport::writeStatistics($resultArr);
 
             $unsubscribeCounter++;
-
-//            break;
         }
 
-        UnsubscribeTask::updateStatistics($unsubscribeTaskId);
+        if (AccountSubscriptions::isTaskDone($accountId)) {
+            UnsubscribeTask::updateStatistics($unsubscribeTaskId, true);
+        } else {
+            UnsubscribeTask::updateStatistics($unsubscribeTaskId);
+        }
 
         Log::debug('=== done ===');
     }

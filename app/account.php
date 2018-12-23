@@ -70,6 +70,25 @@ class account extends Model
         return $account->id;
     }
 
+    public static function editById(array $data)
+    {
+        $account = self::getAccountById($data['account_id'], false);
+//dd($data['account_id'], $data);
+        if (is_null($account)) {
+            return 0;
+        }
+
+        $account->picture = '';
+        $account->response = '';
+        $account->user_id = $data['user_id'];
+        $account->nickname = $data['nickname'];
+        $account->password = $data['password'];
+
+        $account->save();
+
+        return $account->id;
+    }
+
     public function user() {
         return $this->belongsTo('App\User', 'user_id', 'id');
     }

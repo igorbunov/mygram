@@ -57,13 +57,14 @@ class AccountController extends Controller
         }
 
         $res['currentTariff'] = Tariff::getUserCurrentTariffForMainView($userId);
-
+//dd($userId, $res['currentTariff']);
         return view('accounts', $res);
     }
 
     public function create(Request $req)
     {
         $userId = (int) session('user_id', 0);
+        $accountId = (int) $req->post('account_id', 0);
 
         if ($userId == 0) {
             return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
@@ -88,11 +89,21 @@ class AccountController extends Controller
             return response()->json(['success' => false, 'message' => 'Заполните все поля']);
         }
 
-        $accountId = account::addNew([
-            'user_id' => $userId,
-            'nickname' => $nickname,
-            'password' => Crypt::encryptString($password)
-        ]);
+        if ($accountId == 0) {
+            $accountId = account::addNew([
+                'user_id' => $userId,
+                'nickname' => $nickname,
+                'password' => Crypt::encryptString($password)
+            ]);
+        } else {
+            $accountId = account::editById([
+                'account_id' => $accountId,
+                'user_id' => $userId,
+                'nickname' => $nickname,
+                'password' => Crypt::encryptString($password)
+            ]);
+//            dd($accountId);
+        }
 
         if ($accountId == 0) {
             return response()->json(['success' => false, 'message' => 'Не удалось создать аккаунт']);
