@@ -85,25 +85,25 @@
                         <div class="col-lg-12 d-flex">
                             <div class="p-2 account-tasks-type-title">{{ $unsubscribeTask->taskList->title }}</div>
 
-                            {{--<div class="p-2 ml-auto">--}}
-                                {{--@if($currentTariff != null)--}}
-                                    {{--@if($unsubscribeTask->status == \App\DirectTask::STATUS_ACTIVE)--}}
-                                        {{--<div class="btn-dark my-btn pause-task"--}}
-                                             {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
-                                             {{--data-account-id="{{ $account->id }}"--}}
-                                             {{--data-task-id="{{ $unsubscribeTask->id }}">--}}
-                                            {{--<i class="fas fa-pause"></i>--}}
-                                        {{--</div>--}}
-                                    {{--@elseif($unsubscribeTask->status == \App\DirectTask::STATUS_PAUSED)--}}
-                                        {{--<div class="btn-dark my-btn unpause-task"--}}
-                                             {{--data-task-type="{{ $unsubscribeTask->taskType }}"--}}
-                                             {{--data-account-id="{{ $account->id }}"--}}
-                                             {{--data-task-id="{{ $unsubscribeTask->id }}">--}}
-                                            {{--<i class="fas fa-play"></i>--}}
-                                        {{--</div>--}}
-                                    {{--@endif--}}
-                                {{--@endif--}}
-                            {{--</div>--}}
+                            <div class="p-2 ml-auto">
+                                @if($currentTariff != null)
+                                    @if($unsubscribeTask->status == \App\UnsubscribeTask::STATUS_ACTIVE)
+                                        <div class="btn-dark my-btn pause-task"
+                                             data-task-type="{{ $unsubscribeTask->taskType }}"
+                                             data-account-id="{{ $account->id }}"
+                                             data-task-id="{{ $unsubscribeTask->id }}">
+                                            <i class="fas fa-pause"></i>
+                                        </div>
+                                    @elseif($unsubscribeTask->status == \App\UnsubscribeTask::STATUS_PAUSED)
+                                        <div class="btn-dark my-btn unpause-task"
+                                             data-task-type="{{ $unsubscribeTask->taskType }}"
+                                             data-account-id="{{ $account->id }}"
+                                             data-task-id="{{ $unsubscribeTask->id }}">
+                                            <i class="fas fa-play"></i>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
 
                             {{--<div class="p-2">--}}
                                 {{--@if($currentTariff != null)--}}
@@ -192,7 +192,10 @@
                         <selection id="add-unfollowing-task">
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <h3>unfollowing task</h3>
+                                    <h3>Массовая отписка</h3>
+                                    <p>Перед созданием задания, убедитесь что заполнен
+                                        <a href="/safelist/{{ $account->id }}" style="color: blue;font-weight: bold;">"Белый список"</a>
+                                    </p>
                                 </div>
                             </div>
                         </selection>

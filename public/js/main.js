@@ -92,8 +92,7 @@ $(document).ready(function() {
     });
 
     $('.clear-safelist-users').click(function () {
-        if (!confirm('Вы действительно хотите очистить избранных клиентов?')) {
-            console.log('no');
+        if (!confirm('Вы действительно хотите очистить белый список?')) {
             return;
         }
 
@@ -105,13 +104,16 @@ $(document).ready(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             method: 'POST',
-            dataType: 'html',
+            dataType: 'json',
             data: {
                 account_id: accountId
             },
             success: function(data) {
-                $("#safelist-container").empty();
-                $("#safelist-container").html(data);
+                if (data.success) {
+                    location.href = '/safelist/' + data.accountId;
+                } else {
+                    alert(data.message);
+                }
             }
         });
     });
@@ -186,14 +188,17 @@ $(document).ready(function() {
     });
 
     $('.pause-task').click(function () {
-        if (!confirm('Вы действительно хотите остановить отправку сообщений?')) {
+        var taskId = $(this).data('taskId')
+            , accountId = $(this).data('accountId')
+            , taskType = $(this).data('taskType')
+            , message = ('direct' == taskType) ? 'Вы действительно хотите остановить отправку сообщений?' : 'Вы действительно хотите остановить отписку?';
+
+
+        if (!confirm(message)) {
             console.log('no');
             return;
         }
 
-        var taskId = $(this).data('taskId')
-            , accountId = $(this).data('accountId')
-            , taskType = $(this).data('taskType');
 
         changeTaskStatus(taskId, taskType, accountId, 'paused');
     });
@@ -347,7 +352,7 @@ $(document).ready(function() {
         var id = $(this).data('accountId');
 
         if (typeof id != 'undefined') {
-            location.href = 'account/' + id;
+            location.href = '/account/' + id;
         }
     });
 
@@ -385,7 +390,7 @@ $(document).ready(function() {
             if (taskType == 'direct') {
                 $('#add-direct-task').show();
                 $('#add-unfollowing-task').hide();
-            } else if (taskType == 'unfollowing') {
+            } else if (taskType == 'unsubscribe') {
                 $('#add-direct-task').hide();
                 $('#add-unfollowing-task').show();
             }
@@ -493,6 +498,7 @@ $(document).ready(function() {
     });
 
     $("#add-task-submit").click(function () {
+        var taskType = $("#add-task-task-type").find(':selected').data('taskType');
         var accountId = $('#add-task-account-id').val();
         var directText = $('#add-direct-task-text').val();
         var isWorkInNight = $('#add-direct-task-work-only-in-night').is(":checked");
@@ -508,7 +514,8 @@ $(document).ready(function() {
             data: {
                 account_id: accountId,
                 direct_text: directText,
-                task_list_id: taskListId
+                task_list_id: taskListId,
+                task_type: taskType
             },
             success: function(data) {
                 if (data.success) {

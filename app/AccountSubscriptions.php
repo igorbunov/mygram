@@ -61,9 +61,9 @@ class AccountSubscriptions extends Model
         $res->save();
     }
 
-    public static function setAllNotInSafelist(int $accountId)
+    public static function clearSafelist(int $accountId)
     {
-        self::where(['owner_account_id' => $accountId])->update(['is_in_safelist' => 0]);
+        self::where(['owner_account_id' => $accountId])->delete();
     }
 
     public static function setIsInSafelist(int $accountId, string $nickname, int $isChecked)

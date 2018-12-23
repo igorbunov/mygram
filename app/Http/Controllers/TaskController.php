@@ -78,6 +78,7 @@ class TaskController extends Controller
                 }
 
                 $unsubscribeTask->taskList = $taskListItem;
+                $unsubscribeTask->taskType = $taskListItem->type;
                 $unsubscribeTask->safelistStats = AccountSubscriptions::getStatistics($accountId);
             }
         }
@@ -132,7 +133,11 @@ class TaskController extends Controller
             $accountId = (int) $req->post('account_id', 0);
             $taskListId = (int) $req->post('task_list_id', 0);
             $directText = $req->post('direct_text', '');
+            $taskType = $req->post('task_type');
 
+            if (empty($taskType)) {
+                return response()->json(['success' => false, 'message' => 'Не выбран тип задания']);
+            }
             if ($accountId == 0) {
                 return response()->json(['success' => false, 'message' => 'Не найден аккаунт']);
             }
@@ -158,7 +163,7 @@ class TaskController extends Controller
 
             foreach ($taskList as $taskListItem) {
                 if ($taskListItem->id == $taskListId) {
-                    if ('direct' == $taskListItem->type) {
+                    if (TaskList::TYPE_DIRECT == $taskListItem->type) {
                         $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $accountId, true);
 
                         if (!is_null($directTask)) {
@@ -170,6 +175,20 @@ class TaskController extends Controller
                             $direct->task_list_id = $taskListId;
                             $direct->message = $directText;
                             $direct->save();
+
+                            return response()->json(['success' => true]);
+                        }
+                    } else if (TaskList::TYPE_UNSUBSCRIBE == $taskListItem->type) {
+                        $unsubscribeTask = UnsubscribeTask::getActiveUnsubscribeTaskByTaskListId($taskListId, $accountId,true);
+
+                        if (!is_null($unsubscribeTask)) {
+                            return response()->json(['success' => false, 'message' => 'Нельзя создавать два задания отписки']);
+                        } else {
+                            $task = new UnsubscribeTask();
+                            $task->account_id = $accountId;
+                            $task->status = DirectTask::STATUS_ACTIVE;
+                            $task->task_list_id = $taskListId;
+                            $task->save();
 
                             return response()->json(['success' => true]);
                         }
@@ -208,7 +227,7 @@ class TaskController extends Controller
             return response()->json(['success' => false, 'error' => 'Это не ваш аккаунт']);
         }
 
-        if ($taskType == 'direct') {
+        if ($taskType == TaskList::TYPE_DIRECT) {
             $activeTaskCount = DirectTask::getActiveTasksCountByAccountId($accountId);
 
             if ($status == DirectTask::STATUS_ACTIVE and $activeTaskCount > 0) {
@@ -234,6 +253,33 @@ class TaskController extends Controller
             return response()->json([
                 'success' => true,
                 'accountId' => $direct->account_id
+            ]);
+        } else if ($taskType == TaskList::TYPE_UNSUBSCRIBE) {
+            $activeUnsubscribeTask = UnsubscribeTask::getUnsubscribeTaskById($taskId, $accountId, false);
+
+            if (is_null($activeUnsubscribeTask)) {
+                return response()->json(['success' => false, 'error' => 'Задание не найдено']);
+            }
+
+//            if ($status == UnsubscribeTask::STATUS_ACTIVE and
+//                ($activeUnsubscribeTask->status == UnsubscribeTask::STATUS_ACTIVE
+//                    or $activeUnsubscribeTask->status == UnsubscribeTask::STATUS_PAUSED)) {
+//                return response()->json([
+//                    'success' => false,
+//                    'error' => 'У аккаунта уже есть одно активное задание. Сначала деактивируйте его.'
+//                ]);
+//            }
+
+            $activeUnsubscribeTask->status = $status;
+            $activeUnsubscribeTask->save();
+
+//            if ($status == DirectTask::STATUS_DEACTIVATED) {
+//                AccountSubscribers::deleteOldFollowers($accountId);
+//            }
+
+            return response()->json([
+                'success' => true,
+                'accountId' => $activeUnsubscribeTask->account_id
             ]);
         }
 

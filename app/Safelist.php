@@ -53,6 +53,13 @@ class Safelist extends Model
         return is_null($res) ? $res : $res->toArray();
     }
 
+    public static function clearAll(int $accountId)
+    {
+        self::where([
+            'account_id' => $accountId
+        ])->delete();
+    }
+
     public static function getById(int $id, bool $asArray = false)
     {
         $res = self::find($id);

@@ -39,19 +39,10 @@ class SafelistController extends Controller
             return response()->json(['success' => false, 'message' => 'Ошибка получения списка']);
         }
 
-        AccountSubscriptions::setAllNotInSafelist($accountId);
+        AccountSubscriptions::clearSafelist($accountId);
+        Safelist::clearAll($accountId);
 
-
-        $allSubscibtions = AccountSubscriptions::getAll($accountId, true);
-
-        $view = view('safelist.safelist_item', [
-            'safelist' => $allSubscibtions,
-            'accountId' => $accountId
-        ]);
-
-        return $view;
-
-//        return response()->json(['success' => true, 'accountId' => $accountId]);
+        return response()->json(['success' => true, 'accountId' => $accountId]);
     }
 
     public function toggleUser(Request $req)
