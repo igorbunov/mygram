@@ -12,7 +12,7 @@ use App\account;
 use App\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
-use InstagramAPI\Instagram;
+use InstagramAPI\Exception\ChallengeRequiredException;
 
 class MyInstagram
 {
@@ -28,7 +28,6 @@ class MyInstagram
         if (!self::includeLibrary()) {
             return;
         }
-
     }
 
     private static function includeLibrary()
@@ -88,7 +87,7 @@ class MyInstagram
 
     public function loginByAccountId(int $accountId)
     {
-        $account = account::getAccountById($accountId);
+        $account = account::getAccountById($accountId, false);
 
         return $this->login($account);
     }
@@ -104,29 +103,81 @@ class MyInstagram
         try {
             $this->account = $account;
 
-            $this->instagram = new Instagram();
-            $respose = '';
+            $this->instagram = new ExtendedInstagram(true);
+            $response = '';
+            $verifyCode = '';
 
-            try {
-                $respose = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
-            } catch (\Exception $err0) {
-                Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
+            if (!empty($this->account->verify_code) and 'sended' == $this->account->verify_code) {
+                try {
+                    $this->instagram->changeUser($this->account->nickname, Crypt::decryptString($this->account->password));
+                    $customResponse = $this->instagram->request($checkApiPath)
+                        ->setNeedsAuth(false)
+                        ->addPost('security_code', $this->account->verify_code)
+                        ->addPost('_uuid', $this->instagram->uuid)
+                        ->addPost('guid', $this->instagram->uuid)
+                        ->addPost('device_id', $this->instagram->device_id)
+                        ->addPost('_uid', $this->instagram->account_id)
+                        ->addPost('_csrftoken', $this->instagram->client->getToken())
+                        ->getDecodedResponse();
+
+                    if ($customResponse['status'] === 'ok' ) {
+                        Log::debug("Finished, logged in successfully! Run this file again to validate that it works.");
+                    } else {
+                        Log::debug("Probably finished...");
+                        Log::debug(\json_encode($customResponse));
+                    }
+                } catch ( \Exception $ex ) {
+                    $verifyCode = 'error';
+                    Log::error($ex->getMessage());
+                }
+            } else {
+                try {
+                    $response = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
+                } catch (\Exception $err0) {
+                    Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
+
+                    if ($err0 instanceof ChallengeRequiredException
+                        && $response->getErrorType() === 'checkpoint_challenge_required') {
+
+                        sleep(3);
+
+                        $checkApiPath = substr( $response->getChallenge()->getApiPath(), 1);
+                        $verification_method = 0; 	//0 = SMS, 1 = Email
+
+                        $customResponse = $this->instagram->request($checkApiPath)
+                            ->setNeedsAuth(false)
+                            ->addPost('choice', $verification_method)
+                            ->addPost('_uuid', $this->instagram->uuid)
+                            ->addPost('guid', $this->instagram->uuid)
+                            ->addPost('device_id', $this->instagram->device_id)
+                            ->addPost('_uid', $this->instagram->account_id)
+                            ->addPost('_csrftoken', $this->instagram->client->getToken())
+                            ->getDecodedResponse();
+
+                        if ($customResponse['status'] === 'ok' && $customResponse['action'] === 'close') {
+                            Log::debug('Checkpoint bypassed');
+                            $verifyCode = 'sended';
+                        }
+                    } else {
+                        Log::error("Not a challenge required exception...");
+                    }
+                }
             }
 
             $this->setRankToken();
 
             $this->accountPK = $this->instagram->account_id;
             $this->accountId = $this->account->id;
-//            $curUserInfo = $this->instagram->people->getInfoById($this->accountPK);
             $curUserInfo = $this->instagram->account->getCurrentUser();
             $profilePictureUrl = $curUserInfo->getUser()->getProfilePicUrl();
 
-            account::setProfilePictureUrl($account->id, $profilePictureUrl);
-
-            account::setLoginStatus([
-                'accountId' => $account->id,
-                'isError' => false,
-                'message' => (is_null($respose)) ? 'session exists' : \json_encode($respose)
+            account::setInfo($account->id, [
+                'picture' => $profilePictureUrl,
+                'pk' => $this->accountPK,
+                'verify_code' => $verifyCode,
+                'is_confirmed' => 1,
+                'is_active' => 1,
+                'message' => (is_null($response)) ? 'session exists' : \json_encode($response)
             ]);
 
             return $this->instagram;

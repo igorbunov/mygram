@@ -19,13 +19,18 @@ class account extends Model
     public static function setInfo(int $accountId, array $info)
     {
         Log::debug('setInfo ' . \json_encode($info));
-        $account = account::getAccountById($accountId);
+        $account = account::getAccountById($accountId, false);
 
         if (!is_null($account)) {
-            $account->picture = $info['picture'];
-            $account->subscribers = $info['followers'];
-            $account->subscriptions = $info['following'];
-            $account->publications = $info['posts'];
+            $account->picture = isset($info['picture']) ? $info['picture'] : '';
+            $account->subscribers = isset($info['followers']) ? (int) $info['followers'] : 0;
+            $account->subscriptions = isset($info['following']) ? (int) $info['following'] : 0;
+            $account->publications = isset($info['posts']) ? (int) $info['posts'] : 0;
+            $account->pk = isset($info['pk']) ? $info['pk'] : '';
+            $account->verify_code = isset($info['verify_code']) ? $info['verify_code'] : '';
+            $account->is_confirmed = isset($info['is_confirmed']) ? (int) $info['is_confirmed'] : 0;
+            $account->is_active = isset($info['is_active']) ? (int) $info['is_active'] : 0;
+            $account->response = isset($info['message']) ? $info['message'] : '';
 
             $account->save();
         }
@@ -43,7 +48,7 @@ class account extends Model
 
     public static function setLoginStatus(array $data)
     {
-        $account = self::getAccountById($data['accountId']);
+        $account = self::getAccountById($data['accountId'], false);
 
         if (is_null($account)) {
             throw new \Exception('account not found');
@@ -128,6 +133,13 @@ class account extends Model
         }
 
         $res = self::where($filter)->first();
+//Log::debug('getAccountById '.\json_encode($res) . ' ' . \json_encode($filter));
+
+//        try {
+//            throw new \Exception('aa');
+//        } catch (\Exception $err) {
+//            Log::error('bad call stack ' . $err->getTraceAsString());
+//        }
 
         if (!$asArray) {
             return $res;
@@ -172,7 +184,7 @@ class account extends Model
 
     public static function getRankToken(int $accountId)
     {
-        $account = self::getAccountById($accountId);
+        $account = self::getAccountById($accountId, false);
 
         if (is_null($account)) {
             throw new \Exception('Account id: ' . $accountId . ' not found');
