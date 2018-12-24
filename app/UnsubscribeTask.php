@@ -79,7 +79,7 @@ class UnsubscribeTask extends Model
         $task->failure_count = $res[0]->failures;
 
         if ($isDone) {
-            $task->failure_count = self::STATUS_PAUSED;
+            $task->status = self::STATUS_PAUSED;
         }
 
         $task->save();
