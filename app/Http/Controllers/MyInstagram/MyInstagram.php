@@ -101,13 +101,14 @@ class MyInstagram
             $this->logout();
         }
 
+        $response = '';
+        $verifyCode = '';
+        $checkApiPath = '';
+
         try {
             $this->account = $account;
 
             $this->instagram = new ExtendedInstagram(true);
-            $response = '';
-            $verifyCode = '';
-            $checkApiPath = '';
 
             if (!empty($this->account->verify_code) and 'sended' != $this->account->verify_code
                 and $this->account->check_api_path != '') {
@@ -136,13 +137,18 @@ class MyInstagram
                     $verifyCode = 'error';
                     Log::error($ex->getMessage());
                 }
-            } else {
-                try {
-                    $response = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
-                } catch (\Exception $err0) {
-                    Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
+            }
+
+
+            try {
+                $response = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
+            } catch (\Exception $err0) {
+                Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
+
+                if (empty($checkApiPath)) {
+
                     $response = $err0->getResponse();
-Log::debug('login response: ' . \json_encode($response));
+                    Log::debug('login response: ' . \json_encode($response));
                     if ($err0 instanceof ChallengeRequiredException) {
 //                        && $response->getErrorType() === 'checkpoint_challenge_required') {
 
@@ -164,7 +170,7 @@ Log::debug('login response: ' . \json_encode($response));
                         Log::debug('$customResponse: ' . \json_encode($customResponse));
 
                         if ($customResponse['status'] === 'ok') {
-                            Log::debug('Checkpoint bypassed');
+                            Log::debug('SMS SENDED');
                             $verifyCode = 'sended';
                         } else {
                             Log::debug('bad status: ' . $customResponse['status']);
@@ -194,9 +200,11 @@ Log::debug('login response: ' . \json_encode($response));
 
             return $this->instagram;
         } catch (\Exception $err) {
-            account::setLoginStatus([
-                'accountId' => $account->id,
-                'isError' => true,
+            account::setInfo($account->id, [
+                'verify_code' => $verifyCode,
+                'check_api_path' => $checkApiPath,
+                'is_confirmed' => 0,
+                'is_active' => 0,
                 'message' => $err->getMessage()
             ]);
 
@@ -303,26 +311,6 @@ Log::debug('login response: ' . \json_encode($response));
         } catch (\Exception $err) {
             Log::error('error get all following: ' . $err->getMessage());
         }
-
-
-//        $friendStatusesResponse = $this->instagram->people->getFriendships($userIds);
-//        $friendStatuses = $friendStatusesResponse->getFriendshipStatuses()->getData();
-//        Log::debug('$friendStatuses: ' . \json_encode($friendStatuses));
-//
-//        foreach($followersAsArray as $i => $follower) {
-//            $response = $this->instagram->people->getFriendship($follower['pk']);
-//            $followersAsArray[$i]['is_my_subscriber'] = ($response->getFollowedBy()) ? 1 : 0;
-//
-//            $sleepTime = rand(1, 3);
-//            sleep($sleepTime);
-//
-//            if (array_key_exists($follower['pk'], $friendStatuses)) {
-//                $followersAsArray[$i]['is_my_subscriber'] = $friendStatuses[$follower['pk']]->getFollowing();
-//                $followersAsArray[$i]['followed_by'] = $friendStatuses[$follower['pk']]->getFollowedBy();
-//            }
-//        }
-//
-//        Log::debug('$followings as array: ' . \json_encode($followersAsArray));
 
         return $followersAsArray;
     }
