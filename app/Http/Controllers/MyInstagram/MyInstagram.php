@@ -163,7 +163,7 @@ Log::debug('login response: ' . \json_encode($response));
 
                         Log::debug('$customResponse: ' . \json_encode($customResponse));
 
-                        if ($customResponse['status'] === 'ok' && $customResponse['action'] === 'close') {
+                        if ($customResponse['status'] === 'ok') {
                             Log::debug('Checkpoint bypassed');
                             $verifyCode = 'sended';
                         } else {
