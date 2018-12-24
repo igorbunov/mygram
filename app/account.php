@@ -22,15 +22,33 @@ class account extends Model
         $account = account::getAccountById($accountId, false);
 
         if (!is_null($account)) {
-            $account->picture = isset($info['picture']) ? $info['picture'] : '';
-            $account->subscribers = isset($info['followers']) ? (int) $info['followers'] : 0;
-            $account->subscriptions = isset($info['following']) ? (int) $info['following'] : 0;
-            $account->publications = isset($info['posts']) ? (int) $info['posts'] : 0;
-            $account->pk = isset($info['pk']) ? $info['pk'] : '';
-            $account->verify_code = isset($info['verify_code']) ? $info['verify_code'] : '';
-            $account->is_confirmed = isset($info['is_confirmed']) ? (int) $info['is_confirmed'] : 0;
-            $account->is_active = isset($info['is_active']) ? (int) $info['is_active'] : 0;
-            $account->response = isset($info['message']) ? $info['message'] : '';
+            if (isset($info['picture'])) {
+                $account->picture = $info['picture'];
+            }
+            if (isset($info['followers'])) {
+                $account->subscribers = $info['followers'];
+            }
+            if (isset($info['following'])) {
+                $account->subscriptions = $info['following'];
+            }
+            if (isset($info['posts'])) {
+                $account->publications = $info['posts'];
+            }
+            if (isset($info['pk'])) {
+                $account->pk = $info['pk'];
+            }
+            if (isset($info['verify_code'])) {
+                $account->verify_code = $info['verify_code'];
+            }
+            if (isset($info['is_confirmed'])) {
+                $account->is_confirmed = $info['is_confirmed'];
+            }
+            if (isset($info['is_active'])) {
+                $account->is_active = $info['is_active'];
+            }
+            if (isset($info['response'])) {
+                $account->response = $info['response'];
+            }
 
             $account->save();
         }

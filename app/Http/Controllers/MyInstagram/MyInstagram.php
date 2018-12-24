@@ -13,6 +13,7 @@ use App\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use InstagramAPI\Exception\ChallengeRequiredException;
+use InstagramAPI\Response\Model\Challenge;
 
 class MyInstagram
 {
@@ -135,13 +136,13 @@ class MyInstagram
                     $response = $this->instagram->login($this->account->nickname, Crypt::decryptString($this->account->password));
                 } catch (\Exception $err0) {
                     Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
-
+Log::debug('login response: ' . \json_encode($response));
                     if ($err0 instanceof ChallengeRequiredException) {
 //                        && $response->getErrorType() === 'checkpoint_challenge_required') {
 
                         sleep(3);
 
-                        $checkApiPath = substr( $response->getChallenge()->getApiPath(), 1);
+                        $checkApiPath = substr( $response->challenge->getApiPath(), 1);
                         $verification_method = 0; 	//0 = SMS, 1 = Email
 
                         $customResponse = $this->instagram->request($checkApiPath)
