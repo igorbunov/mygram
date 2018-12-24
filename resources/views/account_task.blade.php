@@ -128,7 +128,8 @@
                         <div class="col-lg-12 d-flex flex-row">
                             <div class="p-2">Подписок: {{ $unsubscribeTask->safelistStats->total }}</div>
                             <div class="p-2">В белом списке: {{ $unsubscribeTask->safelistStats->selected }}</div>
-                            <div class="p-2">Уже отписано: {{ $unsubscribeTask->safelistStats->unsubscribed }}</div>
+                            <div class="p-2">Всего: {{ $unsubscribeTask->safelistStats->unsubscribed }}</div>
+                            <div class="p-2">Сегодня: {{ $unsubscribeTask->safelistStats->unsubscribedToday }}</div>
                             {{--<div class="p-2">Всего: {{ $unsubscribeTask->total }}</div>--}}
                             {{--<div class="p-2">Удачно: {{ $unsubscribeTask->success_count }}</div>--}}
                             {{--<div class="p-2">Ошибок: {{ $unsubscribeTask->failure_count }}</div>--}}

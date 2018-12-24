@@ -26,8 +26,9 @@ class AccountSubscriptions extends Model
     public static function getStatistics(int $accountId)
     {
         $res = DB::select("SELECT COUNT(1) AS total
-                , SUM(is_in_safelist) AS selected
-                , SUM(is_unsubscribed) AS unsubscribed 
+                , IFNULL(SUM(is_in_safelist), 0) AS selected
+                , IFNULL(SUM(is_unsubscribed), 0) AS unsubscribed 
+                , IFNULL(SUM(IF(is_unsubscribed = 1 AND DATE(updated_at) = CURDATE(), 1, 0)), 0) AS unsubscribedToday
             FROM account_subscriptions WHERE owner_account_id = ?", [$accountId]);
 
         if (is_null($res) or count($res) == 0) {
