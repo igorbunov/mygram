@@ -20,7 +20,7 @@ class AccountSubscriptions extends Model
             return true;
         }
 
-        return ($res[0]->cnt > 0);
+        return ($res[0]->cnt == 0);
     }
 
     public static function getStatistics(int $accountId)
