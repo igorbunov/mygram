@@ -136,8 +136,8 @@ class MyInstagram
                 } catch (\Exception $err0) {
                     Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
 
-                    if ($err0 instanceof ChallengeRequiredException
-                        && $response->getErrorType() === 'checkpoint_challenge_required') {
+                    if ($err0 instanceof ChallengeRequiredException) {
+//                        && $response->getErrorType() === 'checkpoint_challenge_required') {
 
                         sleep(3);
 
