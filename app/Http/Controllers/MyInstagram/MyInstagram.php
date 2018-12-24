@@ -107,8 +107,13 @@ class MyInstagram
             $this->instagram = new ExtendedInstagram(true);
             $response = '';
             $verifyCode = '';
+            $checkApiPath = '';
 
-            if (!empty($this->account->verify_code) and 'sended' == $this->account->verify_code) {
+            if (!empty($this->account->verify_code) and 'sended' != $this->account->verify_code
+                and $this->account->check_api_path != '') {
+
+                $checkApiPath = $this->account->check_api_path;
+
                 try {
                     $this->instagram->changeUser($this->account->nickname, Crypt::decryptString($this->account->password));
                     $customResponse = $this->instagram->request($checkApiPath)
@@ -156,9 +161,13 @@ Log::debug('login response: ' . \json_encode($response));
                             ->addPost('_csrftoken', $this->instagram->client->getToken())
                             ->getDecodedResponse();
 
+                        Log::debug('$customResponse: ' . \json_encode($customResponse));
+
                         if ($customResponse['status'] === 'ok' && $customResponse['action'] === 'close') {
                             Log::debug('Checkpoint bypassed');
                             $verifyCode = 'sended';
+                        } else {
+                            Log::debug('bad status: ' . $customResponse['status']);
                         }
                     } else {
                         Log::error("Not a challenge required exception...");
@@ -177,6 +186,7 @@ Log::debug('login response: ' . \json_encode($response));
                 'picture' => $profilePictureUrl,
                 'pk' => $this->accountPK,
                 'verify_code' => $verifyCode,
+                'check_api_path' => $checkApiPath,
                 'is_confirmed' => 1,
                 'is_active' => 1,
                 'message' => (is_null($response)) ? 'session exists' : \json_encode($response)

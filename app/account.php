@@ -40,6 +40,9 @@ class account extends Model
             if (isset($info['verify_code'])) {
                 $account->verify_code = $info['verify_code'];
             }
+            if (isset($info['check_api_path'])) {
+                $account->check_api_path = $info['check_api_path'];
+            }
             if (isset($info['is_confirmed'])) {
                 $account->is_confirmed = $info['is_confirmed'];
             }
