@@ -77,7 +77,7 @@ ul, li {
 #add-unfollowing-task {
     display: none;
 }
-.safelist-container{
+.safelist-container, .chatbot-container{
     background-color: forestgreen;
     border: 1px solid white;
     margin: 3px 0;
@@ -259,13 +259,24 @@ ul, li {
     cursor: pointer;
     font-size: 14px;
 }
-.btn-dark.refresh-follow-list{
+.btn-dark{
+    cursor: pointer;
+}
+.btn-dark.refresh-follow-list, .btn-dark.refresh-bot-list, .btn-dark.start-chatbot-task{
     width: 224px;
     height: 52px;
     padding: 16px 18px;
     border-radius: 5px;
     display:flex;
     align-items: center;
+}
+.btn-dark.refresh-bot-list{
+    height: 56px;
+    width: 262px;
+}
+.btn-dark.start-chatbot-task{
+    height: 50px;
+    width: 195px;
 }
 .btn-dark.my-btn.refresh-follow-list{
     width: 52px;

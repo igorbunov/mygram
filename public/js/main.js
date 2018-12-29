@@ -1,4 +1,76 @@
 $(document).ready(function() {
+    var changetChatbotStatus = function (status) {
+        $.ajax({
+            url: '/change_chatbot_status',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                status: status
+            },
+            success: function(data) {
+                if (data.success) {
+                    location.href = '/chatbot';
+                } else {
+                    // console.log('error', data.error);
+                    alert(data.error);
+                }
+            }
+        });
+    };
+
+    $(".start-chatbot-task").click(function () {
+        if ($(this).hasClass('disabled')) { return; }
+
+        var status = $(this).data('status');
+
+        if (status == 'in_progress') {
+            changetChatbotStatus('synchronized');
+        } else {
+            changetChatbotStatus('in_progress');
+        }
+    });
+
+    $(".refresh-bot-list").click(function () {
+        if ($(this).hasClass('disabled')) { return; }
+
+        var hashtags = $("#chatbot-hashtags").val().split("\n").join("|"),
+            maxAccounts = $("#chatbot-max-accounts").val();
+
+        if (hashtags == "") {
+            return;
+        }
+
+        $('#preloader').show();
+
+        $.ajax({
+            url: '/chatbot_update_list',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                hashtags: hashtags,
+                max_accounts: maxAccounts
+            },
+            success: function (data) {
+                if (data.success) {
+                    vaitForFastTaskComplete(data.fastTaskId, '/chatbot');
+                } else {
+                    $('#preloader').hide();
+                    alert(data.message);
+                }
+            },
+            error: function () {
+                $('#preloader').hide();
+            }
+        });
+    });
+
+
     var loadWithPagination = function (accountId, isAll, start) {
         $.ajax({
             url: '/get_safelist',

@@ -6,6 +6,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
 use App\Http\Controllers\InstagramTasksRunner\AccountSubscribersRunner;
 use App\Http\Controllers\InstagramTasksRunner\AccountWhiteListRunner;
+use App\Http\Controllers\InstagramTasksRunner\ChatbotTaskRunner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\InstagramTasksRunner\UnsubscribeTaskRunner;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class FastTask extends Model
     const TYPE_UNSUBSCRIBE = 'unsubscribe';
     const TYPE_REFRESH_WHITELIST = 'refresh_whitelist';
     const TYPE_GET_NEW_SUBSCRIBERS = 'get_new_subscribers';
+    const TYPE_REFRESH_CHATBOT_LIST = 'refresh_chatbot_list';
 
     public static function isHadRestInLastOneAndHalfHoursUnsubscribeTasks(int $accountId): bool
     {
@@ -253,6 +255,23 @@ class FastTask extends Model
                 }
 
                 break;
+            case self::TYPE_REFRESH_CHATBOT_LIST:
+                $chatbotId = $task->task_id;
+
+                try {
+                    ChatbotTaskRunner::runRefreshList($chatbotId, $task->account_id);
+                } catch (\Exception $err) {
+                    $errorMessage = $err->getMessage();
+
+                    Log::error('Error running task refresh chatbot list: ' . $errorMessage);
+
+                    self::mailToDeveloper('ошибка выполнения задачи refresh chatbot list', $errorMessage);
+                } finally {
+                    FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
+                    Chatbot::setStatus($chatbotId, Chatbot::STATUS_SYNCHRONIZED);
+                }
+
+                break;
         }
     }
 
@@ -277,9 +296,6 @@ class FastTask extends Model
         $curHour = (int) date("H");
 
         $isNight = (($nightStartTime >= 21 and $curHour >= $nightStartTime) or $curHour <= $nightEndTime);
-//        $isNightText = ($isNight) ? 'yes' : 'no';
-//        Log::debug('isNight: ' . $isNightText . ' curHour: ' . $curHour .
-//            ' NIGHT_TIME_START_HOUR: ' . $nightStartTime . ' NIGHT_TIME_END_HOUR: ' . $nightEndTime);
 
         return $isNight;
     }

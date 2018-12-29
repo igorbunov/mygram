@@ -295,7 +295,7 @@ class TaskController extends Controller
 
             if (is_null($tariff)) {
                 DB::statement("UPDATE direct_tasks
-                    SET is_active = 0
+                    SET status = 'deactivated'
                     WHERE account_id IN (SELECT id FROM accounts WHERE user_id = {$user->id})");
 
                 DB::statement("UPDATE accounts SET is_active = 0 WHERE user_id = {$user->id}");

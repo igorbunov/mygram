@@ -49,7 +49,8 @@ class Tariff extends Model
         return [
             'name' => $tariffList->name,
             'accounts_count' => $tariff->accounts_count,
-            'dt_end' => date("d.m.Y", strtotime($tariff->dt_end))
+            'dt_end' => date("d.m.Y", strtotime($tariff->dt_end)),
+            'tariff_list_id' => $tariff->tariff_list_id
         ];
     }
 

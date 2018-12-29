@@ -20,7 +20,9 @@
                 <div class="row">
                     <div class="d-flex programm-header-info">
                         <div class="p-2">
-                            <img class="main-profile-icon rounded-circle" src="{{$accountPicture}}" />
+                            @if(isset($accountPicture))
+                                <img class="main-profile-icon rounded-circle" src="{{$accountPicture}}" />
+                            @endif
                         </div>
                         <div class="mr-auto p-2">
                             {{ session('user_email') }}<br/>
@@ -51,6 +53,11 @@
                                     <li class="menu__item">
                                         <a href="{{ url('safelist') }}" @if($activePage == 'safelist') class="active_link" @endif>Белый список</a>
                                     </li>
+                                @if($currentTariff != null and $currentTariff['tariff_list_id'] == 2)
+                                    <li class="menu__item">
+                                        <a href="{{ url('chatbot') }}" @if($activePage == 'chatbot') class="active_link" @endif>Чат бот</a>
+                                    </li>
+                                @endif
                                     <li class="menu__item">
                                         <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
                                     </li>
@@ -102,6 +109,9 @@
                     </li>
                     <li class="menu__item">
                         <a href="{{ url('safelist') }}" @if($activePage == 'safelist') class="active_link" @endif>Белый список</a>
+                    </li>
+                    <li class="menu__item">
+                        <a href="{{ url('chatbot') }}" @if($activePage == 'chatbot') class="active_link" @endif>Чат бот</a>
                     </li>
                     <li class="menu__item">
                         <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
