@@ -16,6 +16,19 @@ class User extends Model
         return $this->hasMany('App\Tariff', 'user_id', 'id');
     }
 
+    public static function sendEmail(int $userId, string $subject, string $message)
+    {
+        $user = self::getUserById($userId);
+
+        if (is_null($user)) {
+            return;
+        }
+
+        $headers = "From: mygram.in.ua\r\nReply-To: igorbunov.ua@gmail.com\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8";
+
+        \mail($user->email, $subject, $message, $headers);
+    }
+
     public static function getUserById(int $userId)
     {
         $res = self::find($userId);

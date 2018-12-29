@@ -14,6 +14,7 @@ use App\Http\Controllers\MyInstagram\MyInstagram;
 use App\Safelist;
 use App\UnsubscribeTask;
 use App\UnsubscribeTaskReport;
+use App\User;
 use Illuminate\Support\Facades\Log;
 
 class UnsubscribeTaskRunner
@@ -83,6 +84,10 @@ class UnsubscribeTaskRunner
 
         if (AccountSubscriptions::isTaskDone($accountId)) {
             UnsubscribeTask::updateStatistics($unsubscribeTaskId, true);
+
+            User::sendEmail($account->user_id,
+                'Массовая отписка @' . $account->nickname,
+                'Задание массовой отписки закончено!');
         } else {
             UnsubscribeTask::updateStatistics($unsubscribeTaskId);
         }
