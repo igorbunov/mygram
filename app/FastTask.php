@@ -247,7 +247,7 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::error('Error running task unsubscribe: ' . $errorMessage);
+                    Log::error('Error running task unsubscribe: ' . $errorMessage . ' trace: ' . $err->getTraceAsString());
 
                     self::mailToDeveloper('ошибка выполнения задачи unsubscribe', $errorMessage);
                 } finally {
