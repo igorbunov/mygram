@@ -111,9 +111,14 @@ class MyInstagram
             $this->instagram = new ExtendedInstagram(true);
 
             if ($account->nickname == 'houpek_nadin') {
-                $this->instagram->setProxy('https://Etv8v1:mgsgxz@213.232.69.203:8000');
+//                $this->instagram->setProxy('https://Etv8v1:mgsgxz@213.232.69.203:8000');
+                $this->instagram->setProxy('socks5://Etv8v1:mgsgxz@213.232.69.203:8000');
+
+                Log::debug("set proxy");
             }
-            
+
+
+
 
 //            // HTTP proxy needing authentication.
 //            $ig->setProxy('http://user:pass@iporhost:port');
