@@ -110,6 +110,30 @@ class MyInstagram
 
             $this->instagram = new ExtendedInstagram(true);
 
+            if ($account->nickname == 'houpek_nadin') {
+                $this->instagram->setProxy('https://Etv8v1:mgsgxz@213.232.69.203:8000');
+            }
+            
+
+//            // HTTP proxy needing authentication.
+//            $ig->setProxy('http://user:pass@iporhost:port');
+//
+//            // HTTP proxy without authentication.
+//                        $ig->setProxy('http://iporhost:port');
+//
+//            // Encrypted HTTPS proxy needing authentication.
+//                        $ig->setProxy('https://user:pass@iporhost:port');
+//
+//            // Encrypted HTTPS proxy without authentication.
+//                        $ig->setProxy('https://iporhost:port');
+//
+//            // SOCKS5 Proxy needing authentication:
+//                        $ig->setProxy('socks5://user:pass@iporhost:port');
+//
+//            // SOCKS5 Proxy without authentication:
+//                        $ig->setProxy('socks5://iporhost:port');
+
+
             if (!empty($this->account->verify_code) and 'sended' != $this->account->verify_code
                 and $this->account->check_api_path != '') {
 
