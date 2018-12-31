@@ -5,58 +5,62 @@
             @foreach ($accounts as $account)
                 <section class="account-link-clickable account @if($account->is_active) active @else deactivated @endif"
                          data-account-id="{{ $account->id }}">
-                    <div class="row d-flex">
+
+                    <div class="row" style="display: flex; justify-content: space-between;">
                         <div class="p-2 account-link @if($account->is_active) active @else deactivated @endif">
                             <span>@</span>{{ $account->nickname }}
                         </div>
+                        @if(!empty($account->proxy_ip))
+                            <div style="padding: 2px 22px 0 0;font-size: 10px;color: yellow;">proxy ip</div>
+                        @endif
+                    </div>
 
-                        <div class="p-2">
+                    <div class="row account-middle-row">
+                        <div style="flex-grow: 1;">
                             <img src="{{ $account->picture }}" class="rounded-circle mini-profile-picture"/>
                         </div>
-                        @if(!empty($account->proxy_ip))
-                            <div class="ml-auto p-2">
-                                Прокси: да
-                            </div>
-                        @endif
 
                         @if($account->is_active == 1)
-                            <div class="ml-auto p-2">
+                            <div>
                                 <div class="btn-dark my-btn refresh-account-btn" data-account-id="{{ $account->id }}">
                                     <i class="fas fa-sync"></i>
                                 </div>
                             </div>
-                            <div class="p-2">
-                                <div class="btn-dark my-btn btn-info account-deactivate"
-                                     data-account-id="{{ $account->id }}">
+                            <div>
+                                <div class="btn-dark my-btn btn-info account-deactivate" data-account-id="{{ $account->id }}">
                                     <i class="fas fa-trash"></i>
                                 </div>
                             </div>
                         @elseif($account->is_confirmed == 1)
-                            <div class="ml-auto p-2">
-                                <button type="button" class="btn btn-basic account-activate"
-                                        data-account-id="{{ $account->id }}">Активировать</button>
+                            <div>
+                                <button type="button" style="margin-right: 20px;" class="btn btn-basic account-activate" data-account-id="{{ $account->id }}">Активировать</button>
                             </div>
                         @elseif($account->is_confirmed == 0 and 'sended' == $account->verify_code)
-                            <div style="color: darkblue;">
-                                <h3>Введите код из смс</h3>
-                            </div>
-                            <div class="ml-auto p-2">
+                            {{--<div style="color: darkblue;">--}}
+                                {{--<h3>Введите код из смс</h3>--}}
+                            {{--</div>--}}
+                            <div>
                                 <button type="button" class="btn btn-basic account-enter-code"
-                                        data-account-id="{{ $account->id }}"
-                                >Ввести код</button>
+                                data-account-id="{{ $account->id }}">Ввести код</button>
                             </div>
-                        @elseif($account->is_confirmed == 0)
-                            <div style="color: darkblue;">
-                                <h3>Не верный логин/пароль</h3>
-                            </div>
-                            <div class="ml-auto p-2">
+                        @elseif($account->is_confirmed == 0 and 'sended' != $account->verify_code)
+                            <div>
                                 <button type="button" class="btn btn-basic account-relogin"
-                                        data-account-id="{{ $account->id }}"
-                                >Попробовать снова</button>
+                                data-account-id="{{ $account->id }}">Ввести данные</button>
                             </div>
                         @endif
-
                     </div>
+
+                    @if($account->is_confirmed == 0 and 'sended' != $account->verify_code)
+                        <div class="row" style="padding-left: 36px;">
+                            <h4>Не верный логин/пароль</h4>
+                        </div>
+                    @endif
+                    @if($account->is_confirmed == 0 and 'sended' == $account->verify_code)
+                        <div class="row" style="padding-left: 36px;">
+                            <h4>Введите код из смс</h4>
+                        </div>
+                    @endif
 
                     @if($account->is_confirmed == 1)
                         <div class="row">

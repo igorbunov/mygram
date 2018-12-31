@@ -152,6 +152,14 @@ ul, li {
     padding: 10px;
     font-size: 20px;
 }
+.account-middle-row{
+    padding-left: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+.account-middle-row > div{
+    padding: 5px;
+}
 #add-direct-task-work-only-in-night{
     margin:15px;
 }
@@ -159,7 +167,7 @@ ul, li {
     font-size: 26px;
     color: black;
     font-weight: bold;
-    width: 100%;
+    /*width: 100%;*/
     margin-left:22px;
 }
 .account-link.deactivated{
