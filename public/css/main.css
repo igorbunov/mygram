@@ -180,7 +180,7 @@ ul, li {
     margin-right:22px;
 }
 .account{
-    margin: 3px 0 10px 0;
+    margin: 3px 0 6px 0;
     border-radius: 5px;
 }
 .main-block, .header {
@@ -200,7 +200,7 @@ ul, li {
 .account-tasks.active{
     border: 1px solid white;
     background-color: forestgreen;
-    margin: 3px 0;
+    margin: 3px 0 6px 0;
     color: black;
     border-radius: 5px;
     padding: 0 0 6px 0;
@@ -208,7 +208,7 @@ ul, li {
 .account-tasks.paused{
     border: 1px solid white;
     background-color: grey;
-    margin: 3px 0;
+    margin: 3px 0 6px 0;
     color: black;
     border-radius: 5px;
     padding: 0 0 6px 0;
@@ -216,7 +216,7 @@ ul, li {
 .account-tasks.deactivated{
     border: 1px solid white;
     background-color: darkseagreen;
-    margin: 3px 0;
+    margin: 3px 0 6px 0;
     border-radius: 5px;
     padding: 0 0 6px 0;
 }

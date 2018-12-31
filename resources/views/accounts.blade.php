@@ -13,6 +13,11 @@
                         <div class="p-2">
                             <img src="{{ $account->picture }}" class="rounded-circle mini-profile-picture"/>
                         </div>
+                        @if(!empty($account->proxy_ip))
+                            <div class="ml-auto p-2">
+                                Прокси: да
+                            </div>
+                        @endif
 
                         @if($account->is_active == 1)
                             <div class="ml-auto p-2">
