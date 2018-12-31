@@ -413,10 +413,6 @@ $(document).ready(function() {
         });
     });
 
-    $('#add-account-btn').click(function () {
-        $('#add-account-form').show();
-    });
-
     $('.account-link-clickable').click(function (event) {
         if ($(this).hasClass('deactivated') || event.target.type == 'button') {
             return;
@@ -543,12 +539,61 @@ $(document).ready(function() {
         });
     };
 
+    $('#add-account-btn').click(function () {
+        $('#add-account-form').show();
+        $('#enter-confirm-code-form').hide();
+        $("html, body").animate({ scrollTop: $(document).height() }, 500);
+    });
+
+    $('.account-enter-code').click(function () {
+        var accountId = $(this).data('accountId');
+
+        $('#add-account-form').hide();
+        $('#enter-confirm-code-form').show();
+        $("#add-account-kode-account-id").val(accountId);
+        $("html, body").animate({ scrollTop: $(document).height() }, 500);
+    });
+
     $('.account-relogin').click(function () {
         var accountId = $(this).data('accountId');
 
         $('#add-account-form').show();
+        $('#enter-confirm-code-form').hide();
         $("#add-account-account-id").val(accountId);
+        $("html, body").animate({ scrollTop: $(document).height() }, 500);
     });
+
+    $("#add-account-code-submit").click(function () {
+        $('#preloader').show();
+
+        var code = $('#account-sms-code').val(),
+            accountId = $("#add-account-kode-account-id").val();
+
+        $.ajax({
+            url: '/add_account_code',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                code: code,
+                account_id: accountId
+            },
+            success: function(data) {
+                if (data.success && data.fastTaskId > 0) {
+                    vaitForFastTaskComplete(data.fastTaskId, '/accounts/all');
+                } else {
+                    $('#preloader').hide();
+                    alert(data.message);
+                }
+            },
+            error: function() {
+                $('#preloader').hide();
+            }
+        });
+    });
+
 
     $("#add-account-submit").click(function () {
         $('#preloader').show();

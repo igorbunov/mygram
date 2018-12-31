@@ -25,22 +25,29 @@
                                      data-account-id="{{ $account->id }}">
                                     <i class="fas fa-trash"></i>
                                 </div>
-                                {{--<button type="button" class="btn btn-info account-deactivate"--}}
-                                        {{--data-account-id="{{ $account->id }}">Деактивировать</button>--}}
                             </div>
                         @elseif($account->is_confirmed == 1)
                             <div class="ml-auto p-2">
                                 <button type="button" class="btn btn-basic account-activate"
                                         data-account-id="{{ $account->id }}">Активировать</button>
                             </div>
+                        @elseif($account->is_confirmed == 0 and 'sended' == $account->verify_code)
+                            <div style="color: darkblue;">
+                                <h3>Введите код из смс</h3>
+                            </div>
+                            <div class="ml-auto p-2">
+                                <button type="button" class="btn btn-basic account-enter-code"
+                                        data-account-id="{{ $account->id }}"
+                                >Ввести код</button>
+                            </div>
                         @elseif($account->is_confirmed == 0)
                             <div style="color: darkblue;">
-                                <h3>Логин/пароль не верный</h3>
+                                <h3>Не верный логин/пароль</h3>
                             </div>
                             <div class="ml-auto p-2">
                                 <button type="button" class="btn btn-basic account-relogin"
                                         data-account-id="{{ $account->id }}"
-                                    >Войти</button>
+                                >Попробовать снова</button>
                             </div>
                         @endif
 
@@ -93,6 +100,25 @@
                     <div class="row" style="margin-top: 10px;">
                         <div class="col-lg-12">
                             <button type="button" class="btn btn-success" id="add-account-submit">Сохранить</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div id="enter-confirm-code-form">
+                <form>
+                    <input type="hidden" id="add-account-kode-account-id" value="0" />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <label for="account-password" class="my-label">Код из смс</label>
+                            <input type="text" class="form-control my-text-input" id="account-sms-code" />
+
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-lg-12">
+                            <button type="button" class="btn btn-success" id="add-account-code-submit">Сохранить</button>
                         </div>
                     </div>
 

@@ -114,6 +114,42 @@ class AccountController extends Controller
         return response()->json(['success' => true, 'fastTaskId' => $fastTaskId]);
     }
 
+    public function addAccountCode(Request $req)
+    {
+        $userId = (int) session('user_id', 0);
+        $accountId = (int) $req->post('account_id', 0);
+        $code = (string) $req->post('code', '');
+
+        if (empty($code) or $accountId == 0) {
+            return response()->json(['success' => false, 'message' => 'Заполните все поля']);
+        }
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+        }
+
+        $activeAccounts = account::getActiveAccountsByUser($userId);
+
+        if (count($activeAccounts) >= $tariff->accounts_count) {
+            return response()->json(['success' => false, 'message' => 'Вы достигли лимита по активным аккаунтам']);
+        }
+
+        account::editById([
+            'account_id' => $accountId,
+            'verify_code' => $code
+        ]);
+
+        $fastTaskId = FastTask::addTask($accountId, FastTask::TYPE_TRY_LOGIN);
+
+        return response()->json(['success' => true, 'fastTaskId' => $fastTaskId]);
+    }
+
     public function sync(Request $req) {
         $userId = (int) session('user_id', 0);
 

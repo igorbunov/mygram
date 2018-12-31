@@ -132,7 +132,7 @@ ul, li {
     border: 1px solid white;
 }
 .account.deactivated{
-    background-color: darkorange;
+    background-color: darkseagreen;
     border: 1px solid white;
 }
 .menu__item{
@@ -180,7 +180,7 @@ ul, li {
     margin-right:22px;
 }
 .account{
-    margin: 3px 0;
+    margin: 3px 0 10px 0;
     border-radius: 5px;
 }
 .main-block, .header {
@@ -215,7 +215,7 @@ ul, li {
 }
 .account-tasks.deactivated{
     border: 1px solid white;
-    background-color: firebrick;
+    background-color: darkseagreen;
     margin: 3px 0;
     border-radius: 5px;
     padding: 0 0 6px 0;
@@ -294,6 +294,13 @@ ul, li {
 }
 #show-all-accounts{
     margin-left:5px;
+}
+.account-relogin, .account-enter-code{
+    margin-right: 22px;
+}
+#enter-confirm-code-form{
+    display: none;
+    margin: 10px 0;
 }
 #all-accounts-checkbox{
     width: 126px;

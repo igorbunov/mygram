@@ -15,14 +15,44 @@ use Illuminate\Support\Facades\Log;
 
 class AccountFirstLoginRunner
 {
+    public static function deleteFiles($src) {
+        $dir = opendir($src);
+        while(false !== ( $file = readdir($dir)) ) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                $full = $src . '/' . $file;
+                if ( is_dir($full) ) {
+                    rmdir($full);
+                }
+                else {
+                    unlink($full);
+                }
+            }
+        }
+        closedir($dir);
+        rmdir($src);
+    }
+
     public static function tryLogin(int $accountId)
     {
         Log::debug('runned tryLogin task for account id: ' . $accountId);
         $account = account::getAccountById($accountId, false);
 
-        if (is_null($account)) {
+        if (is_null($account) or empty($account->nickname)) {
             Log::error('account not found');
             return;
+        }
+
+        $sessionDir = realpath(__DIR__ . '/../../../../instagram_lib/sessions/' . $account->nickname . '/');
+
+        if (empty($account->verify_code) and empty($account->check_api_path)) {
+            if (is_dir($sessionDir)) {
+                Log::debug('Удаляем кукисы: ' . $sessionDir);
+                self::deleteFiles($sessionDir);
+            } else {
+                Log::debug('Нет кукисов');
+            }
+        } else {
+            Log::debug('Попытка ввести код: ' . $account->verify_code);
         }
 
         MyInstagram::getInstanse()->login($account);

@@ -104,11 +104,36 @@ class account extends Model
             return 0;
         }
 
-        $account->picture = '';
-        $account->response = '';
-        $account->user_id = $data['user_id'];
-        $account->nickname = $data['nickname'];
-        $account->password = $data['password'];
+        if (isset($data['is_active'])) {
+            $account->is_active = $data['is_active'];
+        }
+        if (isset($data['is_confirmed'])) {
+            $account->is_confirmed = $data['is_confirmed'];
+        }
+        if (isset($data['password'])) {
+            $account->password = $data['password'];
+        }
+        if (isset($data['nickname'])) {
+            $account->nickname = $data['nickname'];
+        }
+        if (isset($data['user_id'])) {
+            $account->user_id = $data['user_id'];
+        }
+        if (isset($data['picture'])) {
+            $account->picture = $data['picture'];
+        }
+        if (isset($data['response'])) {
+            $account->response = $data['response'];
+        }
+        if (isset($data['pk'])) {
+            $account->pk = $data['pk'];
+        }
+        if (isset($data['verify_code'])) {
+            $account->verify_code = $data['verify_code'];
+        }
+        if (isset($data['check_api_path'])) {
+            $account->check_api_path = $data['check_api_path'];
+        }
 
         $account->save();
 

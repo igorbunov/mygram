@@ -110,7 +110,6 @@ class UserController extends Controller
 
             $user = new User();
             $user->email = $email;
-            $user->picture = '';
             $user->confirm_code = $code;
             $user->save();
 

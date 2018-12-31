@@ -166,7 +166,7 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::error('Error running task AccountFirstLoginRunner::tryLogin: ' . $errorMessage );
+                    Log::debug('Error running task AccountFirstLoginRunner::tryLogin: ' . $errorMessage . ' trace: ' . $err->getTraceAsString());
 
                     self::mailToDeveloper('ошибка выполнения задачи tryLogin', $errorMessage);
                 } finally {
@@ -191,7 +191,7 @@ class FastTask extends Model
                         }
                     }
 
-                    Log::error('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage . ' ' . $err->getTraceAsString());
+                    Log::debug('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage . ' ' . $err->getTraceAsString());
 
                     self::mailToDeveloper('ошибка выполнения задачи runDirectTasks', $errorMessage);
                 } finally {
@@ -205,7 +205,7 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::error('Error running task AccountFirstLoginRunner::runRefresh: ' . $errorMessage);
+                    Log::debug('Error running task AccountFirstLoginRunner::runRefresh: ' . $errorMessage);
 
                     self::mailToDeveloper('ошибка выполнения задачи runRefresh', $errorMessage);
                 } finally {
@@ -219,7 +219,7 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::error('Error running task AccountWhiteListRunner::refreshWhitelist: ' . $errorMessage);
+                    Log::debug('Error running task AccountWhiteListRunner::refreshWhitelist: ' . $errorMessage);
 
                     self::mailToDeveloper('ошибка выполнения задачи refreshWhitelist', $errorMessage);
                 } finally {
@@ -233,7 +233,7 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::error('Error running task get new subscribers: ' . $errorMessage);
+                    Log::debug('Error running task get new subscribers: ' . $errorMessage);
 
                     self::mailToDeveloper('ошибка выполнения задачи subscribers', $errorMessage);
                 } finally {
@@ -247,7 +247,7 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::error('Error running task unsubscribe: ' . $errorMessage . ' trace: ' . $err->getTraceAsString());
+                    Log::debug('Error running task unsubscribe: ' . $errorMessage . ' trace: ' . $err->getTraceAsString());
 
                     self::mailToDeveloper('ошибка выполнения задачи unsubscribe', $errorMessage);
                 } finally {
@@ -263,7 +263,7 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::error('Error running task refresh chatbot list: ' . $errorMessage);
+                    Log::debug('Error running task refresh chatbot list: ' . $errorMessage);
 
                     self::mailToDeveloper('ошибка выполнения задачи refresh chatbot list', $errorMessage);
                 } finally {
@@ -302,6 +302,8 @@ class FastTask extends Model
 
     public static function mailToDeveloper($subject, $message)
     {
-        \mail(env('DEVELOPER_EMAIL'), $subject, $message);
+        if (env('ENABLE_EMAIL')) {
+            \mail(env('DEVELOPER_EMAIL'), $subject, $message);
+        }
     }
 }
