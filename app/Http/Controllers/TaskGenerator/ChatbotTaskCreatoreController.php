@@ -27,7 +27,7 @@ class ChatbotTaskCreatoreController
         Log::debug('======== generate chatbot tasks =======');
         $users = User::where(['is_confirmed' => 1])->get();
 
-//        Log::debug('found users: ' . count($users));
+        Log::debug('found users: ' . count($users));
 
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
@@ -46,13 +46,15 @@ class ChatbotTaskCreatoreController
 
             $accounts = account::getActiveAccountsByUser($user->id);
 
-//            Log::debug("found active accounts: " . count($accounts));
+            Log::debug("found active accounts: " . count($accounts));
 
             try {
                 foreach ($accounts as $account) {
                     if ($account->nickname = 'houpek_nadin') { //TODO: remove in future
                         continue;
                     }
+
+                    Log::debug('$account ' . $account);
 
                     foreach ($tasksTypes as $taskType) {
                         Log::debug('$taskType->type ' . $taskType->type);
