@@ -365,8 +365,16 @@ class MyInstagram
                 Log::debug('search hashtag: ' . $tag);
                 $subResult = [];
                 $isBreak = false;
-                $response = $this->instagram->hashtag->getFeed($tag, $this->rankToken, $maxId);
-                $items = ($response->isItems()) ? $response->getItems() : $response->getRankedItems();
+                $response = null;
+                $items = null;
+
+                try {
+                    $response = $this->instagram->hashtag->getFeed($tag, $this->rankToken, $maxId);
+                    $items = ($response->isItems()) ? $response->getItems() : $response->getRankedItems();
+                } catch(\Exception $err1) {
+                    sleep(4);
+                    continue;
+                }
 
                 if (!is_null($items)) {
                     foreach ($items as $item) {
