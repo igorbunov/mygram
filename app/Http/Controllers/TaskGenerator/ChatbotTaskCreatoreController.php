@@ -55,6 +55,7 @@ class ChatbotTaskCreatoreController
                     }
 
                     foreach ($tasksTypes as $taskType) {
+                        Log::debug('$taskType->type ' . $taskType->type);
                         if (TaskList::TYPE_CHATBOT == $taskType->type) {
 //                            $taskListId = $taskType->id;
 
