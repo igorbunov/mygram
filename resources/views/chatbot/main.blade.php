@@ -24,9 +24,9 @@
                 <div style="display: flex; padding: 5px 15px; justify-content: space-between;">
 
                     <div style="padding: 0 5px;height: 360px;">
-                        <label>Сколько аккаунтов загрузить? (от 1 до 5000):</label>
+                        <label>Сколько аккаунтов по хештегу загрузить? (от 1 до 100):</label>
 
-                        <input type="number" style="width: 100%;" step="100" id="chatbot-max-accounts" min="1" max="5000" value="{{ $chatbot->max_accounts }}"
+                        <input type="number" style="width: 100%;" step="10" id="chatbot-max-accounts" min="1" max="100" value="{{ $chatbot->max_accounts }}"
                             @if($chatbot->status == \App\Chatbot::STATUS_UPDATING || $chatbot->status == \App\Chatbot::STATUS_IN_PROGRESS)
                                 disabled
                             @endif

@@ -83,7 +83,7 @@ class ChatbotTaskCreatoreController
             }
         }
 
-//        Log::debug('generate tasks end');
+        Log::debug('======== done generate chatbot tasks =======');
     }
 
     private static function generateGetInboxTask(Chatbot $chatBot, account $account)
