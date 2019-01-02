@@ -24,7 +24,7 @@ class ChatbotTaskCreatoreController
 {
     public static function tasksGenerator()
     {
-//        Log::debug('generate tasks');
+        Log::debug('======== generate chatbot tasks =======');
         $users = User::where(['is_confirmed' => 1])->get();
 
 //        Log::debug('found users: ' . count($users));
