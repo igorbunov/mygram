@@ -50,7 +50,7 @@ class ChatbotTaskCreatoreController
 
             try {
                 foreach ($accounts as $account) {
-                    if ($account->nickname = 'houpek_nadin') { //TODO: remove in future
+                    if ($account->nickname == 'houpek_nadin') { //TODO: remove in future
                         continue;
                     }
 
