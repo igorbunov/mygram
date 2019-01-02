@@ -166,13 +166,12 @@ class ChatbotTaskRunner
                 Log::debug('found threads for (' . $account->nickname . '): ' . count($threads));
 
                 foreach($threads as $thread) {
-//                    $status = ChatHeader::STATUS_INBOX_UPDATED;
-                    $status = ChatHeader::STATUS_DIALOG_FINISHED;
+                    $status = ChatHeader::STATUS_WAITING_ANSWER;
                     $companionPK = $thread->getUsers()[0]->getPk();
 
-//                    if (array_key_exists($companionPK, $allAccountsSafelist)) {
-//                        $status = ChatHeader::STATUS_DIALOG_FINISHED;
-//                    }
+                    if (array_key_exists($companionPK, $allAccountsSafelist)) {
+                        $status = ChatHeader::STATUS_DIALOG_FINISHED;
+                    }
 
                     Log::debug('первое добавление диалога ' . $thread->getThreadTitle() );
 
@@ -351,6 +350,11 @@ class ChatbotTaskRunner
 //                                'last_message_id' => $sendResp->getPayload()->getItemId()
                             ]);
 
+                        } else if ($otvet['txt'] == '') {
+                            ChatHeader::edit([
+                                'thread_id' => $threadId,
+                                'status' => ChatHeader::STATUS_WAITING_ANSWER
+                            ]);
                         }
 
 //                        Log::debug('messages: ' . \json_encode($messages));
@@ -383,7 +387,6 @@ class ChatbotTaskRunner
 
         $mySecondMessage = 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить';
         $myThirdMessage = 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю.';
-        $myFourthMessage = 'ок. успехов';
 
         $startPositiveOtvet = [
             'да', 'интересно', 'что за работа', 'что за робота', 'что нужно делать', 'делать', 'расскажите',
@@ -433,9 +436,7 @@ class ChatbotTaskRunner
                     $isSecondJobRequest = true;
                     Log::debug('$isSecondJobRequest = true');
                 }
-            } else if (!$msg['isMy'] and $total == $number) {
-                Log::debug('last message ' . mb_strtolower($text));
-
+            } else if (!$msg['isMy']) {
                 preg_match('!\d+!', $text, $matches);
 
                 if (count($matches) > 0) {
@@ -449,43 +450,47 @@ class ChatbotTaskRunner
                     }
                 }
 
-                if (self::strposa(mb_strtolower($text), $okResult)) {
-                    $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                    $result['txt'] = 'Жду номер';
-                    break;
-                }
-
                 if (self::strposa(mb_strtolower($text), $startNegativeOtvet)) {
                     $result['status'] = ChatHeader::STATUS_DIALOG_FINISHED;
-//                    $result['txt'] = $myFourthMessage;
                     break;
                 }
 
-                if (self::strposa(mb_strtolower($text), $quesionOtvet1)) {
-                    $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $myThirdMessage;
-                    break;
-                }
-                if (self::strposa(mb_strtolower($text), $startPositiveOtvet)) {
-                    $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $mySecondMessage;
-                    break;
+                if (!$msg['isMy'] and $total == $number) {
+                    Log::debug('last message ' . mb_strtolower($text));
+
+                    if (self::strposa(mb_strtolower($text), $okResult)) {
+                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
+                        $result['txt'] = 'Жду номер';
+                        break;
+                    }
+
+                    if (self::strposa(mb_strtolower($text), $quesionOtvet1)) {
+                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
+                        $result['txt'] = $myThirdMessage;
+                        break;
+                    }
+                    if (self::strposa(mb_strtolower($text), $startPositiveOtvet)) {
+                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
+                        $result['txt'] = $mySecondMessage;
+                        break;
+                    }
+
+                    if ($isSendNiceProfile and self::strposa(mb_strtolower($text), ['спасиб', 'хай'])) {
+                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
+                        $result['txt'] = $myStartMessages[2];
+                        break;
+                    }
+                    if ($isSendFirstJobRequest and $text == 'like' and !$isSecondJobRequest) {
+                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
+                        $result['txt'] = $mySecondMessage;
+                        break;
+                    } else if ($isSecondJobRequest and $text == 'like') {
+                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
+                        $result['txt'] = 'Жду номер';
+                        break;
+                    }
                 }
 
-                if ($isSendNiceProfile and self::strposa(mb_strtolower($text), ['спасиб', 'хай'])) {
-                    $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $myStartMessages[2];
-                    break;
-                }
-                if ($isSendFirstJobRequest and $text == 'like' and !$isSecondJobRequest) {
-                    $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $mySecondMessage;
-                    break;
-                } else if ($isSecondJobRequest and $text == 'like') {
-                    $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                    $result['txt'] = 'Жду номер';
-                    break;
-                }
             }
         }
 
