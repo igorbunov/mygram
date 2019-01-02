@@ -11,6 +11,7 @@ namespace App\Http\Controllers\MyInstagram;
 use App\account;
 use App\Chatbot;
 use App\ChatbotAccounts;
+use App\FastTask;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use InstagramAPI\Exception\ChallengeRequiredException;
@@ -93,14 +94,8 @@ class MyInstagram
         return $this->login($account);
     }
 
-    public function login(account $account)
+    public function login(account $account, int $loginTryCount = 0)
     {
-        if ($this->isLogined($account)) {
-            return $this->instagram;
-        } else {
-            $this->logout();
-        }
-
         /*
         // HTTP proxy needing authentication.
         $ig->setProxy('http://user:pass@iporhost:port');
@@ -144,7 +139,8 @@ class MyInstagram
 
             return $this->instagram;
         } catch (\Exception $err0) {
-            Log::error('error when login: ' . $this->account->nickname . ' ' . $err0->getMessage());
+            $errorMessage = $err0->getMessage();
+            Log::error('error when login: ' . $this->account->nickname . ' ' . $errorMessage);
 
             $response = $err0->getResponse();
             Log::debug('login response: ' . \json_encode($response));
@@ -229,13 +225,21 @@ class MyInstagram
             } else {
                 Log::error("Not a challenge required exception...");
 
-                account::setInfo($account->id, [
-                    'verify_code' => '',
-                    'check_api_path' => '',
-                    'is_confirmed' => 0,
-                    'is_active' => 0,
-                    'response' => $err0->getMessage()
-                ]);
+                if (strpos($errorMessage, 'Network: CURL error') !== false) {
+                    Log::debug("Network CURL error, do nothing");
+
+                    if ($loginTryCount >= 3) {
+                        account::setInfo($account->id, ['verify_code' => '','check_api_path' => '','is_confirmed' => 0,'is_active' => 0,'response' => $errorMessage]);
+
+                        throw new \Exception('Не удалось залогинется и перелогинется за 3 раза. Ошибка связи');
+                    }
+
+                    sleep(rand(5, 10));
+                    $loginTryCount++;
+                    return $this->login($account, $loginTryCount);
+                }
+
+                account::setInfo($account->id, ['verify_code' => '','check_api_path' => '','is_confirmed' => 0,'is_active' => 0,'response' => $errorMessage]);
             }
         }
 
@@ -276,7 +280,11 @@ class MyInstagram
 
     public function sendDirect(string $receiverPK, string $message)
     {
-        return $this->instagram->direct->sendText(['users' => [$receiverPK]], $message);
+        return $this->instagram->direct->sendText(['users' => $receiverPK], $message);
+    }
+    public function sendDirectThread(string $threadId, string $message)
+    {
+        return $this->instagram->direct->sendText(['thread' => $threadId], $message);
     }
 
     public function unsubscribe(string $userPK)
@@ -437,5 +445,15 @@ class MyInstagram
         }
 
         return $results;
+    }
+
+    public function getDirectInbox($cursorId = null)
+    {
+        return $this->instagram->direct->getInbox($cursorId);
+    }
+
+    public function getThreadMessages(string $threadId)
+    {
+        return $this->instagram->direct->getThread($threadId);
     }
 }

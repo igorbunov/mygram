@@ -4,15 +4,14 @@
     <div class="main-container">
         <header id="header" class="header">
             <div class="container">
-                <div class="row">
-                    <div class="col col-md-1 sidenav-trigger">
+                <div class="row header-top-row">
+                    <div class="sidenav-trigger" style="margin: 6px 0 0 12px;">
                         <i class="fas fa-bars"></i>
                     </div>
-                    <div class="col col-md-9">
+                    <div class="header-top-row-title">
                         <span class="h1 programm-text">mygram</span>
                     </div>
-                    <div class="col col-md-1 col-md-auto"></div>
-                    <div class="col col-md-1">
+                    <div style="margin: 6px 12px 0 0;">
                         <a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a>
                     </div>
                 </div>
@@ -138,33 +137,5 @@
             </nav>
         </div>
     </ul>
-
-    {{--<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>--}}
-
-    <!-- Button trigger modal -->
-    {{--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">--}}
-        {{--Launch demo modal--}}
-    {{--</button>--}}
-
-    <!-- Modal -->
-    {{--<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">--}}
-        {{--<div class="modal-dialog modal-dialog-centered" role="document">--}}
-            {{--<div class="modal-content">--}}
-                {{--<div class="modal-header">--}}
-                    {{--<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>--}}
-                    {{--<button type="button" class="close" data-dismiss="modal" aria-label="Close">--}}
-                        {{--<span aria-hidden="true">&times;</span>--}}
-                    {{--</button>--}}
-                {{--</div>--}}
-                {{--<div class="modal-body">--}}
-                    {{--...--}}
-                {{--</div>--}}
-                {{--<div class="modal-footer">--}}
-                    {{--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>--}}
-                    {{--<button type="button" class="btn btn-primary">Save changes</button>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-    {{--</div>--}}
 
 @stop

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class Safelist extends Model
@@ -10,6 +11,34 @@ class Safelist extends Model
     const STATUS_EMPTY = 'empty';
     const STATUS_UPDATING = 'updating';
     const STATUS_SYNCHRONIZED = 'synchronized';
+
+    public static function getSafelistForAllAccounts(int $userId)
+    {
+        $accounts = account::getActiveAccountsByUser($userId);
+        $result = [];
+
+        if (is_null($accounts) or count($accounts) == 0) {
+            return $result;
+        }
+
+        $accountIds = [];
+
+        foreach ($accounts as $account) {
+            $accountIds[] = (int) $account->id;
+        }
+
+        $accountIds = implode(',', $accountIds);
+
+        $res = DB::select("SELECT * 
+            FROM account_subscriptions 
+            WHERE owner_account_id IN ({$accountIds}) AND is_in_safelist = 1");
+
+        foreach ($res as $row) {
+            $result[$row->pk] = $row;
+        }
+
+        return $result;
+    }
 
     public static function updateStatistics(int $safelistId)
     {

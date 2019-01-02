@@ -36,9 +36,11 @@ class DirectToSubsTasksRunner
             return;
         }
 
-        MyInstagram::getInstanse()->login($account);
-
         $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId, 3);
+
+        if (count($unsendedFollowers) > 0) {
+            MyInstagram::getInstanse()->login($account);
+        }
 
         foreach ($unsendedFollowers as $newFollower) {
             $sleepTime = rand(5, 25);
@@ -74,7 +76,9 @@ class DirectToSubsTasksRunner
             break;
         }
 
-        DirectTask::updateStatistics($directTaskId);
+        if (count($unsendedFollowers) > 0) {
+            DirectTask::updateStatistics($directTaskId);
+        }
 
         Log::debug('=== done ===');
     }

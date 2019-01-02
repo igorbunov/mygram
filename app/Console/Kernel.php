@@ -6,6 +6,7 @@ use App\FastTask;
 use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskGenerator\ChatbotTaskCreatoreController;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Http\Controllers\TaskGenerator\FastTaskGenerator;
 use App\Http\Controllers\TaskGenerator\UnsubscribeTaskCreatorController;
@@ -48,6 +49,8 @@ class Kernel extends ConsoleKernel
             $schedule->call(function() {
                 Log::debug('== Run schedule tasks generator == ');
 
+                ChatbotTaskCreatoreController::tasksGenerator();
+
 //                DirectTaskCreatorController::tasksGenerator();
 //                UnsubscribeTaskCreatorController::tasksGenerator();
             })->everyMinute();
@@ -61,6 +64,10 @@ class Kernel extends ConsoleKernel
 
                 if (env('IS_UNSUBSCRIBE_WORKS', false)) {
                     UnsubscribeTaskCreatorController::tasksGenerator();
+                }
+
+                if (env('IS_CHATBOT_WORKS', false)) {
+                    ChatbotTaskCreatoreController::tasksGenerator();
                 }
             })->everyMinute();//TODO: remove
         }

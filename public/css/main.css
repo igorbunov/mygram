@@ -145,8 +145,16 @@ ul, li {
     font-size: 18px;
     color: white;
 }
+.header-top-row{
+    display: flex;
+    justify-content: space-between;
+}
+.header-top-row-title {
+    padding: 6px 0 0 12px;
+}
 .main-container {
     width: 100%;
+    color: black;
 }
 .btn, .btn-primary, .task-activate {
     padding: 10px;
@@ -446,7 +454,7 @@ ul, li {
 }
 .sidenav-trigger{
     display: none !important;
-    padding: 6px 0 3px 14px;
+    padding: 6px 0 3px 0;
 }
 .fa-bars{
     font-size: 32px;

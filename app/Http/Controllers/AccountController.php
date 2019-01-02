@@ -14,6 +14,10 @@ class AccountController extends Controller
 {
     public static function mailToClient(int $accountId, $subject, $message)
     {
+        if (!env('ENABLE_EMAIL')) {
+            return;
+        }
+
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {

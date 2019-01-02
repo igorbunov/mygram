@@ -94,9 +94,12 @@ class DirectTask extends Model
     {
         $res = null;
         $filter = [
-            'account_id' => $accountId,
-            'task_list_id' => $taskListId
+            'account_id' => $accountId
         ];
+
+        if ($taskListId > 0) {
+            $filter['task_list_id'] = $taskListId;
+        }
 
         if ($activeAndPaused) {
             $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->first();

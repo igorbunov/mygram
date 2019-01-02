@@ -7,6 +7,60 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
+    public static function getLastHourDirectMessagesCount(Chatbot $chatBot, account $account): int
+    {
+        return (int) DB::selectOne("SELECT COUNT(1) AS cnt 
+            FROM chatbot_accounts
+            WHERE chatbot_id = ? 
+                AND sender_account_id = ? 
+                AND is_sended = 1 
+                AND DATE(updated_at) = CURDATE() 
+                AND updated_at > NOW() - INTERVAL 1 HOUR"
+        , [$chatBot->id, $account->id])->cnt;
+    }
+
+    public static function getTodayDirectMessagesCount(Chatbot $chatBot, account $account): int
+    {
+        return (int) DB::selectOne("SELECT COUNT(1) AS cnt 
+            FROM chatbot_accounts
+            WHERE chatbot_id = ? AND sender_account_id = ? AND is_sended = 1 AND DATE(updated_at) = CURDATE()"
+        , [$chatBot->id, $account->id])->cnt;
+    }
+
+    public static function setSended(Chatbot $chatBot, string $pk, bool $isSended, int $accountId)
+    {
+        $res = self::where([
+            'chatbot_id' => $chatBot->id,
+            'pk' => $pk
+        ])->first();
+
+        if (is_null($res)) {
+            return false;
+        }
+
+        $res->is_sended = ($isSended) ? 1 : 0;
+        $res->sender_account_id = $accountId;
+
+        return $res->save();
+    }
+
+    public static function isSended(Chatbot $chatBot, string $pk)
+    {
+        $res = (int) DB::selectOne("SELECT COUNT(1) AS cnt 
+            FROM chatbot_accounts
+            WHERE chatbot_id = ? AND pk = ? AND is_sended = 1", [$chatBot->id, $pk])->cnt;
+
+        return $res > 0;
+    }
+
+    public static function getWaitingSendAccounts(Chatbot $chatBot, int $limit = 5)
+    {
+        return self::where([
+            'chatbot_id' => $chatBot->id,
+            'is_sended' => 0
+        ])->orderBy('id', 'ASC')->limit($limit)->get();
+    }
+
     public static function getCount(int $chatbotId)
     {
         return (int) DB::selectOne("SELECT COUNT(1) AS cnt 

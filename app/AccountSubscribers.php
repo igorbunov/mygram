@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AccountSubscribers extends Model
@@ -15,13 +16,32 @@ class AccountSubscribers extends Model
         ])->delete();
     }
 
+    public static function getSendedByPk(int $userId, int $pk)
+    {
+        return DB::selectOne("SELECT s.*
+            FROM account_subscribers s
+            INNER JOIN accounts a ON a.id = s.owner_account_id
+            WHERE a.user_id = ? AND s.pk = ?
+            LIMIT 1", [$userId, $pk]);
+    }
+
+    public static function isSendedByPk(int $userId, int $pk)
+    {
+        $res = (int) DB::selectOne("SELECT COUNT(1) as cnt
+            FROM account_subscribers s
+            INNER JOIN accounts a ON a.id = s.owner_account_id
+            WHERE a.user_id = ? AND s.pk = ?
+            LIMIT 1", [$userId, $pk])->cnt;
+
+        return ($res > 0);
+    }
+
     public static function isSended(int $followerId)
     {
         $res = self::find($followerId);
 
         if (is_null($res)) {
-            Log::error('не смог найти субскрайбера по айди: ' . $followerId);
-            return true;
+            return false;
         }
 
         return ($res->is_sended == 1);

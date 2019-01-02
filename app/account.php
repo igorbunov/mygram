@@ -179,13 +179,6 @@ class account extends Model
         }
 
         $res = self::where($filter)->first();
-//Log::debug('getAccountById '.\json_encode($res) . ' ' . \json_encode($filter));
-
-//        try {
-//            throw new \Exception('aa');
-//        } catch (\Exception $err) {
-//            Log::error('bad call stack ' . $err->getTraceAsString());
-//        }
 
         if (!$asArray) {
             return $res;

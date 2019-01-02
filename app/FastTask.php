@@ -26,6 +26,9 @@ class FastTask extends Model
     const TYPE_REFRESH_WHITELIST = 'refresh_whitelist';
     const TYPE_GET_NEW_SUBSCRIBERS = 'get_new_subscribers';
     const TYPE_REFRESH_CHATBOT_LIST = 'refresh_chatbot_list';
+    const TYPE_GET_DIRECT_INBOX = 'get_direct_inbox';
+    const TYPE_SEND_FIRST_CHATBOT_MESSAGE = 'send_first_chatbot_message';
+    const TYPE_CHATBOT_ANALIZE_AND_ANSWER = 'chatbot_analize_and_answer';
 
     public static function isHadRestInLastOneAndHalfHoursUnsubscribeTasks(int $accountId): bool
     {
@@ -55,15 +58,16 @@ class FastTask extends Model
 
         return true;
     }
+
     public static function isHadRestInLastOneAndHalfHoursDirectTasks(int $accountId): bool
     {
         $res = DB::select("SELECT
                 IFNULL(SUM(IF(delay > 30, 1, 0)), 0) AS is_rest
                 , COUNT(1) as cnt
             FROM fast_tasks
-            WHERE task_type = :type AND account_id = :accountId
+            WHERE account_id = :accountId AND task_type IN('".self::TYPE_DIRECT_ANSWER."', '".self::TYPE_SEND_FIRST_CHATBOT_MESSAGE."')
                 AND updated_at > (NOW() - INTERVAL 90 MINUTE)
-            ORDER BY id DESC", [':type' => self::TYPE_DIRECT_ANSWER, ':accountId' => $accountId]);
+            ORDER BY id DESC", [':accountId' => $accountId]);
 
         if (is_null($res) or count($res) == 0) {
             Log::debug('is had rest: zero');
@@ -138,13 +142,11 @@ class FastTask extends Model
 
     public static function getTask()
     {
-        $res = self::where([
-            'status' => self::STATUS_SAVED
-        ])->orderBy('id', 'ASC')
-            ->limit(1)
-            ->first();
-
-        return $res;
+        return DB::selectOne("SELECT * 
+            FROM fast_tasks 
+            WHERE `status` = ?
+            ORDER BY IF(delay = -1, 0, id) ASC
+            LIMIT 1", [self::STATUS_SAVED]);
     }
 
     public static function runTask()
@@ -269,6 +271,54 @@ class FastTask extends Model
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                     Chatbot::setStatus($chatbotId, Chatbot::STATUS_SYNCHRONIZED);
+                }
+
+                break;
+            case self::TYPE_GET_DIRECT_INBOX:
+//                $chatbotId = $task->task_id;
+
+                try {
+                    ChatbotTaskRunner::getDirectInbox($task->account_id);
+                } catch (\Exception $err) {
+                    $errorMessage = $err->getMessage();
+
+                    Log::debug('Error running task TYPE_GET_DIRECT_INBOX: ' . $errorMessage);
+
+                    self::mailToDeveloper('ошибка выполнения задачи TYPE_GET_DIRECT_INBOX', $errorMessage);
+                } finally {
+                    FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
+                }
+
+                break;
+            case self::TYPE_SEND_FIRST_CHATBOT_MESSAGE:
+//                $chatbotId = $task->task_id;
+
+                try {
+                    ChatbotTaskRunner::sendFirstMessage($task->account_id);
+                } catch (\Exception $err) {
+                    $errorMessage = $err->getMessage();
+
+                    Log::debug('Error running task sendFirstMessage: ' . $errorMessage);
+
+                    self::mailToDeveloper('ошибка выполнения задачи sendFirstMessage', $errorMessage);
+                } finally {
+                    FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
+                }
+
+                break;
+            case self::TYPE_CHATBOT_ANALIZE_AND_ANSWER:
+                $chatbotId = $task->task_id;
+
+                try {
+                    ChatbotTaskRunner::analizeDialogAndAnswer($chatbotId, $task->account_id);
+                } catch (\Exception $err) {
+                    $errorMessage = $err->getMessage();
+
+                    Log::debug('Error running task analizeDialogAndAnswer: ' . $errorMessage . ' ' . $err->getTraceAsString());
+
+                    self::mailToDeveloper('ошибка выполнения задачи analizeDialogAndAnswer', $errorMessage);
+                } finally {
+                    FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
 
                 break;
