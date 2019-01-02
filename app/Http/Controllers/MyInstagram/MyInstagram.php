@@ -361,6 +361,8 @@ class MyInstagram
             $maxId = null;
             $count = 0;
 
+            $zeroCounts = 0;
+
             do {
                 Log::debug('search hashtag: ' . $tag);
                 $subResult = [];
@@ -421,7 +423,14 @@ class MyInstagram
                         }
                     }
 
-                    Log::debug('count($results): ' . count($results));
+                    Log::debug('count($results) 2: ' . count($results));
+                    if ($count($results) == 0) {
+                        $zeroCounts++;
+                    }
+
+                    if ($zeroCounts > 5) {
+                        break;
+                    }
                 } else {
                     Log::debug('items is null ' . \json_encode($response));
                 }
@@ -433,7 +442,7 @@ class MyInstagram
                     $maxId = $response->getNextMaxId();
                 }
 
-                Log::debug('count $results: ' . count($results));
+                Log::debug('count $results 1: ' . count($results));
 
                 if (count($subResult) > 0) {
                     foreach($subResult as $user) {
