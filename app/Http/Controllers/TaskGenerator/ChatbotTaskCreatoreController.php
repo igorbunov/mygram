@@ -219,9 +219,8 @@ class ChatbotTaskCreatoreController
 
         $waiting = ChatHeader::getWaitingAnalisysCount($chatBot, $account, ChatHeader::STATUS_DIALOG_NEED_ANALIZE);
 
-        Log::debug('waiting analisys: ' . $waiting);
-
         if ($waiting > 0) {
+        Log::debug('waiting analisys: ' . $waiting . ', add fast task');
             $randomDelayMinutes = rand(5,8);
 
             FastTask::addTask($account->id,

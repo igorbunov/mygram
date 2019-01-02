@@ -54,7 +54,7 @@ class UnsubscribeTaskCreatorController
                 foreach ($accounts as $account) {
                     foreach ($tasksTypes as $taskType) {
                         if (TaskList::TYPE_UNSUBSCRIBE == $taskType->type) {
-                            Log::debug("generate unsubscribe task");
+//                            Log::debug("generate unsubscribe task");
 
                             $taskListId = $taskType->id;
                             $unsubscribeTask = UnsubscribeTask::getActiveUnsubscribeTaskByTaskListId($taskListId, $account->id, true);

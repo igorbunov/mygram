@@ -59,8 +59,9 @@ class TaskController extends Controller
         foreach ($avaliableTaskList as $taskListItem) {
             if (TaskList::TYPE_DIRECT == $taskListItem->type) {
                 $directTasks = DirectTask::getDirectTasksByTaskListId($taskListItem->id, $accountId, $onlyActiveTasks);
-
+//                dd('aa' . \json_encode($directTasks));
                 if (is_null($directTasks)) {
+
                     continue;
                 }
 

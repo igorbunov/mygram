@@ -280,7 +280,7 @@ class MyInstagram
 
     public function sendDirect(string $receiverPK, string $message)
     {
-        return $this->instagram->direct->sendText(['users' => $receiverPK], $message);
+        return $this->instagram->direct->sendText(['users' => [$receiverPK]], $message);
     }
     public function sendDirectThread(string $threadId, string $message)
     {
