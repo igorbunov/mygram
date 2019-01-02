@@ -174,7 +174,7 @@ class ChatbotTaskRunner
 //                        $status = ChatHeader::STATUS_DIALOG_FINISHED;
 //                    }
 
-                    Log::debug('первое добавление диалога ' . $account->nickname );
+                    Log::debug('первое добавление диалога ' . $thread->getThreadTitle() );
 
                     ChatHeader::add([
                         'account_id' => $account->id,

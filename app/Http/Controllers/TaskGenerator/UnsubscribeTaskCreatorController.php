@@ -60,7 +60,7 @@ class UnsubscribeTaskCreatorController
                             $unsubscribeTask = UnsubscribeTask::getActiveUnsubscribeTaskByTaskListId($taskListId, $account->id, true);
 
                             if (is_null($unsubscribeTask)) {
-                                Log::debug('No unsubscribe tasks found ' . $taskListId . ' ' . $account->id);
+//                                Log::debug('No unsubscribe tasks found ' . $taskListId . ' ' . $account->id);
                                 continue;
                             }
 
