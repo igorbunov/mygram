@@ -55,6 +55,7 @@ class ChatbotTaskCreatoreController
                     }
 
                     Log::debug('$account ' . $account);
+                    Log::debug('$tasksTypes: ' . \json_encode($tasksTypes));
 
                     foreach ($tasksTypes as $taskType) {
                         Log::debug('$taskType->type ' . $taskType->type);
