@@ -73,9 +73,9 @@ class ChatbotTaskCreatoreController
                             }
 
                             //TODO: временно отключено
-                            if (self::generateFirstMessageTask($chatBot, $account)) {
-                                Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
-                            }
+//                            if (self::generateFirstMessageTask($chatBot, $account)) {
+//                                Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
+//                            }
 
                             if (self::generateBotAnswerTask($chatBot, $account)) {
                                 Log::debug("chatbot answer task added to fast tasks: " . $chatBot->id);
