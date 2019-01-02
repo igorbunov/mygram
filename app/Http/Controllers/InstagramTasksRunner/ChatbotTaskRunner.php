@@ -72,13 +72,13 @@ class ChatbotTaskRunner
 
         MyInstagram::getInstanse()->login($account);
 
-        if (ChatHeader::isChatExists($chatBot)) {
+        if (ChatHeader::isChatExists($chatBot, $account)) {
             $cursorId = null;
             $counter = 0;
 
             $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
 
-            while($counter++ < 3) { // 60 dialogs
+            while($counter++ < 1) { // 40 dialogs
                 $messages = MyInstagram::getInstanse()->getDirectInbox($cursorId);
 
                 if ($messages->getStatus() == 'ok') {
@@ -92,12 +92,10 @@ class ChatbotTaskRunner
                         $threadTitle = $thread->getThreadTitle();
 //                        Log::debug('thread title: ' . $threadTitle);
                         $lastMessageId = $thread->getNewestCursor();
-                        $status = ChatHeader::STATUS_DIALOG_NEED_ANALIZE;
                         $companionPK = $thread->getUsers()[0]->getPk();
                         $inSafeList = false;
 
                         if (array_key_exists($companionPK, $allAccountsSafelist)) {
-                            $status = ChatHeader::STATUS_DIALOG_FINISHED;
                             $inSafeList = true;
                         }
 
@@ -139,7 +137,7 @@ class ChatbotTaskRunner
                                 'my_pk' => $account->pk,
                                 'companion_pk' => $companionPK,
                                 'last_message_id' => $lastMessageId,
-                                'status' => $status
+                                'status' => ChatHeader::STATUS_DIALOG_NEED_ANALIZE
                             ]);
                         }
                     }
@@ -168,12 +166,15 @@ class ChatbotTaskRunner
                 Log::debug('found threads for (' . $account->nickname . '): ' . count($threads));
 
                 foreach($threads as $thread) {
-                    $status = ChatHeader::STATUS_INBOX_UPDATED;
+//                    $status = ChatHeader::STATUS_INBOX_UPDATED;
+                    $status = ChatHeader::STATUS_DIALOG_FINISHED;
                     $companionPK = $thread->getUsers()[0]->getPk();
 
-                    if (array_key_exists($companionPK, $allAccountsSafelist)) {
-                        $status = ChatHeader::STATUS_DIALOG_FINISHED;
-                    }
+//                    if (array_key_exists($companionPK, $allAccountsSafelist)) {
+//                        $status = ChatHeader::STATUS_DIALOG_FINISHED;
+//                    }
+
+                    Log::debug('первое добавление диалога ' . $account->nickname );
 
                     ChatHeader::add([
                         'account_id' => $account->id,
@@ -289,14 +290,14 @@ class ChatbotTaskRunner
         }
 
         foreach($waitingDialogs as $dialog) {
-            Log::debug('waiting dialog: ' . \json_encode($dialog));
+//            Log::debug('waiting dialog: ' . \json_encode($dialog));
 
             $threadId = $dialog->thread_id;
 
             $response = MyInstagram::getInstanse()->getThreadMessages($threadId);
 
             if ($response->getStatus() == 'ok') {
-                Log::debug('пошло: ' . \json_encode($response));
+//                Log::debug('пошло: ' . \json_encode($response));
 
                 if ($response->isThread()) {
                     $thread = $response->getThread();
@@ -325,14 +326,14 @@ class ChatbotTaskRunner
                         }
 
                         $otvet = self::getOtvet($messArr);
-                        Log::debug('getOtvet: ' . $otvet['txt'] . ' ' . $otvet['status']);
+                        Log::debug('== ответ == : ' . $otvet['txt'] . ' ' . $otvet['status']);
                         if ($otvet['status'] != '') {
                             if ($otvet['txt'] != '') {
                                 $sendResp = MyInstagram::getInstanse()->sendDirectThread($threadId, $otvet['txt']);
-                                Log::debug('sendResp: ' . \json_encode($sendResp));
+//                                Log::debug('sendResp: ' . \json_encode($sendResp));
 
                                 if ($sendResp->getStatus() == 'ok') {
-                                    Log::debug('sended');
+                                    Log::debug(' == sended == ');
                                 }
                             }
 

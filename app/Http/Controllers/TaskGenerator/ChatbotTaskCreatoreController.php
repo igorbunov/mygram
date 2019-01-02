@@ -27,7 +27,7 @@ class ChatbotTaskCreatoreController
         Log::debug('======== generate chatbot tasks =======');
         $users = User::where(['is_confirmed' => 1])->get();
 
-        Log::debug('found users: ' . count($users));
+//        Log::debug('found users: ' . count($users));
 
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
@@ -46,7 +46,7 @@ class ChatbotTaskCreatoreController
 
             $accounts = account::getActiveAccountsByUser($user->id);
 
-            Log::debug("found active accounts: " . count($accounts));
+//            Log::debug("found active accounts: " . count($accounts));
 
             try {
                 foreach ($accounts as $account) {
@@ -54,11 +54,11 @@ class ChatbotTaskCreatoreController
                         continue;
                     }
 
-                    Log::debug('$account ' . $account);
-                    Log::debug('$tasksTypes: ' . \json_encode($tasksTypes));
+//                    Log::debug('$account ' . $account);
+//                    Log::debug('$tasksTypes: ' . \json_encode($tasksTypes));
 
                     foreach ($tasksTypes as $taskType) {
-                        Log::debug('$taskType->type ' . $taskType->type);
+//                        Log::debug('$taskType->type ' . $taskType->type);
                         if (TaskList::TYPE_CHATBOT == $taskType->type) {
 //                            $taskListId = $taskType->id;
 
@@ -72,9 +72,10 @@ class ChatbotTaskCreatoreController
                                 Log::debug("chatbot get inbox task added to fast tasks: " . $chatBot->id);
                             }
 
-                            if (self::generateFirstMessageTask($chatBot, $account)) {
-                                Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
-                            }
+                            //TODO: временно отключено
+//                            if (self::generateFirstMessageTask($chatBot, $account)) {
+//                                Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
+//                            }
 
                             if (self::generateBotAnswerTask($chatBot, $account)) {
                                 Log::debug("chatbot answer task added to fast tasks: " . $chatBot->id);

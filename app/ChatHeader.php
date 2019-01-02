@@ -62,11 +62,11 @@ class ChatHeader extends Model
         return $last_message_id == $lastMessageId;
     }
 
-    public static function isChatExists(Chatbot $chatBot): bool
+    public static function isChatExists(Chatbot $chatBot, account $account): bool
     {
         $res = (int) DB::selectOne("SELECT COUNT(1) AS cnt 
             FROM chat_headers 
-            WHERE chatbot_id = ?", [$chatBot->id])->cnt;
+            WHERE chatbot_id = ? AND account_id = ?", [$chatBot->id, $account->id])->cnt;
 
         return $res > 0;
     }
