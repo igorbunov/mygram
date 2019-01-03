@@ -115,7 +115,7 @@ class ChatbotTaskCreatoreController
         $randomDelayMinutes = 3;
 
         for($i = 0; $i < 20; $i++) {
-            $randomDelayMinutes = rand(5, 15);
+            $randomDelayMinutes = rand(3, 6);
 
             if ($lastDelay != $randomDelayMinutes) {
                 break;
@@ -221,7 +221,7 @@ class ChatbotTaskCreatoreController
 
         if ($waiting > 0) {
         Log::debug('waiting analisys: ' . $waiting . ', add fast task');
-            $randomDelayMinutes = rand(0,2);
+            $randomDelayMinutes = rand(1,2);
 
             FastTask::addTask($account->id,
                 FastTask::TYPE_CHATBOT_ANALIZE_AND_ANSWER,
