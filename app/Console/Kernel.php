@@ -56,8 +56,6 @@ class Kernel extends ConsoleKernel
             })->everyMinute();
         } else {
             $schedule->call(function() {
-                Log::debug('== Run schedule direct task generator == ');
-
                 if (env('IS_DIRECT_WORKS', false)) {
                     DirectTaskCreatorController::tasksGenerator();
                 }

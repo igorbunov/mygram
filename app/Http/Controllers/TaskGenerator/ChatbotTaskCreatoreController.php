@@ -24,6 +24,10 @@ class ChatbotTaskCreatoreController
 {
     public static function tasksGenerator()
     {
+        if (FastTask::isNight()) {
+            return false;
+        }
+
         Log::debug('======== generate chatbot tasks =======');
         $users = User::where(['is_confirmed' => 1])->get();
 

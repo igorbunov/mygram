@@ -26,6 +26,9 @@ class UnsubscribeTaskCreatorController
      */
     public static function tasksGenerator()
     {
+        if (FastTask::isNight()) {
+            return false;
+        }
 //        Log::debug('generate tasks');
         $users = User::where(['is_confirmed' => 1])->get();
 
