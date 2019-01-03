@@ -327,7 +327,7 @@ class ChatbotTaskRunner
                         $bot = new BotController();
                         $otvet = $bot->getAnswer(array_reverse($messArr));
 
-                        Log::debug('== ответ == ' . $otvet['txt'] . ' ' . $otvet['status']);
+                        Log::debug('== ответ ' . $threadTitle . ' == ' . $otvet['txt'] . ' ' . $otvet['status']);
 
                         if ($otvet['status'] != '') {
                             if ($otvet['phone'] != '') {
