@@ -24,10 +24,6 @@ class ChatbotTaskCreatoreController
 {
     public static function tasksGenerator()
     {
-        if (FastTask::isNight()) {
-            return false;
-        }
-
         Log::debug('======== generate chatbot tasks =======');
         $users = User::where(['is_confirmed' => 1])->get();
 
@@ -37,7 +33,7 @@ class ChatbotTaskCreatoreController
             $tariff = Tariff::getUserCurrentTariff($user->id);
 
             if (is_null($tariff)) {
-                Log::debug('tariff is not valid for user: ' . $user->id);
+//                Log::debug('tariff is not valid for user: ' . $user->id);
                 continue;
             }
 
@@ -101,10 +97,6 @@ class ChatbotTaskCreatoreController
             return false;
         }
 
-        if (FastTask::isNight()) {
-            return false;
-        }
-
         if (!FastTask::isCanRun($account->id, FastTask::TYPE_GET_DIRECT_INBOX)) {
             return false;
         }
@@ -124,6 +116,10 @@ class ChatbotTaskCreatoreController
             if ($lastDelay != $randomDelayMinutes) {
                 break;
             }
+        }
+
+        if (FastTask::isNight()) {
+            $randomDelayMinutes+= 10;
         }
 
 //        if (!FastTask::isHadRestInLastOneAndHalfHoursUnsubscribeTasks($account->id)) {
@@ -213,10 +209,6 @@ class ChatbotTaskCreatoreController
             return false;
         }
 
-        if (FastTask::isNight()) {
-            return false;
-        }
-
         if (!FastTask::isCanRun($account->id, FastTask::TYPE_CHATBOT_ANALIZE_AND_ANSWER)) {
             return false;
         }
@@ -226,6 +218,10 @@ class ChatbotTaskCreatoreController
         if ($waiting > 0) {
         Log::debug('waiting analisys: ' . $waiting . ', add fast task');
             $randomDelayMinutes = rand(1,2);
+
+            if (FastTask::isNight()) {
+                $randomDelayMinutes = rand(3, 6);
+            }
 
             FastTask::addTask($account->id,
                 FastTask::TYPE_CHATBOT_ANALIZE_AND_ANSWER,

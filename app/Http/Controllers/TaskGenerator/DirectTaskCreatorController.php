@@ -34,7 +34,7 @@ class DirectTaskCreatorController
             $tariff = Tariff::getUserCurrentTariff($user->id);
 
             if (is_null($tariff)) {
-                Log::debug('tariff is not valid for user: ' . $user->id);
+//                Log::debug('tariff is not valid for user: ' . $user->id);
                 continue;
             }
 
