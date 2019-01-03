@@ -237,6 +237,18 @@ class MyInstagram
                     sleep(rand(5, 10));
                     $loginTryCount++;
                     return $this->login($account, $loginTryCount);
+                } else if (strpos($errorMessage, 'InstagramAPI\Response\BootstrapUsersResponse: <built-in method cancelled') !== false) {
+                    Log::debug("BootstrapUsers error, do nothing");
+
+                    if ($loginTryCount >= 3) {
+                        account::setInfo($account->id, ['verify_code' => '','check_api_path' => '','is_confirmed' => 0,'is_active' => 0,'response' => $errorMessage]);
+
+                        throw new \Exception('Не удалось залогинется и перелогинется за 3 раза. Ошибка BootstrapUsers');
+                    }
+
+                    sleep(rand(5, 10));
+                    $loginTryCount++;
+                    return $this->login($account, $loginTryCount);
                 }
 
                 account::setInfo($account->id, ['verify_code' => '','check_api_path' => '','is_confirmed' => 0,'is_active' => 0,'response' => $errorMessage]);
