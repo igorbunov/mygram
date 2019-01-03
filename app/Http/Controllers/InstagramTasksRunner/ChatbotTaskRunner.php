@@ -403,7 +403,7 @@ class ChatbotTaskRunner
         ];
 
         $startNegativeOtvet = [
-            'не интересно', 'нет', 'уже'
+            'не интересно', 'нет', 'уже', 'неинтересно'
         ];
 
         $isSendNiceProfile = false;
