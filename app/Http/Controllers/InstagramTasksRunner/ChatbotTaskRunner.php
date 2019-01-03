@@ -238,7 +238,7 @@ class ChatbotTaskRunner
 
             ChatbotAccounts::setSended($chatBot, $newUser->pk, true, $accountId);
 
-            $response = MyInstagram::getInstanse()->sendDirectThread($newUser->pk, 'Привет, я бот. Давай дружить?');
+            $response = MyInstagram::getInstanse()->sendDirectThread($newUser->pk, 'Добрый день. Предлагаю работу в Инстаграм. Интересно?');
 
             if ($response->isOk()) {
                 Log::debug('message sended to (chatbot): ' . $newUser->username);
@@ -391,7 +391,7 @@ class ChatbotTaskRunner
 
         $startPositiveOtvet = [
             'да', 'интересно', 'что за работа', 'что за робота', 'что нужно делать', 'делать', 'расскажите',
-            'подробнее', 'можно', 'суть', 'условия', 'как', 'так', 'реклам', 'возможно', 'не знаю', 'хорошо'
+            'подробнее', 'можно', 'суть', 'условия', 'как', 'так', 'реклам', 'возможно', 'не знаю', 'хорошо', 'какую'
         ];
 
         $okResult = [
