@@ -382,7 +382,8 @@ class ChatbotTaskRunner
         $myStartMessages = [
             'Привет! Отличный профиль',
             'Привет, как дела?',
-            'Предлагаю работу в Instagram. Интересно?'
+            'Предлагаю работу в Instagram. Интересно?',
+            'Предлагаю работу в Инстаграм. Интересно?'
         ];
 
         $mySecondMessage = 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить';
@@ -428,7 +429,7 @@ class ChatbotTaskRunner
                     $isSendNiceProfile = true;
                     Log::debug('$isSendNiceProfile = true');
                 }
-                if (strpos($text, $myStartMessages[2]) !== false) {
+                if (strpos($text, $myStartMessages[2]) !== false or strpos($text, $myStartMessages[3]) !== false) {
                     $isSendFirstJobRequest = true;
                     Log::debug('$isSendFirstJobRequest = true');
                 }
