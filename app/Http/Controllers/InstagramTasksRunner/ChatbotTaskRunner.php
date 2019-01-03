@@ -14,9 +14,9 @@ use App\ChatbotAccounts;
 use App\ChatHeader;
 use App\FastTask;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BotController;
 use App\Http\Controllers\MyInstagram\MyInstagram;
 use App\Safelist;
-use const Grpc\CHANNEL_CONNECTING;
 use Illuminate\Support\Facades\Log;
 
 class ChatbotTaskRunner
@@ -324,33 +324,50 @@ class ChatbotTaskRunner
                             }
                         }
 
-                        $otvet = self::getOtvet($messArr);
-                        Log::debug('== ответ == : ' . $otvet['txt'] . ' ' . $otvet['status']);
+                        $bot = new BotController();
+                        $otvet = $bot->getAnswer(array_reverse($messArr));
+
+                        Log::debug('== ответ == ' . $otvet['txt'] . ' ' . $otvet['status']);
+
                         if ($otvet['status'] != '') {
-                            if ($otvet['txt'] != '') {
-                                $sendResp = MyInstagram::getInstanse()->sendDirectThread($threadId, $otvet['txt']);
-//                                Log::debug('sendResp: ' . \json_encode($sendResp));
-
-                                if ($sendResp->getStatus() == 'ok') {
-                                    Log::debug(' == sended == ');
-                                }
-                            }
-
                             if ($otvet['phone'] != '') {
-                                FastTask::mailToDeveloper('Получен телефонный номер', $otvet['phone']);
+                                ChatHeader::edit([
+                                    'thread_id' => $threadId,
+                                    'status' => ChatHeader::STATUS_DIALOG_FINISHED
+                                ]);
 
                                 AccountController::mailToClient($account->id
                                     , 'Чатбот (получен номер телефона)'
                                     , 'На аккаунте: ' . $account->nickname. ', чат с: '.$threadTitle.', получен телефон: ' . $otvet['phone']);
+
+                                FastTask::mailToDeveloper('Получен телефонный номер', $otvet['phone']);
+                            } else if ($otvet['txt'] != '') {
+                                $sendResp = MyInstagram::getInstanse()->sendDirectThread($threadId, $otvet['txt']);
+
+                                if ($sendResp->getStatus() == 'ok') {
+                                    Log::debug(' == sended == ');
+                                }
+
+                                ChatHeader::edit([
+                                    'thread_id' => $threadId,
+                                    'status' => ChatHeader::STATUS_WAITING_ANSWER
+                                ]);
+                            } else {
+                                if ($otvet['status'] == BotController::STATUS_DIALOG_FINISHED) {
+                                    Log::debug('пользователь '. $threadTitle . ' отказался');
+
+                                    ChatHeader::edit([
+                                        'thread_id' => $threadId,
+                                        'status' => ChatHeader::STATUS_DIALOG_FINISHED
+                                    ]);
+                                } else if ($otvet['status'] == BotController::STATUS_WAITING_ANSWER) {
+                                    ChatHeader::edit([
+                                        'thread_id' => $threadId,
+                                        'status' => ChatHeader::STATUS_WAITING_ANSWER
+                                    ]);
+                                }
                             }
-
-                            ChatHeader::edit([
-                                'thread_id' => $threadId,
-                                'status' => $otvet['status'],
-//                                'last_message_id' => $sendResp->getPayload()->getItemId()
-                            ]);
-
-                        } else if ($otvet['txt'] == '') {
+                        } else {
                             ChatHeader::edit([
                                 'thread_id' => $threadId,
                                 'status' => ChatHeader::STATUS_WAITING_ANSWER
@@ -375,136 +392,4 @@ class ChatbotTaskRunner
         return $myPk == $senderPk;
     }
 
-    private static function getOtvet(array $messArr)
-    {
-        $messArr = array_reverse($messArr);
-
-        $myStartMessages = [
-            'Привет! Отличный профиль',
-            'Привет, как дела?',
-            'Предлагаю работу в Instagram. Интересно?',
-            'Предлагаю работу в Инстаграм. Интересно?'
-        ];
-
-        $mySecondMessage = 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить';
-        $myThirdMessage = 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю.';
-
-        $startPositiveOtvet = [
-            'да', 'интересно', 'что за работа', 'что за робота', 'что нужно делать', 'делать', 'расскажите',
-            'подробнее', 'можно', 'суть', 'условия', 'как', 'так', 'реклам', 'возможно', 'не знаю', 'хорошо', 'какую'
-        ];
-
-        $okResult = [
-            'ok', 'ок'
-        ];
-
-        $quesionOtvet1 = [
-            'орифлейм', 'ори', 'сетевой', 'продажи', 'эйвон', 'джерел'
-        ];
-
-        $startNegativeOtvet = [
-            'не интересно', 'нет', 'уже', 'неинтересно'
-        ];
-
-        $isSendNiceProfile = false;
-        $isSendFirstJobRequest = false;
-        $isSecondJobRequest = false;
-
-        $result = [
-            'status' => '',
-            'txt' => '',
-            'phone' => ''
-        ];
-
-        $total = count($messArr)-1;
-
-        Log::debug('total msg: ' . $total);
-
-        foreach($messArr as $number => $msg) {
-            $text = $msg['text'];
-            Log::debug($number . ' text (is my: '.$msg['isMy'].'):' . $text);
-
-            if ($msg['isMy']) {
-                if (strpos($text, $myStartMessages[0]) !== false or strpos($text, $myStartMessages[1]) !== false) {
-                    $isSendNiceProfile = true;
-                    Log::debug('$isSendNiceProfile = true');
-                }
-                if (strpos($text, $myStartMessages[2]) !== false or strpos($text, $myStartMessages[3]) !== false) {
-                    $isSendFirstJobRequest = true;
-                    Log::debug('$isSendFirstJobRequest = true');
-                }
-                if (strpos($text, $mySecondMessage) !== false) {
-                    $isSecondJobRequest = true;
-                    Log::debug('$isSecondJobRequest = true');
-                }
-            } else if (!$msg['isMy']) {
-                preg_match('!\d+!', $text, $matches);
-
-                if (count($matches) > 0) {
-                    Log::debug('numbers in message ' . \json_encode($matches) . ' count: ' . count($matches) );
-                    foreach($matches as $num) {
-                        if (strlen($num) > 5) {
-                            $result['status'] = ChatHeader::STATUS_DIALOG_FINISHED;
-                            $result['phone'] = $num;
-                            return $result;
-                        }
-                    }
-                }
-
-                if (self::strposa(mb_strtolower($text), $startNegativeOtvet)) {
-                    $result['status'] = ChatHeader::STATUS_DIALOG_FINISHED;
-                    break;
-                }
-
-                if (!$msg['isMy'] and $total == $number) {
-                    Log::debug('last message ' . mb_strtolower($text));
-
-                    if (self::strposa(mb_strtolower($text), $okResult)) {
-                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                        $result['txt'] = 'Жду номер';
-                        break;
-                    }
-
-                    if (self::strposa(mb_strtolower($text), $quesionOtvet1)) {
-                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                        $result['txt'] = $myThirdMessage;
-                        break;
-                    }
-                    if (self::strposa(mb_strtolower($text), $startPositiveOtvet)) {
-                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                        $result['txt'] = $mySecondMessage;
-                        break;
-                    }
-
-                    if ($isSendNiceProfile and self::strposa(mb_strtolower($text), ['спасиб', 'хай'])) {
-                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                        $result['txt'] = $myStartMessages[2];
-                        break;
-                    }
-                    if ($isSendFirstJobRequest and $text == 'like' and !$isSecondJobRequest) {
-                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                        $result['txt'] = $mySecondMessage;
-                        break;
-                    } else if ($isSecondJobRequest and $text == 'like') {
-                        $result['status'] = ChatHeader::STATUS_WAITING_ANSWER;
-                        $result['txt'] = 'Жду номер';
-                        break;
-                    }
-                }
-
-            }
-        }
-
-        return $result;
-    }
-
-    private static function strposa($haystack, $needle, $offset=0) {
-        if(!is_array($needle)) $needle = array($needle);
-
-        foreach($needle as $query) {
-            if(strpos($haystack, $query, $offset) !== false) return true; // stop on first true result
-        }
-
-        return false;
-    }
 }
