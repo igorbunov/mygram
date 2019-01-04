@@ -83,7 +83,8 @@ class BotController
             'messageIdex' => -1,
             'myMessages' => [
                 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'
-            ]
+            ],
+            'myShortMsg' => 'Объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество'
         ],
         'oriQuestion' => [
             'isDone' => false,
@@ -266,7 +267,7 @@ class BotController
         return $this->strposa($text, $this->myStages['helloOfer']['myMessages']);
     }
     private function isViberOferStage($text) {
-        return $this->strposa($text, $this->myStages['viberOfer']['myMessages']);
+        return $this->strposa($text, $this->myStages['viberOfer']['myShortMsg']);
     }
     private function isOriQuestionStage($text) {
         return $this->strposa($text, $this->myStages['oriQuestion']['myMessages']);
