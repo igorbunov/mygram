@@ -198,16 +198,24 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    if (strpos($errorMessage, 'Feedback required') !== false) {
-                        $direct = DirectTask::getDirectTaskById($task->task_id, $task->account_id, false);
+                    if (strpos($errorMessage, 'DirectSendItemResponse: Feedback required') !== false) {
+                        if (self::updateDelay($task->id, 180)) {
+                            Log::debug('Delay updated for account: ' . $task->account_id);
 
-                        if (!is_null($direct)) {
-                            $direct->status = DirectTask::STATUS_PAUSED;
-                            $direct->save();
-
-                            AccountController::mailToClient($task->account_id, 'Ошибка директ автоответа', 'При попытке отправить директ сообщение возникла ошибка. Задача рассылки автоматически приостановлена.');
+                            AccountController::mailToClient($task->account_id, 'Ошибка директ автоответа', 'При попытке отправить директ сообщение возникла ошибка. Задача рассылки продолжится через 3 часа.');
                         }
                     }
+
+//                    if (strpos($errorMessage, 'Feedback required') !== false) {
+//                        $direct = DirectTask::getDirectTaskById($task->task_id, $task->account_id, false);
+//
+//                        if (!is_null($direct)) {
+//                            $direct->status = DirectTask::STATUS_PAUSED;
+//                            $direct->save();
+//
+//                            AccountController::mailToClient($task->account_id, 'Ошибка директ автоответа', 'При попытке отправить директ сообщение возникла ошибка. Задача рассылки автоматически приостановлена.');
+//                        }
+//                    }
 
                     Log::debug('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage . ' ' . $err->getTraceAsString());
 
@@ -383,7 +391,7 @@ class FastTask extends Model
 
     public static function updateDelay(int $taskId, int $delay)
     {
-        $res = self::finishSave($taskId);
+        $res = self::find($taskId);
 
         if (is_null($res)) {
             return false;
