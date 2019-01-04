@@ -8,6 +8,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
+
 class BotController
 {
     const STATUS_WAITING_ANSWER = 'waiting_answer';
@@ -110,6 +112,10 @@ class BotController
             'phone' => ''
         ];
 
+        if (count($messages) == 0) {
+            return $result['status'] = self::STATUS_WAITING_ANSWER;
+        }
+
         $lastMsgIndex = count($messages) - 1;
         $totalMessages = count($messages);
 
@@ -168,6 +174,9 @@ class BotController
             return $result;
         }
 //dd($this->curStage, $this->myStages[$this->curStage], $lastMsgIndex);
+
+        Log::debug($this->curStage . ' ' . $lastMsgIndex . ' ' .\json_encode($messages));
+
         if ($this->myStages[$this->curStage]['messageIdex'] == $lastMsgIndex) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
 

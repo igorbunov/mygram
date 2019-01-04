@@ -65,14 +65,21 @@ class ChatbotTaskCreatoreController
                                 Log::debug("no chatbot exists");
                             }
 
+                            if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
+                                Log::debug("chatbot {$chatBot->id} status not in progress: " . $chatBot->status);
+                                continue;
+                            }
+
                             if (self::generateGetInboxTask($chatBot, $account)) {
                                 Log::debug("chatbot get inbox task added to fast tasks: " . $chatBot->id);
                             }
 
-                            //TODO: временно отключено
-//                            if (self::generateFirstMessageTask($chatBot, $account)) {
-//                                Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
-//                            }
+//                            TODO: кроме главного аккаунта
+                            if ($account->nickname != 'houpek_nadin') {
+                                if (self::generateFirstMessageTask($chatBot, $account)) {
+                                    Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
+                                }
+                            }
 
                             if (self::generateBotAnswerTask($chatBot, $account)) {
                                 Log::debug("chatbot answer task added to fast tasks: " . $chatBot->id);
@@ -151,7 +158,7 @@ class ChatbotTaskCreatoreController
             $todayDirectCount += DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
         }
 
-        if ($todayDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_DAY')) {
+        if ($todayDirectCount >= env('NOT_FRIEND_DIRECT_LIMITS_BY_DAY', 50)) {
             return false;
         }
 
@@ -172,22 +179,22 @@ class ChatbotTaskCreatoreController
             $lastHourDirectCount += DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
         }
 
-        if ($lastHourDirectCount >= env('FRIEND_DIRECT_LIMITS_BY_HOUR')) {
+        if ($lastHourDirectCount >= env('NOT_FRIEND_DIRECT_LIMITS_BY_HOUR', 8)) {
             return false;
         }
 
-        $randomDelayMinutes = 3;
+        $randomDelayMinutes = 5;
 
         for($i = 0; $i < 20; $i++) {
-            $randomDelayMinutes = rand(env('MESSAGE_DELAY_MIN_SLEEP', '3'), env('MESSAGE_DELAY_MAX_SLEEP', '5'));
+            $randomDelayMinutes = rand(env('NOT_FRIEND_MESSAGE_DELAY_MIN_SLEEP', '6'), env('NOT_FRIEND_MESSAGE_DELAY_MAX_SLEEP', '10'));
 
             if ($lastDelay != $randomDelayMinutes) {
                 break;
             }
         }
 
-        if (!FastTask::isHadRestInLastOneAndHalfHoursDirectTasks($account->id)) {
-            $randomDelayMinutes = rand(40, 50);
+        if (FastTask::isReachedHourlyLimitForFirstChatMessage($account->id)) {
+            $randomDelayMinutes = rand(120, 180);
         }
 
         Log::debug('Delay time (minutes): ' . $randomDelayMinutes);

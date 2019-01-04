@@ -55,7 +55,7 @@
                 <div style="display: flex; padding: 5px 15px; justify-content: space-between;  width: 450px;">
                     <div>Статус: {{ $chatbot->statusRus }}</div>
 
-                    @if($chatbot->status == \App\Chatbot::STATUS_SYNCHRONIZED)
+                    @if($chatbot->status == \App\Chatbot::STATUS_SYNCHRONIZED or $chatbot->status == \App\Chatbot::STATUS_EMPTY)
                         <div class="btn-dark start-chatbot-task" data-status="{{ $chatbot->status }}">
                             <i class="fas fa-play"></i>
                             <span style="margin-left: 20px;">Начать задание</span>

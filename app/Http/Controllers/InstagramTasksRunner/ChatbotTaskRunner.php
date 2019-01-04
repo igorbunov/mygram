@@ -218,6 +218,10 @@ class ChatbotTaskRunner
             return;
         }
 
+        if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
+            return;
+        }
+
 //        Log::debug('chatbot: ' . \json_encode($chatBot->toArray()));
 
 //        chatbot_accounts is_sended
@@ -247,7 +251,7 @@ class ChatbotTaskRunner
 
             ChatbotAccounts::setSended($chatBot, $newUser->pk, true, $accountId);
 
-            $response = MyInstagram::getInstanse()->sendDirectThread($newUser->pk, 'Добрый день. Предлагаю работу в Инстаграм. Интересно?');
+            $response = MyInstagram::getInstanse()->sendDirect($newUser->pk, 'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?');
 
             if ($response->isOk()) {
                 Log::debug('message sended to (chatbot): ' . $newUser->username);
@@ -313,6 +317,11 @@ class ChatbotTaskRunner
                     if ($thread->isItems()) {
                         $messages = $thread->getItems();
                         $threadTitle = $thread->getThreadTitle();
+
+                        if (count($messages) == 0) {
+                            Log::debug('===!!! нет сообщений в диалоге: ' . $threadTitle);
+                            continue;
+                        }
 
                         $messArr = [];
 
