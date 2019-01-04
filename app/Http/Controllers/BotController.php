@@ -56,7 +56,8 @@ class BotController
             'messageIdex' => -1,
             'myMessages' => [
                 'Привет! Отличный профиль',
-                'Привет, как дела?'
+                'Привет, как дела?',
+                'Привет! Отличный профиль.:)'
             ]
         ],
         'helloOfer' => [
@@ -65,7 +66,8 @@ class BotController
             'myMessages' => [
                 'Добрый день. Предлагаю работу в Instagram. Интересно?',
                 'Добрый день. Предлагаю работу в Инстаграм. Интересно?',
-                'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?'
+                'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?',
+                'Добрый день! Предлагаю работу в Instagram. Интересно?'
             ]
         ],
         'simpleOfer' => [
@@ -157,7 +159,7 @@ class BotController
 //        dd($this->myStages);
         if (!$this->myStages['hello']['isDone'] and $totalMessages > 0) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
-            $result['txt'] = $this->myStages['helloOfer']['myMessages'][rand(0,2)];
+            $result['txt'] = $this->myStages['helloOfer']['myMessages'][rand(0,3)];
 
             return $result;
         }
