@@ -113,7 +113,8 @@ class BotController
         ];
 
         if (count($messages) == 0) {
-            return $result['status'] = self::STATUS_WAITING_ANSWER;
+            $result['status'] = self::STATUS_WAITING_ANSWER;
+            return $result;
         }
 
         $lastMsgIndex = count($messages) - 1;
