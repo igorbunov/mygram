@@ -157,8 +157,11 @@ class BotController
             }
         }
 
-//        dd($this->myStages);
-        if (!$this->myStages['hello']['isDone'] and $totalMessages > 0) {
+        if (!$this->myStages['hello']['isDone'] and $totalMessages > 3) {
+            $result['status'] = self::STATUS_DIALOG_FINISHED;
+
+            return $result;
+        } else if (!$this->myStages['hello']['isDone'] and $totalMessages > 0) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
             $result['txt'] = $this->myStages['helloOfer']['myMessages'][rand(0,3)];
 
