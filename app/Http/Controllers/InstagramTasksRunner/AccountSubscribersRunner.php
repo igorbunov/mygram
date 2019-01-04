@@ -25,7 +25,7 @@ class AccountSubscribersRunner
         }
 
         $sleepTime = rand(5, 25);
-        Log::debug('Sleep: ' . $sleepTime);
+//        Log::debug('Sleep: ' . $sleepTime);
         sleep($sleepTime);
 
         MyInstagram::getInstanse()->login($account);

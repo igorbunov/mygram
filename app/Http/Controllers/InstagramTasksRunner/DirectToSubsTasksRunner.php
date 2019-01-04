@@ -44,7 +44,7 @@ class DirectToSubsTasksRunner
 
         foreach ($unsendedFollowers as $newFollower) {
             $sleepTime = rand(5, 25);
-            Log::debug('Sleep: ' . $sleepTime);
+//            Log::debug('Sleep: ' . $sleepTime);
             sleep($sleepTime);
 
             if (AccountSubscribers::isSended($newFollower->id)) { //TODO: сделать проверку за последние 5 мин

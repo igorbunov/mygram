@@ -50,7 +50,7 @@ class UnsubscribeTaskRunner
             }
 
             $sleepTime = rand(5, 25);
-            Log::debug('Sleep: ' . $sleepTime);
+//            Log::debug('Sleep: ' . $sleepTime);
             sleep($sleepTime);
 
             if (AccountSubscriptions::isUnsubscribed($following->id)) { //TODO: сделать проверку за последние 5 мин

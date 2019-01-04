@@ -63,13 +63,13 @@ class DirectTaskCreatorController
 
                             // run get subs task
                             if (GetNewSubsTaskCreatorController::generateGetSubsTask($directTask)) {
-                                Log::debug("get subs task added to fast tasks: " . $directTask->id);
+//                                Log::debug("get subs task added to fast tasks: " . $directTask->id);
                             }
 
                             if ($directTask->status == DirectTask::STATUS_ACTIVE) {
                                 // run generate direct task
                                 if (self::generateDirectTask($directTask)) {
-                                    Log::debug("direct task added to fast tasks: " . $directTask->id);
+//                                    Log::debug("direct task added to fast tasks: " . $directTask->id);
                                 }
                             }
                         }

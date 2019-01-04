@@ -104,7 +104,7 @@ class ChatbotTaskRunner
                     $inbox = $messages->getInbox();
 
                     $threads = $inbox->getThreads();
-                    Log::debug('found threads for (' . $account->nickname . '): ' . count($threads));
+//                    Log::debug('found threads for (' . $account->nickname . '): ' . count($threads));
 
                     foreach($threads as $thread) {
                         $threadId = $thread->getThreadId();
