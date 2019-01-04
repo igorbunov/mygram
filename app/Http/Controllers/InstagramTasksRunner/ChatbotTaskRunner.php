@@ -37,9 +37,7 @@ class ChatbotTaskRunner
             Log::debug('chatbot by user_id not found');
             return;
         }
-
-//        Log::debug('$chatbot: ' . \json_encode($chatbot->toArray()));
-
+/*
         $hashtags = explode('|', $chatbot->hashtags);
 
         Log::debug('$hashtags: ' . \json_encode($hashtags));
@@ -47,7 +45,28 @@ class ChatbotTaskRunner
         MyInstagram::getInstanse()->login($account);
 
         $newUsers = MyInstagram::getInstanse()->findUsersByHashtag($hashtags, $chatbot->max_accounts, $chatbot->id, $account->user_id);
+*/
+        // TODO: find users by likes
+        $userAccounts = explode('|', $chatbot->hashtags);
 
+        Log::debug('userAccounts: ' . \json_encode($userAccounts));
+
+        MyInstagram::getInstanse()->login($account);
+
+        $newUsers = MyInstagram::getInstanse()->findUsersByLikes($userAccounts, $chatbot->id, $account->user_id);
+
+        $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
+
+        $allAccountsSubsDirect = AccountSubscribers::getAllAccountsUsersPKS($account->user_id);
+
+        foreach($newUsers as $userPk => $userRow) {
+            if (!array_key_exists($userPk, $allAccountsSafelist)
+                and !array_key_exists($userPk, $allAccountsSubsDirect)) {
+                ChatbotAccounts::add($userRow);
+            }
+        }
+
+        ChatbotAccounts::updateStatistics($chatbot);
         Chatbot::setStatus($chatbot->id, Chatbot::STATUS_SYNCHRONIZED);
 
         Log::debug('done');

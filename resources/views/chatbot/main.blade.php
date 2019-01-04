@@ -24,17 +24,17 @@
                 <div style="display: flex; padding: 5px 15px; justify-content: space-between;">
 
                     <div style="padding: 0 5px;height: 360px;">
-                        <label>Сколько аккаунтов по хештегу загрузить? (от 1 до 100):</label>
+                        {{--<label>Сколько аккаунтов по хештегу загрузить? (от 1 до 100):</label>--}}
 
-                        <input type="number" style="width: 100%;" step="10" id="chatbot-max-accounts" min="1" max="100" value="{{ $chatbot->max_accounts }}"
-                            @if($chatbot->status == \App\Chatbot::STATUS_UPDATING || $chatbot->status == \App\Chatbot::STATUS_IN_PROGRESS)
-                                disabled
-                            @endif
-                        />
+                        {{--<input type="number" style="width: 100%;" step="10" id="chatbot-max-accounts" min="1" max="100" value="{{ $chatbot->max_accounts }}"--}}
+                            {{--@if($chatbot->status == \App\Chatbot::STATUS_UPDATING || $chatbot->status == \App\Chatbot::STATUS_IN_PROGRESS)--}}
+                                {{--disabled--}}
+                            {{--@endif--}}
+                        {{--/>--}}
 
 
 
-                        <label>Хеш теги (каждый с новой строки):</label>
+                        <label>Аккаунты (каждый с новой строки):</label>
 
                         <textarea type="textarea" id="chatbot-hashtags" maxlength="450" rows="5" style="width: 100%;height: 245px;"
                           @if($chatbot->status == \App\Chatbot::STATUS_UPDATING || $chatbot->status == \App\Chatbot::STATUS_IN_PROGRESS)

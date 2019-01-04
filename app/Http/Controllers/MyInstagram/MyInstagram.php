@@ -476,6 +476,73 @@ class MyInstagram
         return $results;
     }
 
+    public function findUsersByLikes(array $userAccounts, int $chatbotId, int $userId)
+    {
+        $results = [];
+
+        Log::debug(' count(userAccounts) = ' . count($userAccounts));
+
+        foreach($userAccounts as $i => $userAccount) {
+            Log::debug('search userAccount: ' . $userAccount);
+
+            $response = null;
+
+            try {
+                $userId = $this->instagram->people->getUserIdForName($userAccount);
+
+                $response = $this->instagram->timeline->getUserFeed($userId, null);
+                Log::debug('getUserFeed: ' . \json_encode($response));
+
+                if ($response->getStatus() != 'ok') {
+                    Log::debug('bad status: ' . $response->getStatus());
+                    continue;
+                }
+
+                $posts = ($response->isItems()) ? $response->getItems() : [];
+
+                foreach ($posts as $num => $post) {
+                    $likers = $this->instagram->media->getLikers($post->getId());
+
+                    Log::debug('$likers: ' . \json_encode($likers));
+                    if ($likers->isUserCount() and $likers->getUserCount() > 0) {
+                        $users = $likers->getUsers();
+
+                        foreach($users as $user) {
+                            $userPk = $user->getPk();
+
+                            if (!array_key_exists($userPk, $results) and $user->getIsPrivate() == 0) {
+                                $results[$userPk] = [
+                                    'chatbot_id' => $chatbotId,
+                                    'username' => $user->getUsername(),
+                                    'pk' => $userPk,
+                                    'json' => \json_encode($user),
+                                    'picture' => $user->getProfilePicUrl(),
+                                    'is_private_profile' => 0
+                                ];
+                            }
+                        }
+
+                        if ($num > 3) {
+                            break;
+                        }
+                    }
+
+                    if ($num > 5) {
+                        break;
+                    }
+                }
+            } catch(\Exception $err1) {
+                sleep(4);
+                Log::error('error: ' . $err1->getMessage() . ' ' . $err1->getTraceAsString());
+                continue;
+            }
+
+            sleep(rand(5, 15));
+        }
+
+        return $results;
+    }
+
     public function getDirectInbox($cursorId = null)
     {
         return $this->instagram->direct->getInbox($cursorId);

@@ -37,7 +37,7 @@ $(document).ready(function() {
         if ($(this).hasClass('disabled')) { return; }
 
         var hashtags = $("#chatbot-hashtags").val().split("\n").join("|"),
-            maxAccounts = $("#chatbot-max-accounts").val();
+            maxAccounts = 0;//$("#chatbot-max-accounts").val();
 
         if (hashtags == "") {
             return;

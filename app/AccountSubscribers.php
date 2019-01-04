@@ -8,6 +8,27 @@ use Illuminate\Support\Facades\Log;
 
 class AccountSubscribers extends Model
 {
+    public static function getAllAccountsUsersPKS(int $userId)
+    {
+        $res = DB::select("SELECT DISTINCT pk 
+            FROM account_subscribers 
+            WHERE owner_account_id IN (SELECT id FROM accounts WHERE user_id = ?)", [$userId]);
+
+        if (is_null($res)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach($res as $i => $row) {
+            $result[$row->pk] = 1;
+        }
+
+        Log::debug('getAllAccountsUsersPKS : ' . \json_encode($result));
+
+        return $result;
+    }
+
     public static function clearQueue(int $accountId)
     {
         self::where([
