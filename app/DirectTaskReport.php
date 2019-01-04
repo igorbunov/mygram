@@ -47,7 +47,7 @@ class DirectTaskReport extends Model
                 AND DATE(r.created_at) = CURDATE() 
                 AND r.created_at > NOW() - INTERVAL 1 HOUR
             LIMIT 1", [$directTaskId]);
-Log::debug('getLastHourFriendDirectMessagesCount ' . $directTaskId . ' res: ' . \json_encode($res));
+
         if (is_null($res) or count($res) == 0) {
             return 0;
         }

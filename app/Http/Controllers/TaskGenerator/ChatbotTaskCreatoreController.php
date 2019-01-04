@@ -151,12 +151,10 @@ class ChatbotTaskCreatoreController
         }
 
         $todayDirectCount = ChatbotAccounts::getTodayDirectMessagesCount($chatBot, $account);
-Log::debug('$todayDirectCount : ' . $todayDirectCount);
         $directTask = DirectTask::getActiveDirectTaskByTaskListId(0, $account->id, true);
 
         if (!is_null($directTask)) {
             $todayDirectCount += DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
-            Log::debug('$todayDirectCount 2 : ' . $todayDirectCount);
         }
 
         if ($todayDirectCount >= env('NOT_FRIEND_DIRECT_LIMITS_BY_DAY', 50)) {
@@ -166,23 +164,22 @@ Log::debug('$todayDirectCount : ' . $todayDirectCount);
         if (!FastTask::isCanRun($account->id, FastTask::TYPE_SEND_FIRST_CHATBOT_MESSAGE)) {
             return false;
         }
-        Log::debug('FastTask::isCanRun');
+
         $lastTask = FastTask::getLastTask($account->id, FastTask::TYPE_SEND_FIRST_CHATBOT_MESSAGE);
         $lastDelay = 0;
 
         if (!is_null($lastTask)) {
             $lastDelay = $lastTask->delay;
         }
-        Log::debug('$lastDelay ' . $lastDelay);
+
         $lastHourDirectCount = ChatbotAccounts::getLastHourDirectMessagesCount($chatBot, $account);
-        Log::debug('$lastHourDirectCount ' . $lastHourDirectCount);
+
         if (!is_null($directTask)) {
             $subres = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
-            Log::debug('$lastHourDirectCount 2 ' . $subres);
             $lastHourDirectCount += $subres;
 
         }
-        Log::debug('mazafaka');
+
         if ($lastHourDirectCount >= env('NOT_FRIEND_DIRECT_LIMITS_BY_HOUR', 8)) {
             return false;
         }
@@ -200,8 +197,6 @@ Log::debug('$todayDirectCount : ' . $todayDirectCount);
         if (FastTask::isReachedHourlyLimitForFirstChatMessage($account->id)) {
             $randomDelayMinutes = rand(120, 180);
         }
-        Log::debug('isReachedHourlyLimitForFirstChatMessage '. $randomDelayMinutes);
-        Log::debug('Delay time (minutes): ' . $randomDelayMinutes);
 
         FastTask::addTask($account->id,
             FastTask::TYPE_SEND_FIRST_CHATBOT_MESSAGE,
