@@ -41,6 +41,7 @@ class DirectTaskReport extends Model
 
     public static function getLastHourFriendDirectMessagesCount(int $directTaskId): int
     {
+        Log::debug('getLastHourFriendDirectMessagesCount before ' . $directTaskId);
         $res = DB::select("SELECT COUNT(1) AS cnt
             FROM direct_task_reports r
             WHERE r.direct_task_id = ? 

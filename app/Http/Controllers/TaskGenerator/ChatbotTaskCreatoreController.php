@@ -177,10 +177,12 @@ Log::debug('$todayDirectCount : ' . $todayDirectCount);
         $lastHourDirectCount = ChatbotAccounts::getLastHourDirectMessagesCount($chatBot, $account);
         Log::debug('$lastHourDirectCount ' . $lastHourDirectCount);
         if (!is_null($directTask)) {
-            $lastHourDirectCount += DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
-            Log::debug('$lastHourDirectCount 2 ' . $lastHourDirectCount);
-        }
+            $subres = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
+            Log::debug('$lastHourDirectCount 2 ' . $subres);
+            $lastHourDirectCount += $subres;
 
+        }
+        Log::debug('mazafaka');
         if ($lastHourDirectCount >= env('NOT_FRIEND_DIRECT_LIMITS_BY_HOUR', 8)) {
             return false;
         }
