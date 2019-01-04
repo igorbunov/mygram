@@ -66,9 +66,9 @@ class DirectToSubsTasksRunner
             if (!$response->isOk()) {
                 $resultArr['success'] = 0;
                 $resultArr['error_message'] = $response->getMessage();
-                Log::error('error send message to: ' . $newFollower->username . ' ' . $resultArr['error_message']);
+                Log::error('['.$account->nickname.'] error send message to: ' . $newFollower->username . ' ' . $resultArr['error_message']);
             } else {
-                Log::debug('message sended to: ' . $newFollower->username);
+                Log::debug('['.$account->nickname.'] message sended to: ' . $newFollower->username);
             }
 
             DirectTaskReport::writeStatistics($resultArr);

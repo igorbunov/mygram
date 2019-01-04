@@ -72,9 +72,9 @@ class UnsubscribeTaskRunner
             if (!$response->isOk()) {
                 $resultArr['success'] = 0;
                 $resultArr['error_message'] = $response->getMessage();
-                Log::error('error unsubscribing from: ' . $following->username . ' ' . $resultArr['error_message']);
+                Log::error('['.$account->nickname.'] error unsubscribing from: ' . $following->username . ' ' . $resultArr['error_message']);
             } else {
-                Log::debug('unsubscribed from: ' . $following->username);
+                Log::debug('['.$account->nickname.'] unsubscribed from: ' . $following->username);
             }
 
             UnsubscribeTaskReport::writeStatistics($resultArr);

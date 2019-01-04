@@ -273,9 +273,9 @@ class ChatbotTaskRunner
             $response = MyInstagram::getInstanse()->sendDirect($newUser->pk, 'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?');
 
             if ($response->isOk()) {
-                Log::debug('message sended to (chatbot): ' . $newUser->username);
+                Log::debug('['.$account->nickname.'] message sended to (chatbot): ' . $newUser->username);
             } else {
-                Log::error('error send message to (chatbot): ' . $newUser->username . ' error: ' . \json_encode($response));
+                Log::error('['.$account->nickname.'] error send message to (chatbot): ' . $newUser->username . ' error: ' . \json_encode($response));
             }
 //            Error running task sendFirstMessage: InstagramAPI\Response\DirectSendItemResponse: Feedback required.
 //            $sleepTime = rand(5, 25);
