@@ -11,9 +11,9 @@ class ChatbotAccounts extends Model
     {
         $res = DB::selectOne("SELECT 
                 COUNT(1) AS total,
-                IFNULL(SUM(IF(is_sended = 1, 1, 0)), 0) AS `sended`
+                IFNULL(SUM(IF(sender_account_id = :senderId, 1, 0)), 0) AS `sended`
             FROM chatbot_accounts 
-            WHERE chatbot_id = ? AND sender_account_id = ?", [$chatBot->id, $account->id]);
+            WHERE chatbot_id = :botId", [':botId' => $chatBot->id, ':senderId' => $account->id]);
 
         if (is_null($res)) {
             return;
