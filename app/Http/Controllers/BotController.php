@@ -202,17 +202,20 @@ class BotController
             case 'helloOfer':
                 if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    break;
                 }
 
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposa($totalAnswer, $this->viberOferQuestions)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
+                    break;
                 }
 
                 if ($this->strposa($totalAnswer, $this->oriQuestions)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
                     $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
+                    break;
                 }
                 break;
             case 'hello':
@@ -228,23 +231,27 @@ class BotController
 
                 if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    break;
                 }
 
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
                     $result['txt'] = 'Ок, я жду номер';
+                    break;
                 }
 
                 break;
             case 'oriQuestion':
                 if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    break;
                 }
 
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposa($totalAnswer, $this->viberOferQuestions)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
+                    break;
                 }
 
                 break;
