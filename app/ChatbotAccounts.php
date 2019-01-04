@@ -9,22 +9,34 @@ class ChatbotAccounts extends Model
 {
     public static function getLastHourDirectMessagesCount(Chatbot $chatBot, account $account): int
     {
-        return (int) DB::selectOne("SELECT COUNT(1) AS cnt 
+        $res = DB::selectOne("SELECT COUNT(1) AS cnt 
             FROM chatbot_accounts
             WHERE chatbot_id = ? 
                 AND sender_account_id = ? 
                 AND is_sended = 1 
                 AND DATE(updated_at) = CURDATE() 
                 AND updated_at > NOW() - INTERVAL 1 HOUR"
-        , [$chatBot->id, $account->id])->cnt;
+        , [$chatBot->id, $account->id]);
+
+        if (is_null($res)) {
+            return 0;
+        }
+
+        return $res->cnt;
     }
 
     public static function getTodayDirectMessagesCount(Chatbot $chatBot, account $account): int
     {
-        return (int) DB::selectOne("SELECT COUNT(1) AS cnt 
+        $res = DB::selectOne("SELECT COUNT(1) AS cnt 
             FROM chatbot_accounts
             WHERE chatbot_id = ? AND sender_account_id = ? AND is_sended = 1 AND DATE(updated_at) = CURDATE()"
-        , [$chatBot->id, $account->id])->cnt;
+        , [$chatBot->id, $account->id]);
+
+        if (is_null($res)) {
+            return 0;
+        }
+
+        return $res->cnt;
     }
 
     public static function setSended(Chatbot $chatBot, string $pk, bool $isSended, int $accountId)

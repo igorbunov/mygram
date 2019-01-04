@@ -61,14 +61,18 @@ class FastTask extends Model
 
     public static function isReachedHourlyLimitForFirstChatMessage(int $accountId): bool
     {
-        $cnt = (int) DB::select("SELECT
+        $cnt = DB::select("SELECT
               COUNT(1) as cnt
             FROM fast_tasks
             WHERE account_id = :accountId AND task_type IN('".self::TYPE_SEND_FIRST_CHATBOT_MESSAGE."')
                 AND updated_at > (NOW() - INTERVAL 100 MINUTE)
-            ORDER BY id DESC", [':accountId' => $accountId])->cnt;
+            ORDER BY id DESC", [':accountId' => $accountId]);
 
-        return ($cnt >= env('NOT_FRIEND_DIRECT_LIMITS_BY_HOUR', '10'));
+        if (is_null($cnt)) {
+            return false;
+        }
+
+        return ($cnt->cnt >= env('NOT_FRIEND_DIRECT_LIMITS_BY_HOUR', '10'));
     }
 
     public static function isHadRestInLastOneAndHalfHoursDirectTasks(int $accountId): bool
