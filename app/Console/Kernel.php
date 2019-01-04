@@ -65,7 +65,12 @@ class Kernel extends ConsoleKernel
                 }
 
                 if (env('IS_CHATBOT_WORKS', false)) {
-                    ChatbotTaskCreatoreController::tasksGenerator();
+                    try {
+                        ChatbotTaskCreatoreController::tasksGenerator();
+                    } catch (\Exception $err) {
+                        Log::debug('error ChatbotTaskCreatoreController ' . $err->getMessage() . ' ' . $err->getTraceAsString());
+                    }
+
                 }
             })->everyMinute();//TODO: remove
         }
