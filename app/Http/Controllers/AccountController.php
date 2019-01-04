@@ -30,7 +30,9 @@ class AccountController extends Controller
             return;
         }
 
-        \mail($user->email, $subject, $message);
+        $headers = "From: mygram.in.ua\nReply-To: {$user->email}\nMIME-Version: 1.\nContent-Type: text/html; charset=UTF-8";
+
+        \mail($user->email, $subject, $message, $headers);
     }
 
     public function indexAll()

@@ -325,7 +325,8 @@ class ChatbotTaskRunner
                         }
 
                         $bot = new BotController();
-                        $otvet = $bot->getAnswer(array_reverse($messArr));
+                        $messArr = array_reverse($messArr);
+                        $otvet = $bot->getAnswer($messArr);
 
                         Log::debug('== ответ ' . $threadTitle . ' == ' . $otvet['txt'] . ' ' . $otvet['status']);
 
@@ -336,11 +337,19 @@ class ChatbotTaskRunner
                                     'status' => ChatHeader::STATUS_DIALOG_FINISHED
                                 ]);
 
-                                AccountController::mailToClient($account->id
-                                    , 'Чатбот (получен номер телефона)'
-                                    , 'На аккаунте: ' . $account->nickname. ', чат с: '.$threadTitle.', получен телефон: ' . $otvet['phone']);
-
                                 FastTask::mailToDeveloper('Получен телефонный номер', $otvet['phone']);
+
+                                try {
+                                    $emailMessage = 'На аккаунте: ' . $account->nickname. ', чат с: '.$threadTitle.', получен телефон: ' . $otvet['phone'];
+                                    $emailMessage .= view('chatbot.mail_chat', [
+                                        'dialog' => $messArr,
+                                        'threadTitle' => $threadTitle
+                                    ]);
+
+                                    AccountController::mailToClient($account->id, 'Чатбот (получен номер телефона)', $emailMessage);
+                                } catch (\Exception $err1) {
+                                    Log::error('Ошибка отправки чата клиенту ' . $err1->getMessage() . ' ' . $err1->getTraceAsString());
+                                }
                             } else if ($otvet['txt'] != '') {
                                 $sendResp = MyInstagram::getInstanse()->sendDirectThread($threadId, $otvet['txt']);
 
