@@ -44,7 +44,7 @@ class FastTask extends Model
             LIMIT {$runsPerHour}", [':type' => self::TYPE_UNSUBSCRIBE, ':accountId' => $accountId]);
 
         if (is_null($res) or count($res) == 0) {
-            Log::debug('is had rest: zero');
+//            Log::debug('is had rest: zero');
             return true;
         }
 
@@ -86,13 +86,13 @@ class FastTask extends Model
             ORDER BY id DESC", [':accountId' => $accountId]);
 
         if (is_null($res) or count($res) == 0) {
-            Log::debug('is had rest: zero');
+//            Log::debug('is had rest: zero');
             return true;
         }
 
         $row = $res[0];
 
-        Log::debug('res' . \json_encode($row));
+//        Log::debug('res' . \json_encode($row));
 
         if ($row->cnt >= (env('FRIEND_DIRECT_LIMITS_BY_HOUR', '10') - 1) ) {
             if ($row->cnt > env('FRIEND_DIRECT_LIMITS_BY_HOUR', '10')) {

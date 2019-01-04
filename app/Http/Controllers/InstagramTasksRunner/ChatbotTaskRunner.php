@@ -138,7 +138,7 @@ class ChatbotTaskRunner
                                 continue;
                             }
 
-                            Log::debug('isLastMessageSame changed, threadTitle: ' . $threadTitle);
+                            Log::debug('['.$account->nickname.'] isLastMessageSame changed, threadTitle: ' . $threadTitle);
 
                             ChatHeader::edit([
                                 'thread_id' => $threadId,
@@ -148,7 +148,7 @@ class ChatbotTaskRunner
 
                             MyInstagram::getInstanse()->markItemSeen($threadId, $lastMessageId);
                         } else {
-                            Log::debug('chat header not exists, adding: ' . $threadTitle);
+                            Log::debug('['.$account->nickname.'] chat header not exists, adding: ' . $threadTitle);
 
                             ChatHeader::add([
                                 'account_id' => $account->id,
@@ -186,7 +186,7 @@ class ChatbotTaskRunner
                 $threads = $inbox->getThreads();
 
                 $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
-                Log::debug('found threads for 1 (' . $account->nickname . '): ' . count($threads));
+//                Log::debug('found threads for 1 (' . $account->nickname . '): ' . count($threads));
 
                 foreach($threads as $thread) {
                     $status = ChatHeader::STATUS_WAITING_ANSWER;
@@ -196,7 +196,7 @@ class ChatbotTaskRunner
                         $status = ChatHeader::STATUS_DIALOG_FINISHED;
                     }
 
-                    Log::debug('первое добавление диалога ' . $thread->getThreadTitle() );
+                    Log::debug('['.$account->nickname.'] первое добавление диалога ' . $thread->getThreadTitle() );
 
                     $threadId = $thread->getThreadId();
                     $lastMessageId = $thread->getNewestCursor();
