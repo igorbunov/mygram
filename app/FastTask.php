@@ -317,6 +317,12 @@ class FastTask extends Model
                     Log::debug('Error running task sendFirstMessage: ' . $errorMessage);
 
                     self::mailToDeveloper('ошибка выполнения задачи sendFirstMessage', $errorMessage);
+
+                    if (strpos($errorMessage, 'DirectSendItemResponse: Feedback required') !== false) {
+                        if (self::updateDelay($task->id, 180)) {
+                            Log::debug('Delay updated for account: ' . $task->account_id);
+                        }
+                    }
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
@@ -373,5 +379,20 @@ class FastTask extends Model
 
             \mail(env('DEVELOPER_EMAIL'), $subject, $message, $headers);
         }
+    }
+
+    public static function updateDelay(int $taskId, int $delay)
+    {
+        $res = self::finishSave($taskId);
+
+        if (is_null($res)) {
+            return false;
+        }
+
+        $res->delay = $delay;
+
+        Log::debug('=== FastTask: delay updated for taskId: ' . $taskId. ' = ' . $delay);
+
+        return $res->save();
     }
 }
