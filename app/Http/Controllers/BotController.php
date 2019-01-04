@@ -168,6 +168,22 @@ class BotController
             return $result;
         }
 
+        if ($this->myStages['viberOfer']['isDone']
+            and $this->myStages['viberOfer']['messageIdex'] < $lastMsgIndex) {
+
+            foreach($messages as $num => $msg) {
+                if (!$msg['isMy'] and $this->isPhoneNumber($msg['text'])) {
+                    $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    $result['phone'] = $msg['text'];
+                    break;
+                }
+            }
+
+            $result['status'] = self::STATUS_DIALOG_FINISHED;
+
+            return $result;
+        }
+
         $totalAnswer = [];
 
         foreach($messages as $num => $msg) {

@@ -107,7 +107,7 @@ class ChatbotTaskRunner
                                 continue;
                             }
                             if ($chatHeader->status == ChatHeader::STATUS_DIALOG_FINISHED) {
-//                                Log::debug('dialog finished, skip');
+                                Log::debug('dialog ' . $threadTitle . ' finished, skip');
                                 continue;
                             }
 
