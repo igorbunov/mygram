@@ -128,7 +128,7 @@ class DirectTaskCreatorController
             $randomDelayMinutes = rand(40, 50);
         }
 
-        Log::debug('Delay time (minutes): ' . $randomDelayMinutes);
+//        Log::debug('Delay time (minutes): ' . $randomDelayMinutes);
 
         FastTask::addTask($directTask->account_id,
             FastTask::TYPE_DIRECT_ANSWER,

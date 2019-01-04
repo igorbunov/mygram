@@ -24,7 +24,7 @@ class ChatbotTaskCreatoreController
 {
     public static function tasksGenerator()
     {
-        Log::debug('======== generate chatbot tasks =======');
+//        Log::debug('======== generate chatbot tasks =======');
         $users = User::where(['is_confirmed' => 1])->get();
 
 //        Log::debug('found users: ' . count($users));
@@ -62,28 +62,28 @@ class ChatbotTaskCreatoreController
                             $chatBot = Chatbot::getByUserId($user->id);
 
                             if (is_null($chatBot)) {
-                                Log::debug("no chatbot exists");
+//                                Log::debug("no chatbot exists");
                             }
 
                             if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
-                                Log::debug("chatbot {$chatBot->id} status not in progress: " . $chatBot->status);
+//                                Log::debug("chatbot {$chatBot->id} status not in progress: " . $chatBot->status);
                                 continue;
                             }
 
                             if (self::generateGetInboxTask($chatBot, $account)) {
-                                Log::debug("chatbot get inbox task added to fast tasks: " . $chatBot->id);
+//                                Log::debug("chatbot get inbox task added to fast tasks: " . $chatBot->id);
                             }
 
                             if (env('IS_CHATBOT_FIRST_MESSAGE_WORKS', false)) {
                                 if ($account->nickname != 'houpek_nadin') {//TODO: кроме главного аккаунта
                                     if (self::generateFirstMessageTask($chatBot, $account)) {
-                                        Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
+//                                        Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
                                     }
                                 }
                             }
 
                             if (self::generateBotAnswerTask($chatBot, $account)) {
-                                Log::debug("chatbot answer task added to fast tasks: " . $chatBot->id);
+//                                Log::debug("chatbot answer task added to fast tasks: " . $chatBot->id);
                             }
                         }
                     }
@@ -93,7 +93,7 @@ class ChatbotTaskCreatoreController
             }
         }
 
-        Log::debug('======== done generate chatbot tasks =======');
+//        Log::debug('======== done generate chatbot tasks =======');
     }
 
     private static function generateGetInboxTask(Chatbot $chatBot, account $account)
@@ -131,7 +131,7 @@ class ChatbotTaskCreatoreController
 //            $randomDelayMinutes = rand(20, 30);
 //        }
 
-        Log::debug('GetInbox delay time (minutes): ' . $randomDelayMinutes);
+//        Log::debug('GetInbox delay time (minutes): ' . $randomDelayMinutes);
 
         FastTask::addTask($account->id,
             FastTask::TYPE_GET_DIRECT_INBOX,
@@ -220,7 +220,7 @@ class ChatbotTaskCreatoreController
         $waiting = ChatHeader::getWaitingAnalisysCount($chatBot, $account, ChatHeader::STATUS_DIALOG_NEED_ANALIZE);
 
         if ($waiting > 0) {
-        Log::debug('waiting analisys: ' . $waiting . ', add fast task');
+//        Log::debug('waiting analisys: ' . $waiting . ', add fast task');
             $randomDelayMinutes = rand(1,2);
 
             if (FastTask::isNight()) {

@@ -16,7 +16,7 @@ class AccountSubscribersRunner
 {
     public static function runGetSubscribers(int $accountId)
     {
-        Log::debug('=== start async method: runGetSubscribers ' . $accountId . ' ===');
+//        Log::debug('=== start async method: runGetSubscribers ' . $accountId . ' ===');
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -30,8 +30,8 @@ class AccountSubscribersRunner
 
         MyInstagram::getInstanse()->login($account);
 
-        Log::debug('account_id ' . MyInstagram::getInstanse()->getInstagram()->account_id .
-            ', get rank token ' . MyInstagram::getInstanse()->getRankToken());
+//        Log::debug('account_id ' . MyInstagram::getInstanse()->getInstagram()->account_id .
+//            ', get rank token ' . MyInstagram::getInstanse()->getRankToken());
 
         $followersAsArray = [];
 
@@ -39,7 +39,7 @@ class AccountSubscribersRunner
             $followers = MyInstagram::getInstanse()->getLast200Followers();
             $followersAsArray = MyInstagram::getInstanse()->convertFollowersToArray($followers);
 
-            Log::debug('Received new: ' . count($followersAsArray) . ' followers from instagram');
+//            Log::debug('Received new: ' . count($followersAsArray) . ' followers from instagram');
         } catch (\Exception $err) {
             Log::error($err->getMessage());
             return;
@@ -68,6 +68,6 @@ class AccountSubscribersRunner
             Log::debug('re-added followers: ' . count($followersDiff));
         }
 
-        Log::debug('=== done ===');
+//        Log::debug('=== done ===');
     }
 }

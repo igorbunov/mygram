@@ -50,7 +50,7 @@ class FastTask extends Model
 
         $row = $res[0];
 
-        Log::debug('runsPerHour: ' . $runsPerHour . ' res: ' . \json_encode($row));
+//        Log::debug('runsPerHour: ' . $runsPerHour . ' res: ' . \json_encode($row));
 
         if ($row->cnt > ($runsPerHour - 2)) {
             return ($row->is_rest > 0);
@@ -174,8 +174,8 @@ class FastTask extends Model
         }
 
         self::setStatus($task->id, FastTask::STATUS_IN_PROCESS);
-        Log::debug('Found fast task # ' . $task->id . ' ' .$task->task_type);
-        DirectTaskReport::getNow();
+//        Log::debug('Found fast task # ' . $task->id . ' ' .$task->task_type);
+//        DirectTaskReport::getNow();
 
         switch ($task->task_type) {
             case self::TYPE_TRY_LOGIN:

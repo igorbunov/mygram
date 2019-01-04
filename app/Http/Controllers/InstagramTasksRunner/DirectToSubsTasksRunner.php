@@ -22,7 +22,7 @@ class DirectToSubsTasksRunner
 {
     public static function runDirectTasks(int $directTaskId, int $accountId)
     {
-        Log::debug('=== start async method: runDirectTasks ' . $directTaskId . ' ===');
+//        Log::debug('=== start async method: runDirectTasks ' . $directTaskId . ' ===');
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -80,6 +80,6 @@ class DirectToSubsTasksRunner
             DirectTask::updateStatistics($directTaskId);
         }
 
-        Log::debug('=== done ===');
+//        Log::debug('=== done ===');
     }
 }

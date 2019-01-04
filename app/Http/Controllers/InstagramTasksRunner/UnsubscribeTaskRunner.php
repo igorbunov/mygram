@@ -21,7 +21,7 @@ class UnsubscribeTaskRunner
 {
     public static function runUnsubscribeTasks(int $unsubscribeTaskId, int $accountId)
     {
-        Log::debug('=== start async method: runUnsubscribeTasks ' . $unsubscribeTaskId . ' ===');
+//        Log::debug('=== start async method: runUnsubscribeTasks ' . $unsubscribeTaskId . ' ===');
 
         $account = account::getAccountById($accountId);
 
@@ -92,6 +92,6 @@ class UnsubscribeTaskRunner
             UnsubscribeTask::updateStatistics($unsubscribeTaskId);
         }
 
-        Log::debug('=== done ===');
+//        Log::debug('=== done ===');
     }
 }

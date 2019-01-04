@@ -70,7 +70,7 @@ class UnsubscribeTaskCreatorController
                             if ($unsubscribeTask->status == UnsubscribeTask::STATUS_ACTIVE) {
                                 // run generate unsubscribe task
                                 if (self::generateUnsubscribeTask($unsubscribeTask)) {
-                                    Log::debug("unsubscribe task added to fast tasks: " . $unsubscribeTask->id);
+//                                    Log::debug("unsubscribe task added to fast tasks: " . $unsubscribeTask->id);
                                 }
                             }
                         }
@@ -130,7 +130,7 @@ class UnsubscribeTaskCreatorController
             $randomDelayMinutes = rand(20, 30);
         }
 
-        Log::debug('Delay time (minutes): ' . $randomDelayMinutes);
+//        Log::debug('Delay time (minutes): ' . $randomDelayMinutes);
 
         FastTask::addTask($unsubscribeTask->account_id,
             FastTask::TYPE_UNSUBSCRIBE,

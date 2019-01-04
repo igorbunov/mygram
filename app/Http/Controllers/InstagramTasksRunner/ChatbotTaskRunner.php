@@ -23,7 +23,7 @@ class ChatbotTaskRunner
 {
     public static function runRefreshList(int $chatbotId, int $accountId)
     {
-        Log::debug('=== start async method: ChatbotTaskRunner->runRefreshList ' . $chatbotId . ' ===');
+//        Log::debug('=== start async method: ChatbotTaskRunner->runRefreshList ' . $chatbotId . ' ===');
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -69,12 +69,12 @@ class ChatbotTaskRunner
         ChatbotAccounts::updateStatistics($chatbot);
         Chatbot::setStatus($chatbot->id, Chatbot::STATUS_SYNCHRONIZED);
 
-        Log::debug('done');
+//        Log::debug('done');
     }
 
     public static function getDirectInbox(int $accountId)
     {
-        Log::debug('=== start async method: ChatbotTaskRunner->getDirectInbox ' . $accountId . ' ===');
+//        Log::debug('=== start async method: ChatbotTaskRunner->getDirectInbox ' . $accountId . ' ===');
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -217,12 +217,12 @@ class ChatbotTaskRunner
             }
         }
 
-        Log::debug('getDirectInbox done');
+//        Log::debug('getDirectInbox done');
     }
 
     public static function sendFirstMessage(int $accountId)
     {
-        Log::debug('=== start async method: ChatbotTaskRunner->sendFirstMessage accountId: ' . $accountId . ' ===');
+//        Log::debug('=== start async method: ChatbotTaskRunner->sendFirstMessage accountId: ' . $accountId . ' ===');
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -287,12 +287,12 @@ class ChatbotTaskRunner
 
         ChatbotAccounts::updateStatistics($chatBot);
 
-        Log::debug('done');
+//        Log::debug('done');
     }
 
     public static function analizeDialogAndAnswer(int $chatbotId, int $accountId)
     {
-        Log::debug('=== start async method: ChatbotTaskRunner->analizeDialogAndAnswer ' . $chatbotId . ' === ' . $accountId);
+//        Log::debug('=== start async method: ChatbotTaskRunner->analizeDialogAndAnswer ' . $chatbotId . ' === ' . $accountId);
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
@@ -316,7 +316,7 @@ class ChatbotTaskRunner
             return;
         }
 
-        Log::debug('waiting analisys: ' . count($waitingDialogs));
+//        Log::debug('waiting analisys: ' . count($waitingDialogs));
 
         if (count($waitingDialogs) > 0) {
             MyInstagram::getInstanse()->login($account);
@@ -450,7 +450,7 @@ class ChatbotTaskRunner
             sleep(rand(5, 10));
         }
 
-        Log::debug('done');
+//        Log::debug('done');
     }
 
     private static function isMyMessage($myPk, $senderPk)
