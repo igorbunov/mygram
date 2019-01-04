@@ -296,14 +296,14 @@ class ChatbotTaskRunner
         $account = account::getAccountById($accountId);
 
         if (is_null($account)) {
-            Log::debug('account not found');
+//            Log::debug('account not found');
             return;
         }
 
         $chatBot = Chatbot::getByUserId($account->user_id);
 
         if (is_null($chatBot) or $chatBot->id != $chatbotId) {
-            Log::debug('chatbot by user_id not found');
+//            Log::debug('chatbot by user_id not found');
             return;
         }
 
@@ -312,7 +312,7 @@ class ChatbotTaskRunner
         $waitingDialogs = ChatHeader::getWaitingAnalisys($chatBot, $account, ChatHeader::STATUS_DIALOG_NEED_ANALIZE);
 
         if (is_null($waitingDialogs)) {
-            Log::debug('no waiting dialogs for account: ' . $account->nickname);
+//            Log::debug('no waiting dialogs for account: ' . $account->nickname);
             return;
         }
 
@@ -340,7 +340,7 @@ class ChatbotTaskRunner
                         $threadTitle = $thread->getThreadTitle();
 
                         if (count($messages) == 0) {
-                            Log::debug('===!!! нет сообщений в диалоге: ' . $threadTitle);
+                            Log::debug('['.$account->nickname.'] ===!!! нет сообщений в диалоге: ' . $threadTitle);
                             continue;
                         }
 
@@ -367,7 +367,7 @@ class ChatbotTaskRunner
                         $messArr = array_reverse($messArr);
                         $otvet = $bot->getAnswer($messArr);
 
-                        Log::debug('== ответ ' . $threadTitle . ' == ' . $otvet['txt'] . ' ' . $otvet['status']);
+                        Log::debug('['.$account->nickname.'] == ответ ' . $threadTitle . ' == ' . $otvet['txt'] . ' ' . $otvet['status']);
 
                         if ($otvet['status'] != '') {
                             if ($otvet['phone'] != '') {
@@ -377,7 +377,7 @@ class ChatbotTaskRunner
                                 ]);
 
                                 try {
-                                    Log::debug('На аккаунте: ' . $account->nickname. ', чат с: '.$threadTitle.', получен телефон: ' . $otvet['phone']);
+                                    Log::debug('['.$account->nickname.'] На аккаунте: ' . $account->nickname. ', чат с: '.$threadTitle.', получен телефон: ' . $otvet['phone']);
 
                                     $emailMessage = view('chatbot.mail_chat', [
                                         'account' => $account->nickname,
@@ -396,7 +396,7 @@ class ChatbotTaskRunner
                                 $sendResp = MyInstagram::getInstanse()->sendDirectThread($threadId, $otvet['txt']);
 
                                 if ($sendResp->getStatus() == 'ok') {
-                                    Log::debug(' == sended == ');
+                                    Log::debug('['.$account->nickname.']  == sended == ');
                                 }
 
                                 ChatHeader::edit([
@@ -405,7 +405,7 @@ class ChatbotTaskRunner
                                 ]);
                             } else {
                                 if ($otvet['status'] == BotController::STATUS_DIALOG_FINISHED) {
-                                    Log::debug('пользователь '. $threadTitle . ' отказался');
+                                    Log::debug('['.$account->nickname.'] пользователь '. $threadTitle . ' отказался');
 
                                     ChatHeader::edit([
                                         'thread_id' => $threadId,
