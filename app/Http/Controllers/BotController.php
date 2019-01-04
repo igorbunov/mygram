@@ -195,7 +195,7 @@ class BotController
                 }
             }
 
-            $result['status'] = self::STATUS_DIALOG_FINISHED;
+            $result['status'] = self::STATUS_WAITING_ANSWER;
 
             return $result;
         }
