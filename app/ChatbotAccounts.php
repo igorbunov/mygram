@@ -7,6 +7,25 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
+    public static function updateStatistics(Chatbot $chatBot, account $account)
+    {
+        $res = DB::selectOne("SELECT 
+                COUNT(1) AS total,
+                IFNULL(SUM(IF(is_sended = 1, 1, 0)), 0) AS `sended`
+            FROM chatbot_accounts 
+            WHERE chatbot_id = ? AND sender_account_id = ?", [$chatBot->id, $account->id]);
+
+        if (is_null($res)) {
+            return;
+        }
+
+        Chatbot::edit([
+            'id' => $chatBot->id,
+            'total_chats' => $res->total,
+            'chats_in_progress' => $res->sended
+        ]);
+    }
+
     public static function getLastHourDirectMessagesCount(Chatbot $chatBot, account $account): int
     {
         $res = DB::selectOne("SELECT COUNT(1) AS cnt 

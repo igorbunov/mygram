@@ -266,6 +266,8 @@ class ChatbotTaskRunner
             break;
         }
 
+        ChatbotAccounts::updateStatistics($chatBot, $account);
+
         Log::debug('done');
     }
 
