@@ -61,7 +61,7 @@ class FastTask extends Model
 
     public static function isReachedHourlyLimitForFirstChatMessage(int $accountId): bool
     {
-        $cnt = DB::select("SELECT
+        $cnt = DB::selectOne("SELECT
               COUNT(1) as cnt
             FROM fast_tasks
             WHERE account_id = :accountId AND task_type IN('".self::TYPE_SEND_FIRST_CHATBOT_MESSAGE."')
