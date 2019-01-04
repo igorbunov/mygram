@@ -3,8 +3,9 @@
     <meta charset="utf-8">
 
     <body>
-        <h3>Диалог с {{ $threadTitle }}</h3>
-
+        <h2>Диалог с {{ $threadTitle }}</h2>
+        <h3>На аккаунте: {{ $account }}, получен телефон: {{ $phone }}</h3>
+        <br/><br/>
         <div style="width: 400px; background-color: lightcyan;">
             @foreach($dialog as $message)
                 @if (!$message['isMy'])

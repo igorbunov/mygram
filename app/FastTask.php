@@ -353,7 +353,9 @@ class FastTask extends Model
     public static function mailToDeveloper($subject, $message)
     {
         if (env('ENABLE_EMAIL')) {
-            \mail(env('DEVELOPER_EMAIL'), $subject, $message);
+            $headers = "From: mygram.in.ua\nReply-To: {$user->email}\nMIME-Version: 1.\nContent-Type: text/html; charset=UTF-8";
+
+            \mail(env('DEVELOPER_EMAIL'), $subject, $message, $headers);
         }
     }
 }

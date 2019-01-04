@@ -337,16 +337,19 @@ class ChatbotTaskRunner
                                     'status' => ChatHeader::STATUS_DIALOG_FINISHED
                                 ]);
 
-                                FastTask::mailToDeveloper('Получен телефонный номер', $otvet['phone']);
-
                                 try {
-                                    $emailMessage = 'На аккаунте: ' . $account->nickname. ', чат с: '.$threadTitle.', получен телефон: ' . $otvet['phone'];
-                                    $emailMessage .= view('chatbot.mail_chat', [
+                                    Log::debug('На аккаунте: ' . $account->nickname. ', чат с: '.$threadTitle.', получен телефон: ' . $otvet['phone']);
+
+                                    $emailMessage = view('chatbot.mail_chat', [
+                                        'account' => $account->nickname,
                                         'dialog' => $messArr,
-                                        'threadTitle' => $threadTitle
+                                        'threadTitle' => $threadTitle,
+                                        'phone' => $otvet['phone']
                                     ]);
 
                                     AccountController::mailToClient($account->id, 'Чатбот (получен номер телефона)', $emailMessage);
+
+                                    FastTask::mailToDeveloper('Чатбот (получен номер телефона)', $emailMessage);
                                 } catch (\Exception $err1) {
                                     Log::error('Ошибка отправки чата клиенту ' . $err1->getMessage() . ' ' . $err1->getTraceAsString());
                                 }
