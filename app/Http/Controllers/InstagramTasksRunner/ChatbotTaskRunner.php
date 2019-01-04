@@ -360,7 +360,7 @@ class ChatbotTaskRunner
 
                                     FastTask::mailToDeveloper('Чатбот (получен номер телефона)', $emailMessage);
                                 } catch (\Exception $err1) {
-                                    Log::error('Ошибка отправки чата клиенту ' . $err1->getMessage() . ' ' . $err1->getTraceAsString());
+                                    Log::error('Ошибка отправки чата клиента ' . $err1->getMessage() . ' ' . $err1->getTraceAsString());
                                 }
                             } else if ($otvet['txt'] != '') {
                                 $sendResp = MyInstagram::getInstanse()->sendDirectThread($threadId, $otvet['txt']);
@@ -393,6 +393,21 @@ class ChatbotTaskRunner
                                 'thread_id' => $threadId,
                                 'status' => ChatHeader::STATUS_WAITING_ANSWER
                             ]);
+
+                            if ($otvet['txt'] == '') {
+                                try {
+                                    $emailMessage = $emailMessage = view('chatbot.mail_chat', [
+                                        'account' => $account->nickname,
+                                        'dialog' => $messArr,
+                                        'threadTitle' => $threadTitle,
+                                        'phone' => $otvet['phone']
+                                    ]);
+
+                                    FastTask::mailToDeveloper('Чатбот (ответ не ясен)', $emailMessage);
+                                } catch (\Exception $err2) {
+                                    Log::error('Ошибка отправки чата ' . $err2->getMessage() . ' ' . $err2->getTraceAsString());
+                                }
+                            }
                         }
 
 //                        Log::debug('messages: ' . \json_encode($messages));
