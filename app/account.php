@@ -18,7 +18,7 @@ class account extends Model
 
     public static function setInfo(int $accountId, array $info)
     {
-        Log::debug('setInfo ' . \json_encode($info));
+//        Log::debug('setInfo ' . \json_encode($info));
         $account = account::getAccountById($accountId, false);
 
         if (!is_null($account)) {

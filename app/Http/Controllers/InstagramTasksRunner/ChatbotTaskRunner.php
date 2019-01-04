@@ -38,7 +38,7 @@ class ChatbotTaskRunner
             return;
         }
 
-        Log::debug('$chatbot: ' . \json_encode($chatbot->toArray()));
+//        Log::debug('$chatbot: ' . \json_encode($chatbot->toArray()));
 
         $hashtags = explode('|', $chatbot->hashtags);
 
@@ -107,7 +107,7 @@ class ChatbotTaskRunner
                                 continue;
                             }
                             if ($chatHeader->status == ChatHeader::STATUS_DIALOG_FINISHED) {
-                                Log::debug('dialog ' . $threadTitle . ' finished, skip');
+//                                Log::debug('dialog ' . $threadTitle . ' finished, skip');
                                 continue;
                             }
 
@@ -167,7 +167,7 @@ class ChatbotTaskRunner
                 $threads = $inbox->getThreads();
 
                 $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
-                Log::debug('found threads for (' . $account->nickname . '): ' . count($threads));
+                Log::debug('found threads for 1 (' . $account->nickname . '): ' . count($threads));
 
                 foreach($threads as $thread) {
                     $status = ChatHeader::STATUS_WAITING_ANSWER;
@@ -218,7 +218,7 @@ class ChatbotTaskRunner
             return;
         }
 
-        Log::debug('chatbot: ' . \json_encode($chatBot->toArray()));
+//        Log::debug('chatbot: ' . \json_encode($chatBot->toArray()));
 
 //        chatbot_accounts is_sended
         $waitingSend = ChatbotAccounts::getWaitingSendAccounts($chatBot, 10);
@@ -282,7 +282,7 @@ class ChatbotTaskRunner
             return;
         }
 
-        Log::debug('chatBot: ' . \json_encode($chatBot->toArray()));
+//        Log::debug('chatBot: ' . \json_encode($chatBot->toArray()));
 
         $waitingDialogs = ChatHeader::getWaitingAnalisys($chatBot, $account, ChatHeader::STATUS_DIALOG_NEED_ANALIZE);
 
