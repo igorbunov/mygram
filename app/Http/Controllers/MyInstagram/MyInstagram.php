@@ -485,4 +485,13 @@ class MyInstagram
     {
         return $this->instagram->direct->getThread($threadId);
     }
+
+    public function markItemSeen(string $threadId, string $lastMessageId)
+    {
+        try {
+            return $this->instagram->direct->markItemSeen($threadId, $lastMessageId);
+        } catch (\Exception $err) {
+            Log::error('error mark as seen');
+        }
+    }
 }

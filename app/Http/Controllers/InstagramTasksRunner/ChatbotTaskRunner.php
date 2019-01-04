@@ -126,6 +126,8 @@ class ChatbotTaskRunner
                                 'status' => ChatHeader::STATUS_DIALOG_NEED_ANALIZE,
                                 'last_message_id' => $lastMessageId
                             ]);
+
+                            MyInstagram::getInstanse()->markItemSeen($threadId, $lastMessageId);
                         } else {
                             Log::debug('chat header not exists, adding: ' . $threadTitle);
 
@@ -139,6 +141,8 @@ class ChatbotTaskRunner
                                 'last_message_id' => $lastMessageId,
                                 'status' => ChatHeader::STATUS_DIALOG_NEED_ANALIZE
                             ]);
+
+                            MyInstagram::getInstanse()->markItemSeen($threadId, $lastMessageId);
                         }
                     }
 
@@ -175,16 +179,21 @@ class ChatbotTaskRunner
 
                     Log::debug('первое добавление диалога ' . $thread->getThreadTitle() );
 
+                    $threadId = $thread->getThreadId();
+                    $lastMessageId = $thread->getNewestCursor();
+
                     ChatHeader::add([
                         'account_id' => $account->id,
                         'chatbot_id' => $chatBot->id,
-                        'thread_id' => $thread->getThreadId(),
+                        'thread_id' => $threadId,
                         'thread_title' => $thread->getThreadTitle(),
                         'my_pk' => $account->pk,
                         'companion_pk' => $companionPK,
-                        'last_message_id' => $thread->getNewestCursor(),
+                        'last_message_id' => $lastMessageId,
                         'status' => $status
                     ]);
+
+                    MyInstagram::getInstanse()->markItemSeen($threadId, $lastMessageId);
                 }
             }
         }
