@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
-    public static function updateStatistics(Chatbot $chatBot, account $account)
+    public static function updateStatistics(Chatbot $chatBot)
     {
         $res = DB::selectOne("SELECT 
                 COUNT(1) AS total,
-                IFNULL(SUM(IF(sender_account_id = :senderId, 1, 0)), 0) AS `sended`
+                IFNULL(SUM(IF(sender_account_id > 0, 1, 0)), 0) AS `sended`
             FROM chatbot_accounts 
-            WHERE chatbot_id = :botId", [':botId' => $chatBot->id, ':senderId' => $account->id]);
+            WHERE chatbot_id = :botId", [':botId' => $chatBot->id]);
 
         if (is_null($res)) {
             return;
