@@ -115,7 +115,7 @@ class ChatbotTaskRunner
                         $inSafeList = false;
 
                         if (array_key_exists($companionPK, $allAccountsSafelist)) {
-                            $inSafeList = true;
+                            continue;
                         }
 
                         $chatHeader = ChatHeader::getHeaderByThreadId($chatBot, $threadId);
