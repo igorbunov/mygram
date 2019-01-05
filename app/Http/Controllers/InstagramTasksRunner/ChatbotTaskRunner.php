@@ -89,13 +89,13 @@ class ChatbotTaskRunner
             return;
         }
 
+        $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
+
         MyInstagram::getInstanse()->login($account);
 
         if (ChatHeader::isChatExists($chatBot, $account)) {
             $cursorId = null;
             $counter = 0;
-
-            $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
 
             while($counter++ < 1) { // 40 dialogs
                 $messages = MyInstagram::getInstanse()->getDirectInbox($cursorId);
@@ -185,7 +185,7 @@ class ChatbotTaskRunner
 //                Log::debug('inbox: ' . \json_encode($inbox));
                 $threads = $inbox->getThreads();
 
-                $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
+//                $allAccountsSafelist = Safelist::getSafelistForAllAccounts($account->user_id);
 //                Log::debug('found threads for 1 (' . $account->nickname . '): ' . count($threads));
 
                 foreach($threads as $thread) {
@@ -193,7 +193,7 @@ class ChatbotTaskRunner
                     $companionPK = $thread->getUsers()[0]->getPk();
 
                     if (array_key_exists($companionPK, $allAccountsSafelist)) {
-                        $status = ChatHeader::STATUS_DIALOG_FINISHED;
+                        continue;
                     }
 
                     Log::debug('['.$account->nickname.'] первое добавление диалога ' . $thread->getThreadTitle() );
