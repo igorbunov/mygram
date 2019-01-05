@@ -74,5 +74,9 @@
                 </div>
             </div>
         </section>
+
+        <div id="chatbot-accounts-container">
+            @include('chatbot.chatbot_account_item')
+        </div>
     </div>
 @stop

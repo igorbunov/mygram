@@ -7,6 +7,45 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
+    public static function setIsInSendlist(Chatbot $chatBot, string $nickname, int $isChecked)
+    {
+        $res = DB::selectOne("SELECT id
+            FROM chatbot_accounts 
+            WHERE chatbot_id = :botId AND username = :user
+              AND (is_sended = 0 OR (is_sended = 1 AND sender_account_id = -1))
+            LIMIT 1"
+        , [':botId' => $chatBot->id, ':user' => $nickname]);
+
+        if (is_null($res)) {
+            return false;
+        }
+
+//dd($res);
+        $item = self::find($res->id);
+
+        if (is_null($item)) {
+            return false;
+        }
+
+        $item->is_sended = (!$isChecked) ? 1 : 0;
+        $item->sender_account_id = (!$isChecked) ? -1 : 0;
+
+        return $item->save();
+    }
+
+    public static function getAll(Chatbot $chatBot, int $start = 0, int $limit = 100)
+    {
+        $res = DB::select("SELECT SQL_CALC_FOUND_ROWS *
+            FROM chatbot_accounts 
+            WHERE chatbot_id = :botId
+              AND is_sended = 0 OR (is_sended = 1 AND sender_account_id = -1)
+            LIMIT :start, :limit", [':botId' => $chatBot->id, ':start' => $start, ':limit' => $limit]);
+
+        $total = DB::selectOne(DB::raw("SELECT FOUND_ROWS() AS total"))->total;
+
+        return is_null($res) ? ['data' => null, 'total' => 0] : ['data' => $res, 'total' => $total];
+    }
+
     public static function updateStatistics(Chatbot $chatBot)
     {
         $res = DB::selectOne("SELECT 

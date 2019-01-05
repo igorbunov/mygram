@@ -84,7 +84,7 @@ ul, li {
     border-radius: 5px;
     padding: 10px;
 }
-#safelist{
+#safelist, #chatbotaccounts-list{
     border-radius: 5px;
 }
 .safelist-pagination{
@@ -92,7 +92,7 @@ ul, li {
     margin: 12px 0;
     display: flex;
 }
-#safelist > div{
+#safelist > div, #chatbotaccounts-list > div{
     display: flex;
     align-items: center;
     border: 1px solid white;
@@ -101,13 +101,13 @@ ul, li {
     padding: 5px;
     background-color: darkseagreen;
 }
-#safelist > div > div:nth-child(2n){
+#safelist > div > div:nth-child(2n), #chatbotaccounts-list > div > div:nth-child(2n){
     padding: 5px;
     flex-grow: 1;
     font-size: 30px;
 }
 
-#safelist > div > div:nth-child(3n){
+#safelist > div > div:nth-child(3n), #chatbotaccounts-list > div > div:nth-child(3n){
     padding-right: 15px;
     font-size: 40px;
 }
@@ -126,6 +126,13 @@ ul, li {
 .safelist-toggle-on-off > span{
     padding: 5px;
 }
+
+
+
+
+
+
+
 
 .account.active{
     background-color: forestgreen;

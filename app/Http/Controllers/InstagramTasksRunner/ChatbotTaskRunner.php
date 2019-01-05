@@ -59,10 +59,23 @@ class ChatbotTaskRunner
 
         $allAccountsSubsDirect = AccountSubscribers::getAllAccountsUsersPKS($account->user_id);
 
+        $botController = new BotController();
+
+        $blackListNicknames = [
+            'ua', 'store', 'shop', 'ukraine',
+            'style', 'moda', 'clothes', 'odezhda', 'look', 'apple', 'watch',
+            'fitness', 'sport', 'doll', 'toys', 'parfume', 'shoes' , 'mag', 'official',
+            'fashion', 'cosmet', 'shugar', 'babe', 'eco', 'food', 'ru', 'russia', 'travel',
+            'box', 'decor', 'jewelry', 'galler'
+        ];
+
         foreach($newUsers as $userPk => $userRow) {
             if (!array_key_exists($userPk, $allAccountsSafelist)
                 and !array_key_exists($userPk, $allAccountsSubsDirect)) {
-                ChatbotAccounts::add($userRow);
+
+                if (!$botController->strposa($userRow['username'], $blackListNicknames)) {
+                    ChatbotAccounts::add($userRow);
+                }
             }
         }
 

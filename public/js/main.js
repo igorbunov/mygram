@@ -71,6 +71,24 @@ $(document).ready(function() {
     });
 
 
+    var loadChatbotAccountsWithPagination = function (start) {
+        $.ajax({
+            url: '/get_chatbot',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'html',
+            data: {
+                start: start
+            },
+            success: function(data) {
+                $("#chatbot-accounts-container").empty();
+                $("#chatbot-accounts-container").html(data);
+            }
+        });
+    };
+
     var loadWithPagination = function (accountId, isAll, start) {
         $.ajax({
             url: '/get_safelist',
@@ -89,6 +107,13 @@ $(document).ready(function() {
                 $("#safelist-container").html(data);
             }
         });
+    };
+
+    chatBotAccountsListPaginateForward = function (me, start, limit) {
+        loadChatbotAccountsWithPagination(start + limit);
+    };
+    chatBotAccountsListPaginateBack = function (me, start, limit) {
+        loadChatbotAccountsWithPagination(start - limit);
     };
 
     safelistPaginateBack = function (me, start, limit) {
@@ -189,6 +214,40 @@ $(document).ready(function() {
             }
         });
     });
+
+    onChatbotAccountClick = function (el) {
+        var nickname = $(el).children('.safelist-nickname').text().trim(),
+            isChecked = 0,
+            checkbox = $(el).children('.my-checkbox');
+
+        if (checkbox.hasClass('checkbox-unchecked')) {
+            isChecked = 1;
+        }
+
+        $.ajax({
+            url: '/chatbot_account_toggle',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                nickname: nickname,
+                isChecked: isChecked
+            },
+            success: function(data) {
+                if (data.success) {
+                    if (data.is_checked == 1) {
+                        checkbox.removeClass('checkbox-unchecked').addClass('checkbox-checked');
+                    } else {
+                        checkbox.removeClass('checkbox-checked').addClass('checkbox-unchecked');
+                    }
+                } else {
+                    alert(data.message);
+                }
+            }
+        });
+    };
 
     onSafelistClick = function (el) {
         var accountId = $("#safelist").data("accountId"),

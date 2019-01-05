@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Chatbot;
+use App\ChatbotAccounts;
 use App\FastTask;
 use App\Tariff;
 use App\User;
@@ -11,6 +12,78 @@ use Illuminate\Http\Request;
 
 class ChatbotController extends Controller
 {
+    public function toggleAccount(Request $req)
+    {
+        $userId = (int) session('user_id', 0);
+        $nickname = (string) $req->post('nickname', '');
+        $isChecked = (int) $req->post('isChecked', -1);
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+        }
+
+        $chatBot = Chatbot::getByUserId($userId);
+
+        if (is_null($chatBot)) {
+            return response()->json(['success' => false, 'message' => 'Ошибка получения чатбота']);
+        }
+
+        if ($nickname == '') {
+            return response()->json(['success' => false, 'message' => 'Не указан никнейм']);
+        }
+        if ($isChecked == -1) {
+            return response()->json(['success' => false, 'message' => 'Не указан статус']);
+        }
+
+        $res = ChatbotAccounts::setIsInSendlist($chatBot, $nickname, $isChecked);
+
+        if (!$res) {
+            return response()->json(['success' => false,'message' => 'Ошибка, не удалось изменить статус']);
+        }
+
+        //Safelist::updateStatistics($safeList->id);
+
+        return response()->json(['success' => true, 'is_checked' => $isChecked]);
+    }
+
+    public function getChatbotAccountsAjax(Request $req)
+    {
+        $userId = (int) session('user_id', 0);
+        $start = (int) $req->post('start', 0);
+        $limit = 100;
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+        }
+
+        $chatBot = Chatbot::getByUserId($userId);
+
+        if (is_null($chatBot)) {
+            return response()->json(['success' => false, 'message' => 'Ошибка получения чатбота']);
+        }
+
+        $allAccounts = ChatbotAccounts::getAll($chatBot, $start, $limit);
+
+        return view('chatbot.chatbot_account_item', [
+            'chatBotAccounts' => $allAccounts['data'],
+            'chatBotAccountsTotal' => $allAccounts['total'],
+            'start' => $start,
+            'limit' => $limit
+        ]);
+    }
+
     public function index()
     {
         $userId = (int) session('user_id', 0);
@@ -49,6 +122,8 @@ class ChatbotController extends Controller
                 break;
         }
 
+        $allAccounts = ChatbotAccounts::getAll($chatbot);
+
         $res = [
             'title' => 'Чат бот'
             , 'activePage' => 'chatbot'
@@ -56,7 +131,12 @@ class ChatbotController extends Controller
             , 'chatbot' => $chatbot
             , 'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
             , 'accountPicture' => User::getAccountPictureUrl($userId)
+            , 'chatBotAccounts' => $allAccounts['data']
+            , 'chatBotAccountsTotal' => $allAccounts['total']
+            , 'start' => 0
+            , 'limit' => 100
         ];
+
 
         return view('chatbot.main', $res);
     }
