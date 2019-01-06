@@ -225,7 +225,8 @@ class MyInstagram
             } else {
                 Log::error("Not a challenge required exception...");
 
-                if (strpos($errorMessage, 'Network: CURL error') !== false) {
+                if (strpos($errorMessage, 'Network: CURL error') !== false
+                    or strpos($errorMessage, 'No response from server. Either a connection or configuration error') !== false) {
                     Log::debug("Network CURL error, do nothing");
 
                     if ($loginTryCount >= 3) {
@@ -251,6 +252,7 @@ class MyInstagram
                     return $this->login($account, $loginTryCount);
                 }
 
+                FastTask::mailToDeveloper('Ошибка входа в инст', $account->nickname . ' не смог перелогинется: ' . $errorMessage);
                 account::setInfo($account->id, ['verify_code' => '','check_api_path' => '','is_confirmed' => 0,'is_active' => 0,'response' => $errorMessage]);
             }
         }
