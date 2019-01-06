@@ -33,7 +33,7 @@ class ChatbotAccounts extends Model
         return $item->save();
     }
 
-    public static function getAll(Chatbot $chatBot, int $start = 0, int $limit = 100)
+    public static function getAll(Chatbot $chatBot, int $start = 0, int $limit = 50)
     {
         $res = DB::select("SELECT SQL_CALC_FOUND_ROWS *
             FROM chatbot_accounts 

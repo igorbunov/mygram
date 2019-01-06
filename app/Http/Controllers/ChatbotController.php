@@ -56,7 +56,7 @@ class ChatbotController extends Controller
     {
         $userId = (int) session('user_id', 0);
         $start = (int) $req->post('start', 0);
-        $limit = 100;
+        $limit = 50;
 
         if ($userId == 0) {
             return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
@@ -134,7 +134,7 @@ class ChatbotController extends Controller
             , 'chatBotAccounts' => $allAccounts['data']
             , 'chatBotAccountsTotal' => $allAccounts['total']
             , 'start' => 0
-            , 'limit' => 100
+            , 'limit' => 50
         ];
 
 
