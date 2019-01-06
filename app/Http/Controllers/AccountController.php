@@ -24,6 +24,8 @@ class AccountController extends Controller
             return;
         }
 
+        $message = '['. $account->nickname .'] ' . $message;
+
         $user = User::getUserById($account->user_id);
 
         if (is_null($user)) {

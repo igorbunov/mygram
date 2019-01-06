@@ -447,6 +447,7 @@ class ChatbotTaskRunner
                                     ]);
 
                                     FastTask::mailToDeveloper('Чатбот (ответ не ясен)', $emailMessage);
+                                    AccountController::mailToClient($account->id, 'Чатбот (ответ не ясен)', $emailMessage);
                                 } catch (\Exception $err2) {
                                     Log::error('Ошибка отправки чата ' . $err2->getMessage() . ' ' . $err2->getTraceAsString());
                                 }
