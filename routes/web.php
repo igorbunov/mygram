@@ -21,6 +21,7 @@ Route::get('/', 'AccountController@index');
 Route::post('activationsuccess', 'TariffController@paymentCallback');
 
 Route::group(['middleware' => 'myauth'], function () {
+    Route::get('test_chatbot', 'ChatbotController@runTests');
     Route::post('add_account_code', 'AccountController@addAccountCode');
     Route::post('add_account', 'AccountController@create');
     Route::get('accounts', 'AccountController@index');

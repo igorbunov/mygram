@@ -12,6 +12,152 @@ use Illuminate\Http\Request;
 
 class ChatbotController extends Controller
 {
+    public function runTests()
+    {
+        $bot = new BotController();
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Добрый день']
+        ]);
+
+        $this->checkTest(1, $res, '','','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Инстаграм. Интересно?'],
+            ['isMy' => false, 'text' => 'Добрый день, да']
+        ]);
+
+        $this->checkTest(2, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?'],
+            ['isMy' => false, 'text' => 'нет']
+        ]);
+
+        $this->checkTest(3, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'привет, как дела'],
+            ['isMy' => false, 'text' => 'норм, а у тебя'],
+            ['isMy' => true, 'text' => 'так себе']
+        ]);
+
+        $this->checkTest(4, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет, как дела?'],
+            ['isMy' => false, 'text' => 'Привет, нормально, а у тебя?'],
+            ['isMy' => true, 'text' => 'Предлагаю работу в Инстаграм. Интересно?'],
+            ['isMy' => false, 'text' => 'Это орифлейм?'],
+            ['isMy' => true, 'text' => 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю. '],
+            ['isMy' => false, 'text' => 'Да, давайте'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'надо подумать'],
+            ['isMy' => true, 'text' => 'думайте быстрее'],
+            ['isMy' => false, 'text' => '345345435'],
+        ]);
+
+        $this->checkTest(5, $res, $bot::STATUS_DIALOG_FINISHED,'','345345435');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет, как дела?'],
+            ['isMy' => false, 'text' => 'Привет, нормально, а у тебя?'],
+            ['isMy' => true, 'text' => 'Предлагаю работу в Инстаграм. Интересно?'],
+            ['isMy' => false, 'text' => 'Это орифлейм?'],
+            ['isMy' => true, 'text' => 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю. '],
+            ['isMy' => false, 'text' => 'Да, давайте'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'надо подумать'],
+            ['isMy' => true, 'text' => 'думайте быстрее']
+        ]);
+
+        $this->checkTest(6, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет, как дела?'],
+            ['isMy' => false, 'text' => 'Привет, нормально, а у тебя?'],
+            ['isMy' => true, 'text' => 'Предлагаю Интересно?']
+        ]);
+
+        $this->checkTest(7, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'сама ищу)']
+        ]);
+
+        $this->checkTest(8, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'в чём заключается работа']
+        ]);
+
+        $this->checkTest(9, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'да нет']
+        ]);
+
+        $this->checkTest(10, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'доброго. и так работаем уже)']
+        ]);
+
+        $this->checkTest(11, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'yes'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'да']
+        ]);
+
+        $this->checkTest(12, $res, $bot::STATUS_WAITING_ANSWER,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'здравствуйте! блaгодapю! я сотрудничаю с корейской компанией атоми. рассказать подробнее?']
+        ]);
+
+        $this->checkTest(13, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'да, хочу минет']
+        ]);
+
+        $this->checkTest(14, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'пизда']
+        ]);
+
+        $this->checkTest(15, $res, '','','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'а'],
+            ['isMy' => false, 'text' => 'да']
+        ]);
+
+        $this->checkTest(16, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+//        dd($res);
+    }
+
+    private function checkTest(int $number, array $response, string $status, string $txt, string $phone) {
+        if ($response['status'] == $status and $response['txt'] == $txt and $response['phone'] == $phone) {
+            echo '<span style="color: green;font-weight: bold;font-size: 16px;">test # '. $number . ' good</span><br/>';
+        } else {
+            echo '<span style="color: red;font-weight: bold;font-size: 22px;">test # '. $number . ' error</span><br/>';
+        }
+    }
+
     public function toggleAccount(Request $req)
     {
         $userId = (int) session('user_id', 0);

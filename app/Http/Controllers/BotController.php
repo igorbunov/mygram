@@ -20,18 +20,21 @@ class BotController
     }
 
     private $positiveAnswers = [
-        'да', 'интересно', 'интересует', 'ага', 'угу', 'давайте', 'давай', 'хорошо',  'трави', 'говори',
+        'интересно', 'интересует', 'давайте', 'давай', 'хорошо',  'трави', 'говори',
         'рассказывай', 'раскажите', 'раскажи', 'расскажи', 'игтересно', 'готов', 'готова', 'отлично',
-        'yes', 'yep', 'like', 'ok', 'okey', 'okay', 'канешно', 'канечно', 'конечно', 'интиресно',
-        'согласен', 'согласна', 'оке', 'ок', 'da', 'слушаю',
-        'так', 'цікаво', 'готовий', 'добре', 'розповідай', 'розкажіть', 'розкажи', 'відмінно'
+        'yep', 'like', 'okey', 'okay', 'канешно', 'канечно', 'конечно', 'интиресно',
+        'согласен', 'согласна', 'оке',  'слушаю', 'звичайно',
+        'цікаво', 'готовий', 'добре', 'розповідай', 'розкажіть', 'розкажи', 'відмінно'
     ];
 
+    private $positiveClearAnswers = ['да', 'ага', 'угу', 'так', 'yes', 'ok', 'da', 'ок'];
+    private $negativeClearAnswers = ['нет', 'уже в', 'вже є', 'no', 'not', 'ні'];
+
     private $negativeAnswers = [
-        'нет', 'не интересно', 'уже есть', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно',
-        'ні', 'не цікаво', 'не цікавить', 'не потрібно', 'не цікаво', 'вже є', 'вже працюю',
-        'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво',
-        'no', 'nope', 'no thanks', 'no need', 'not', 'уже с Вами'
+        'не интересно', 'уже есть', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно',
+        'не цікаво', 'не цікавить', 'не потрібно', 'не цікаво', 'вже працюю', 'сотрудничаю',
+        'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво', 'сама ищу', 'сам ищу',  'клуб',
+        'nope', 'no thanks', 'no need', 'уже с вами', 'работаем уже', 'уже работаем', 'идеального'
     ];
 
     private $viberOferQuestions = [
@@ -47,7 +50,7 @@ class BotController
         'орифлейм', 'ори', 'сетевой', 'продажи', 'реклама', 'маркетинг', 'эйвон', 'джерелия',
         'продавать', 'рекламировать', 'фаберлик', 'косметика', 'ori', 'oriflame', 'faberlic',
         'jerelia', 'джерелія', 'орі', 'оріфлейм', 'фаберлік', 'фармаси', 'фармасі', 'farmasi', 'farmassi',
-        'продать', 'купить', 'покупать', 'вкладывать', 'деньги', 'что за компания'
+        'продать', 'купить', 'покупать', 'вкладывать', 'деньги', 'компания', 'кампания', 'компанія'
     ];
 
     private $curStage = '';
@@ -119,6 +122,8 @@ class BotController
 
         $lastMsgIndex = count($messages) - 1;
         $totalMessages = count($messages);
+        $myMessagesCount = 0;
+        $hasOtherMessages = false;
 
 //        ["isMy" => true, "text" => ""]
 
@@ -128,6 +133,8 @@ class BotController
 
         foreach ($messages as $num => $msg) {
             if ($msg['isMy']) {
+                $myMessagesCount++;
+
                 if ($this->isHelloStage($msg['text'])) {
                     $this->curStage = 'hello';
                     $this->myStages['hello']['isDone'] = true;
@@ -160,41 +167,60 @@ class BotController
                     $this->curStage = 'oriQuestion';
                     $this->myStages['oriQuestion']['isDone'] = true;
                     $this->myStages['oriQuestion']['messageIdex'] = $num;
+                } else {
+                    $hasOtherMessages = true;
                 }
             }
         }
 
-        if (!$this->myStages['hello']['isDone'] and $totalMessages > 3) {
-            $result['status'] = self::STATUS_DIALOG_FINISHED;
 
-            return $result;
-        } else if (!$this->myStages['hello']['isDone'] and $totalMessages > 0) {
-            $result['status'] = self::STATUS_WAITING_ANSWER;
-            $result['txt'] = $this->myStages['helloOfer']['myMessages'][rand(0,3)];
+//        dd($this->myStages['viberOfer']['isDone'],
+//            $this->myStages['viberOfer']['messageIdex'] ,
+//            $lastMsgIndex,
+//            $myMessagesCount);
 
-            return $result;
-        }
-//dd($this->curStage, $this->myStages[$this->curStage], $lastMsgIndex);
-
-        Log::debug($this->curStage . ' ' . $lastMsgIndex . ' ' .\json_encode($messages));
-
-        if ($this->myStages[$this->curStage]['messageIdex'] == $lastMsgIndex) {
-            $result['status'] = self::STATUS_WAITING_ANSWER;
-
-            return $result;
-        }
 
         if ($this->myStages['viberOfer']['isDone']
-            and $this->myStages['viberOfer']['messageIdex'] < $lastMsgIndex) {
+            and $this->myStages['viberOfer']['messageIdex'] < $lastMsgIndex and $myMessagesCount > 0) {
+
+            $result['status'] = self::STATUS_WAITING_ANSWER;
 
             foreach($messages as $num => $msg) {
                 if (!$msg['isMy'] and $this->isPhoneNumber($msg['text'])) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
                     $result['phone'] = $msg['text'];
-                    break;
+
+                    return $result;
                 }
             }
 
+            if ($myMessagesCount > 4 OR $hasOtherMessages) {
+                $result['status'] = self::STATUS_DIALOG_FINISHED;
+                return $result;
+            }
+
+            return $result;
+        }
+
+        if ($myMessagesCount > 4 OR $hasOtherMessages) {
+//            dd('other');
+            $result['status'] = self::STATUS_DIALOG_FINISHED;
+            return $result;
+        }
+
+        if (!$this->myStages['hello']['isDone'] and $totalMessages > 3 and $myMessagesCount > 0) {
+            $result['status'] = self::STATUS_DIALOG_FINISHED;
+
+            return $result;
+        } else if (!$this->myStages['hello']['isDone'] and $totalMessages > 0 and $myMessagesCount > 0) {
+//            dd($this->curStage, $lastMsgIndex, $totalMessages);
+            $result['status'] = self::STATUS_WAITING_ANSWER;
+            $result['txt'] = $this->myStages['helloOfer']['myMessages'][rand(0,3)];
+
+            return $result;
+        }
+
+        if ($this->myStages[$this->curStage]['messageIdex'] == $lastMsgIndex and $myMessagesCount > 0) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
 
             return $result;
@@ -213,6 +239,8 @@ class BotController
         switch ($this->curStage) {
             case 'simpleOfer':
             case 'helloOfer':
+//dd($totalAnswer, $this->viberOferQuestions, $this->strposa($totalAnswer, $this->viberOferQuestions));
+
                 if ($this->strposa($totalAnswer, $this->oriQuestions)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
                     $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
@@ -223,9 +251,21 @@ class BotController
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
                     break;
                 }
-//dd($this->strposa($totalAnswer, $this->viberOferQuestions));
+
+                if ($this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
+                    $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    break;
+                }
+
+
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposa($totalAnswer, $this->viberOferQuestions)) {
+                    $result['status'] = self::STATUS_WAITING_ANSWER;
+                    $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
+                    break;
+                }
+
+                if ($this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
                     break;
@@ -247,12 +287,10 @@ class BotController
                     break;
                 }
 
-                if ($this->strposa($totalAnswer, $this->positiveAnswers)) {
-                    $result['status'] = self::STATUS_WAITING_ANSWER;
-                    $result['txt'] = 'Ок, я жду номер';
+                if ($this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
+                    $result['status'] = self::STATUS_DIALOG_FINISHED;
                     break;
                 }
-
                 break;
             case 'oriQuestion':
                 if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
@@ -260,8 +298,19 @@ class BotController
                     break;
                 }
 
+                if ($this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
+                    $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    break;
+                }
+
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposa($totalAnswer, $this->viberOferQuestions)) {
+                    $result['status'] = self::STATUS_WAITING_ANSWER;
+                    $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
+                    break;
+                }
+
+                if ($this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
                     break;
@@ -296,12 +345,35 @@ class BotController
         return $this->strposa($text, $this->myStages['simpleOfer']['myMessages']);
     }
 
-    public function strposa($haystack, $needle, $offset=0) {
+    private function strposa($haystack, $needle) {
         if(!is_array($needle)) $needle = array($needle);
 
         foreach($needle as $query) {
             $query = mb_strtolower($query);
-            if(strpos($haystack, $query, $offset) !== false) return true; // stop on first true result
+            if(strpos($haystack, $query) !== false) return true; // stop on first true result
+        }
+
+        return false;
+    }
+
+    private  function strposaExact($haystack, $needle) {
+        if(!is_array($needle)) $needle = array($needle);
+
+        foreach($needle as $query) {
+            $query = mb_strtolower($query);
+
+            $res = str_replace([".",",",";",":","!","@","#","$","%","^","&","*",
+                "(",")","[","]","-","=","+","_","``","\n","\r","№","\\","/","|", " "], '`', $haystack);
+
+            $res = explode('`', $res);
+
+            foreach($res as $i => $row) {
+                if ($row != '') {
+                    if ($query == $row) {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;
