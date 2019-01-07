@@ -219,7 +219,7 @@ class BotController
 
             return $result;
         }
-
+Log::debug($this->curStage, $lastMsgIndex , $myMessagesCount );
         if ($this->myStages[$this->curStage]['messageIdex'] == $lastMsgIndex and $myMessagesCount > 0) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
 
