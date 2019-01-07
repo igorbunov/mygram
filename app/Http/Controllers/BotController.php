@@ -354,7 +354,7 @@ class BotController
         return $this->strposa($text, $this->myStages['simpleOfer']['myMessages']);
     }
 
-    private function strposa($haystack, $needle) {
+    public function strposa($haystack, $needle) {
         if(!is_array($needle)) $needle = array($needle);
 
         foreach($needle as $query) {
