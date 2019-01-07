@@ -315,7 +315,7 @@ class FastTask extends Model
 
                     Log::debug('Error running task sendFirstMessage: ' . $errorMessage);
 
-                    self::mailToDeveloper('Директ не отправился, превышен лимит. sendFirstMessage', $errorMessage);
+                    self::mailToDeveloper('['.$task->account_id.'] Директ не отправился, превышен лимит. sendFirstMessage', $errorMessage);
 
                     AccountController::mailToClient($task->account_id, 'Ошибка первого сообщения', 'Инст отклонил директ сообщение (спам). Задача рассылки продолжится через 3 часа.');
 

@@ -32,8 +32,8 @@ class BotController
 
     private $negativeAnswers = [
         'не интересно', 'уже есть', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно',
-        'не цікаво', 'не цікавить', 'не потрібно', 'не цікаво', 'вже працюю', 'сотрудничаю',
-        'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво', 'сама ищу', 'сам ищу',  'клуб',
+        'не цікаво', 'не цікавить', 'не потрібно', 'не цікаво', 'вже працюю', 'сотрудничаю', 'коллега',
+        'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво', 'сама ищу', 'сам ищу',  'клуб', 'не хочу',
         'nope', 'no thanks', 'no need', 'уже с вами', 'работаем уже', 'уже работаем', 'идеального'
     ];
 
@@ -241,11 +241,6 @@ class BotController
             case 'helloOfer':
 //dd($totalAnswer, $this->viberOferQuestions, $this->strposa($totalAnswer, $this->viberOferQuestions));
 
-                if ($this->strposa($totalAnswer, $this->oriQuestions)) {
-                    $result['status'] = self::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
-                    break;
-                }
 
                 if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
@@ -254,6 +249,12 @@ class BotController
 
                 if ($this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    break;
+                }
+
+                if ($this->strposa($totalAnswer, $this->oriQuestions)) {
+                    $result['status'] = self::STATUS_WAITING_ANSWER;
+                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
                     break;
                 }
 

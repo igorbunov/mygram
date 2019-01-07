@@ -147,6 +147,20 @@ class ChatbotController extends Controller
 
         $this->checkTest(16, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Благодарю, я ваша коллега в Орифлейм. Вам успехов!!!']
+        ]);
+
+        $this->checkTest(17, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Вибачте но не хочу']
+        ]);
+
+        $this->checkTest(18, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
 //        dd($res);
     }
 
