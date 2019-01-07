@@ -404,10 +404,10 @@ class MyInstagram
 
                         $isPrivate = $user->getIsPrivate();
 
-                        if ($isPrivate) {
-                            Log::debug('private profile: ' . $user->getUsername());
-                            continue;
-                        }
+//                        if ($isPrivate) {
+//                            Log::debug('private profile: ' . $user->getUsername());
+//                            continue;
+//                        }
 
                         if (!ChatbotAccounts::canBeAdded($chatbotId, $userPK, $userId)) {
                             Log::debug('cantBeAdded: ' . $user->getUsername());
