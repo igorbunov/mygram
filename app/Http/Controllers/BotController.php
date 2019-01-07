@@ -219,8 +219,15 @@ class BotController
 
             return $result;
         }
-Log::debug(\json_encode($messages));
-Log::debug($this->curStage . ' ' . $lastMsgIndex . ' ' . $myMessagesCount );
+
+        if (!array_key_exists($this->curStage, $this->myStages)) {
+            $result['status'] = self::STATUS_DIALOG_FINISHED;
+
+            return $result;
+        }
+
+//Log::debug(\json_encode($messages));
+//Log::debug($this->curStage . ' ' . $lastMsgIndex . ' ' . $myMessagesCount );
         if ($this->myStages[$this->curStage]['messageIdex'] == $lastMsgIndex and $myMessagesCount > 0) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
 

@@ -161,6 +161,12 @@ class ChatbotController extends Controller
 
         $this->checkTest(18, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+//        $res = $bot->getAnswer([
+//            ['isMy' => false, 'text' => "\ud83d\udc4d\ud83c\udffb"]
+//        ]);
+//
+//        $this->checkTest(19, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+//
 //        dd($res);
     }
 
