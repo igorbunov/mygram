@@ -53,7 +53,7 @@ class AccountController extends Controller
         $accounts = User::getAccountsByUser($userId, $onlyActive);
 
         $res = [
-            'title' => 'Ваши аккаунты'
+            'title' => 'Ваши аккаунты ('.count($accounts).')'
             , 'activePage' => 'accounts'
             , 'onlyActiveAccounts' => $onlyActive
             , 'accounts' => $accounts
