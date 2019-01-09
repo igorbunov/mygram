@@ -23,6 +23,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(1, $res, '','','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Инстаграм. Интересно?'],
             ['isMy' => false, 'text' => 'Добрый день, да']
@@ -30,6 +31,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(2, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?'],
             ['isMy' => false, 'text' => 'нет']
@@ -37,6 +39,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(3, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'привет, как дела'],
             ['isMy' => false, 'text' => 'норм, а у тебя'],
@@ -45,11 +48,12 @@ class ChatbotController extends Controller
 
         $this->checkTest(4, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Привет, как дела?'],
             ['isMy' => false, 'text' => 'Привет, нормально, а у тебя?'],
             ['isMy' => true, 'text' => 'Предлагаю работу в Инстаграм. Интересно?'],
-            ['isMy' => false, 'text' => 'Это орифлейм?'],
+            ['isMy' => false, 'text' => 'Это оря?'],
             ['isMy' => true, 'text' => 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю. '],
             ['isMy' => false, 'text' => 'Да, давайте'],
             ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
@@ -60,6 +64,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(5, $res, $bot::STATUS_DIALOG_FINISHED,'','345345435');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Привет, как дела?'],
             ['isMy' => false, 'text' => 'Привет, нормально, а у тебя?'],
@@ -74,6 +79,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(6, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Привет, как дела?'],
             ['isMy' => false, 'text' => 'Привет, нормально, а у тебя?'],
@@ -82,6 +88,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(7, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'сама ищу)']
@@ -89,6 +96,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(8, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'в чём заключается работа']
@@ -96,6 +104,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(9, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'да нет']
@@ -103,6 +112,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(10, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'доброго. и так работаем уже)']
@@ -110,6 +120,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(11, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'yes'],
@@ -119,6 +130,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(12, $res, $bot::STATUS_WAITING_ANSWER,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'здравствуйте! блaгодapю! я сотрудничаю с корейской компанией атоми. рассказать подробнее?']
@@ -126,6 +138,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(13, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'да, хочу минет']
@@ -133,6 +146,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(14, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'пизда']
@@ -140,6 +154,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(15, $res, '','','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'а'],
             ['isMy' => false, 'text' => 'да']
@@ -147,6 +162,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(16, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'Благодарю, я ваша коллега в Орифлейм. Вам успехов!!!']
@@ -154,6 +170,7 @@ class ChatbotController extends Controller
 
         $this->checkTest(17, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
+        unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Instagram. Интересно?'],
             ['isMy' => false, 'text' => 'Вибачте но не хочу']
@@ -161,12 +178,64 @@ class ChatbotController extends Controller
 
         $this->checkTest(18, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
-//        $res = $bot->getAnswer([
-//            ['isMy' => false, 'text' => "like"]
-//        ]);
-//
-//        $this->checkTest(19, $res, $bot::STATUS_DIALOG_FINISHED,'','');
-//
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день. Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'говори']
+        ]);
+
+        $this->checkTest(19, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Предлагаю работу в Инстаграм. Интересно?'],
+            ['isMy' => false, 'text' => 'Это оря?']
+        ]);
+
+        $this->checkTest(20, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'yes'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'это орифлейм, ситивой или маркетинг?']
+        ]);
+
+        $this->checkTest(21, $res, $bot::STATUS_WAITING_ANSWER,'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю.','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'yes'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'это орифлейм, ситивой или маркетинг?'],
+            ['isMy' => true, 'text' => 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю.'],
+            ['isMy' => false, 'text' => 'это орифлейм, ситивой или маркетинг?']
+        ]);
+
+        $this->checkTest(22, $res, $bot::STATUS_WAITING_ANSWER,'','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'yes'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'ат спасибы']
+        ]);
+
+        $this->checkTest(23, $res, '','','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'like'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'щельбе кельбе']
+        ]);
+
+        $this->checkTest(24, $res, '','','');
+
 //        dd($res);
     }
 
