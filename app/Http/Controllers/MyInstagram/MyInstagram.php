@@ -115,6 +115,10 @@ class MyInstagram
             $this->account = $account;
             $this->instagram = new ExtendedInstagram(true);
 
+            if ($this->account->nickname == 'houpek_nadin') {
+                $this->instagram->setVerifySSL(false);
+            }
+
             if (!empty($account->proxy_ip)) {
                 $this->instagram->setProxy($account->proxy_ip);
             }
