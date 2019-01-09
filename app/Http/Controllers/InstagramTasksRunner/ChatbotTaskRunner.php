@@ -378,11 +378,37 @@ class ChatbotTaskRunner
 
                         $bot = new BotController();
                         $messArr = array_reverse($messArr);
-                        $otvet = $bot->getAnswer($messArr);
+                        $otvet = null;
+
+                        try {
+                            $otvet = $bot->getAnswer($messArr);
+                        } catch (\Exception $err2) {
+                            Log::error('бот задублировал сообщение');
+                            FastTask::mailToDeveloper('Чатбот (задублировал сообщение)', \json_encode($messArr));
+                            $otvet = ['status' => '', 'txt' => '', 'phone' => ''];
+                        }
 
                         Log::debug('['.$account->nickname.'] == ответ ' . $threadTitle . ' == ' . $otvet['txt'] . ' ' . $otvet['status']);
 
-                        if ($otvet['status'] != '') {
+                        if ($otvet['ori']) {
+                            $emailMessage = view('chatbot.mail_chat', [
+                                'account' => $account->nickname,
+                                'dialog' => $messArr,
+                                'threadTitle' => $threadTitle,
+                                'phone' => $otvet['phone']
+                            ]);
+
+                            Log::debug('['.$account->nickname.'] , чат с: '.$threadTitle.' вопрос про ори, написали имейл');
+
+                            ChatHeader::edit([
+                                'thread_id' => $threadId,
+                                'status' => ChatHeader::STATUS_DIALOG_FINISHED
+                            ]);
+
+                            AccountController::mailToClient($account->id, 'Чатбот (вопрос про орифлейм)', $emailMessage);
+
+                            FastTask::mailToDeveloper('Чатбот (вопрос про орифлейм)', $emailMessage);
+                        } else if ($otvet['status'] != '') {
                             if ($otvet['phone'] != '') {
                                 ChatHeader::edit([
                                     'thread_id' => $threadId,

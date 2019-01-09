@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 
+
 class BotController
 {
     const STATUS_WAITING_ANSWER = 'waiting_answer';
@@ -44,7 +45,7 @@ class BotController
         'детальніше', 'що за робота', 'що за работа', 'що робити', 'що робити', 'що потрібно',
         'що треба', 'розкажіть', 'роскажіть', 'умови', 'яку', 'як', 'можливо', 'про що', 'про шо', 'робота',
         'детальніше', 'розкажи', 'саме', 'подробиці', 'потрібно робити', 'що', '?', '??', '???', 'в чому полягає робота',
-        'чем заниматься', 'чем заниматся'
+        'чем заниматься', 'чем заниматся', 'какое направление'
     ];
 
     private $oriClearAnswers = ['ори', 'орі', 'ori'];
@@ -93,18 +94,19 @@ class BotController
             ],
             'myShortMsg' => 'Объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество'
         ],
+        'extendedExplain' => [
+            'isDone' => false,
+            'messageIdex' => -1,
+            'myMessages' => [
+                'Давать людям информацию в соц сетях. Это в двух словах, более подробно в Вайбер сообществе.'
+            ],
+            'myShortMsg' => 'Давать людям информацию в соц сетях'
+        ],
         'oriQuestion' => [
             'isDone' => false,
             'messageIdex' => -1,
             'myMessages' => [
                 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю.'
-            ]
-        ],
-        'phone' => [
-            'isDone' => false,
-            'messageIdex' => -1,
-            'myMessages' => [
-                'Я сейчас вас добавлю в сообщество. Внимательно прочитайте приветственное сообщение. Потом нажмите на строчку вверху закрепленную и вас перенесёт в самое начало информации.'
             ]
         ]
     ];
@@ -112,7 +114,7 @@ class BotController
     public function getAnswer(array $messages)
     {
         $this->curStage = '';
-        $result = ['status' => '', 'txt' => '', 'phone' => ''];
+        $result = ['status' => '', 'txt' => '', 'phone' => '', 'ori' => false];
 
         if (count($messages) == 0) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
@@ -123,8 +125,7 @@ class BotController
         $totalMessages = count($messages);
         $myMessagesCount = 0;
         $hasOtherMessages = false;
-
-//        ["isMy" => true, "text" => ""]
+        $isMyMessageLast = false;
 
         foreach ($messages as $num => $msg) {
             $messages[$num]['text'] = mb_strtolower(trim($msg['text']));
@@ -132,6 +133,7 @@ class BotController
 
         foreach ($messages as $num => $msg) {
             if ($msg['isMy']) {
+                $isMyMessageLast = true;
                 $myMessagesCount++;
 
                 if ($this->isHelloStage($msg['text'])) {
@@ -166,14 +168,36 @@ class BotController
                     $this->curStage = 'oriQuestion';
                     $this->myStages['oriQuestion']['isDone'] = true;
                     $this->myStages['oriQuestion']['messageIdex'] = $num;
+                } else if ($this->isExtendedStage($msg['text'])) {
+                    $this->curStage = 'extendedExplain';
+                    $this->myStages['extendedExplain']['isDone'] = true;
+                    $this->myStages['extendedExplain']['messageIdex'] = $num;
                 } else {
                     $hasOtherMessages = true;
                 }
+            } else {
+                $isMyMessageLast = false;
             }
         }
 
-        if (!array_key_exists($this->curStage, $this->myStages)) {
+        foreach($messages as $num => $msg) {
+            if (!$msg['isMy'] and $this->isPhoneNumber($msg['text'])) {
+                $result['status'] = self::STATUS_DIALOG_FINISHED;
+                $result['phone'] = $msg['text'];
+
+                return $result;
+            }
+        }
+
+//        dd($hasOtherMessages, $messages);
+        if ($hasOtherMessages or !array_key_exists($this->curStage, $this->myStages)) {
+
             $result['status'] = self::STATUS_DIALOG_FINISHED;
+
+            return $result;
+        }
+        if (!$hasOtherMessages and $isMyMessageLast) {
+            $result['status'] = self::STATUS_WAITING_ANSWER;
 
             return $result;
         }
@@ -187,50 +211,42 @@ class BotController
         }
 
         $totalAnswer = implode(' ', $totalAnswer);
-//dd($totalAnswer);
-        if ($this->myStages['viberOfer']['isDone']
+
+        if ($this->myStages['viberOfer']['isDone'] and !$this->myStages['oriQuestion']['isDone']
             and $this->myStages['viberOfer']['messageIdex'] < $lastMsgIndex and $myMessagesCount > 0) {
 
             $result['status'] = self::STATUS_WAITING_ANSWER;
-
-            foreach($messages as $num => $msg) {
-                if (!$msg['isMy'] and $this->isPhoneNumber($msg['text'])) {
-                    $result['status'] = self::STATUS_DIALOG_FINISHED;
-                    $result['phone'] = $msg['text'];
-
-                    return $result;
-                }
-            }
 
             if ($myMessagesCount > 4 OR $hasOtherMessages) {
                 $result['status'] = self::STATUS_DIALOG_FINISHED;
                 return $result;
             } else if (!$this->myStages['oriQuestion']['isDone']) {
-                if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
+                if ($this->strposa($totalAnswer, $this->negativeAnswers)
+                    or $this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
                     return $result;
                 }
-
-                if ($this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
+                if ($this->strposaExact($totalAnswer, $this->oriClearAnswers)
+                    or $this->strposa($totalAnswer, $this->oriQuestions)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    $result['ori'] = true;
                     return $result;
-                }
 
-                if ($this->strposaExact($totalAnswer, $this->oriClearAnswers)) {
-                    $result['status'] = self::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
-                    return $result;
+//                    $this->checkDouble($messages, $this->myStages['oriQuestion']['myMessages'][0]);
+//                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
+//                    return $result;
                 }
-
-                if ($this->strposa($totalAnswer, $this->oriQuestions)) {
-                    $result['status'] = self::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
-                    return $result;
-                }
-
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
+                    return $result;
+                }
+                if ($this->strposa($totalAnswer, $this->viberOferQuestions)
+                    and !$this->myStages['extendedExplain']['isDone']) {
+                    $result['status'] = self::STATUS_WAITING_ANSWER;
+
+                    $this->checkDouble($messages, $this->myStages['extendedExplain']['myMessages'][0]);
+                    $result['txt'] = $this->myStages['extendedExplain']['myMessages'][0];
                     return $result;
                 }
 
@@ -239,18 +255,52 @@ class BotController
             }
 
             return $result;
-        } else if ($this->myStages['oriQuestion']['isDone']
+        } else if ($this->myStages['oriQuestion']['isDone'] and !$this->myStages['viberOfer']['isDone']
             and $this->myStages['oriQuestion']['messageIdex'] < $lastMsgIndex and $myMessagesCount > 0) {
 
-            if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
+            if ($this->strposa($totalAnswer, $this->negativeAnswers)
+                or $this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
                 $result['status'] = self::STATUS_DIALOG_FINISHED;
                 return $result;
             }
-dd($totalAnswer);
-            if ($this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
+            if ($this->strposa($totalAnswer, $this->positiveAnswers)
+                or $this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
+                $result['status'] = self::STATUS_WAITING_ANSWER;
+                return $result;
+            }
+            if ($this->strposa($totalAnswer, $this->viberOferQuestions)
+                and !$this->myStages['extendedExplain']['isDone']) {
+                $result['status'] = self::STATUS_WAITING_ANSWER;
+
+                $this->checkDouble($messages, $this->myStages['extendedExplain']['myMessages'][0]);
+                $result['txt'] = $this->myStages['extendedExplain']['myMessages'][0];
+                return $result;
+            }
+
+            $result['status'] = '';
+            return $result;
+        } else if ($this->myStages['oriQuestion']['isDone'] and $this->myStages['viberOfer']['isDone']) {
+            if ($this->strposa($totalAnswer, $this->negativeAnswers)
+                or $this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
                 $result['status'] = self::STATUS_DIALOG_FINISHED;
                 return $result;
             }
+            if ($this->strposa($totalAnswer, $this->positiveAnswers)
+                or $this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
+                $result['status'] = self::STATUS_WAITING_ANSWER;
+                return $result;
+            }
+            if ($this->strposa($totalAnswer, $this->viberOferQuestions)
+                and !$this->myStages['extendedExplain']['isDone']) {
+                $result['status'] = self::STATUS_WAITING_ANSWER;
+
+                $this->checkDouble($messages, $this->myStages['extendedExplain']['myMessages'][0]);
+                $result['txt'] = $this->myStages['extendedExplain']['myMessages'][0];
+                return $result;
+            }
+
+            $result['status'] = '';
+            return $result;
         }
 
         if ($myMessagesCount > 4 OR $hasOtherMessages) {
@@ -264,7 +314,8 @@ dd($totalAnswer);
             return $result;
         } else if (!$this->myStages['hello']['isDone'] and $totalMessages > 0 and $myMessagesCount > 0) {
             $result['status'] = self::STATUS_WAITING_ANSWER;
-            $result['txt'] = $this->myStages['helloOfer']['myMessages'][rand(0,3)];
+            $this->checkDouble($messages, $this->myStages['helloOfer']['myMessages'][0]);
+            $result['txt'] = $this->myStages['helloOfer']['myMessages'][0];
 
             return $result;
         }
@@ -289,14 +340,21 @@ dd($totalAnswer);
                 }
 
                 if ($this->strposaExact($totalAnswer, $this->oriClearAnswers)) {
-                    $result['status'] = self::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
+                    $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    $result['ori'] = true;
+
+                    break;
+
+//                    $this->checkDouble($messages, $this->myStages['oriQuestion']['myMessages'][0]);
+//                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
                     break;
                 }
 
                 if ($this->strposa($totalAnswer, $this->oriQuestions)) {
-                    $result['status'] = self::STATUS_WAITING_ANSWER;
-                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
+                    $result['status'] = self::STATUS_DIALOG_FINISHED;
+                    $result['ori'] = true;
+//                    $this->checkDouble($messages, $this->myStages['oriQuestion']['myMessages'][0]);
+//                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
                     break;
                 }
 
@@ -304,19 +362,22 @@ dd($totalAnswer);
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposa($totalAnswer, $this->viberOferQuestions)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
+                    $this->checkDouble($messages, $this->myStages['viberOfer']['myMessages'][0]);
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
                     break;
                 }
 
                 if ($this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
+                    $this->checkDouble($messages, $this->myStages['viberOfer']['myMessages'][0]);
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
                     break;
                 }
                 break;
             case 'hello':
                 $result['status'] = self::STATUS_WAITING_ANSWER;
-                $result['txt'] = $this->myStages['simpleOfer']['myMessages'][rand(0,1)];
+                $this->checkDouble($messages, $this->myStages['simpleOfer']['myMessages'][0]);
+                $result['txt'] = $this->myStages['simpleOfer']['myMessages'][0];
                 break;
             case 'viberOfer':
                 if ($this->isPhoneNumber($totalAnswer)) {
@@ -349,12 +410,14 @@ dd($totalAnswer);
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposa($totalAnswer, $this->viberOferQuestions)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
+                    $this->checkDouble($messages, $this->myStages['viberOfer']['myMessages'][0]);
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
                     break;
                 }
 
                 if ($this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
                     $result['status'] = self::STATUS_WAITING_ANSWER;
+                    $this->checkDouble($messages, $this->myStages['viberOfer']['myMessages'][0]);
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
                     break;
                 }
@@ -384,6 +447,9 @@ dd($totalAnswer);
     private function isOriQuestionStage($text) {
         return $this->strposa($text, $this->myStages['oriQuestion']['myMessages']);
     }
+    private function isExtendedStage($text) {
+        return $this->strposa($text, $this->myStages['extendedExplain']['myShortMsg']);
+    }
     private function isSimpleOferStage($text) {
         return $this->strposa($text, $this->myStages['simpleOfer']['myMessages']);
     }
@@ -397,6 +463,14 @@ dd($totalAnswer);
         }
 
         return false;
+    }
+
+    private function checkDouble($messages, $txt) {
+        foreach($messages as $msg) {
+            if ($msg['isMy'] and strpos($msg['text'], $txt) !== false) {
+                throw new \Exception('double');
+            }
+        }
     }
 
     private  function strposaExact($haystack, $needle) {
