@@ -236,6 +236,25 @@ class ChatbotController extends Controller
 
         $this->checkTest(24, $res, '','','');
 
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Здравствуйте, я работаю, спасибо']
+        ]);
+
+        $this->checkTest(25, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'интересно'],
+            ['isMy' => false, 'text' => 'что за компания'],
+            ['isMy' => true, 'text' => 'Это Орифлейм. Но это не продажи. Помимо продавцов в компании есть менеджеры, которые всем этим процессом управляют. Вот я, например, не продавец. Я менеджер и занимаюсь набором персонала, который будет помогать мне развивать нашу команду. Работа полностью онлайн. Я всему обучаю.'],
+            ['isMy' => false, 'text' => 'Благодарю. Я уже в команде Орифлейм']
+        ]);
+
+        $this->checkTest(26, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
 //        dd($res);
     }
 

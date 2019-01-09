@@ -28,12 +28,12 @@ class BotController
     ];
 
     private $positiveClearAnswers = ['да', 'ага', 'угу', 'так', 'yes', 'ok', 'da', 'ок'];
-    private $negativeClearAnswers = ['нет', 'уже в', 'вже є', 'no', 'not', 'ні', 'нетт'];
+    private $negativeClearAnswers = ['нет',  'no', 'not', 'ні', 'нетт'];
 
     private $negativeAnswers = [
-        'не интересно', 'уже есть', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно',
+        'не интересно', 'уже есть', 'вже є', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно', 'я работаю',
         'не цікаво', 'не цікавить', 'не потрібно', 'не цікаво', 'вже працюю', 'сотрудничаю', 'коллега', 'коллеги',
-        'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво', 'сама ищу', 'сам ищу',  'клуб', 'не хочу',
+        'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво', 'сама ищу', 'сам ищу',  'клуб', 'не хочу', 'уже в',
         'nope', 'no thanks', 'no need', 'уже с вами', 'работаем уже', 'уже работаем', 'идеального', 'колега', 'колеги'
     ];
 
@@ -238,6 +238,18 @@ class BotController
             }
 
             return $result;
+        } else if ($this->myStages['oriQuestion']['isDone']
+            and $this->myStages['oriQuestion']['messageIdex'] < $lastMsgIndex and $myMessagesCount > 0) {
+
+            if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
+                $result['status'] = self::STATUS_DIALOG_FINISHED;
+                return $result;
+            }
+dd($totalAnswer);
+            if ($this->strposaExact($totalAnswer, $this->negativeClearAnswers)) {
+                $result['status'] = self::STATUS_DIALOG_FINISHED;
+                return $result;
+            }
         }
 
         if ($myMessagesCount > 4 OR $hasOtherMessages) {
