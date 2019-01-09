@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\FastTask;
 use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
+use App\Http\Controllers\InstagramTasksRunner\DatabaseCleaner;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskGenerator\ChatbotTaskCreatoreController;
@@ -43,6 +44,7 @@ class Kernel extends ConsoleKernel
             Log::debug('== Run chedule tariff changer == ');
             Tariff::tariffTick();
             TaskController::disableAccountsAndTasksByEndTariff();
+            DatabaseCleaner::clearFastTasks();
         })->daily();
 
         if (env('PROJECT_PATH') == '/home/pata/projects/myinst/') {
