@@ -314,7 +314,7 @@ class MyInstagram
     {
         try {
             $response = $this->instagram->timeline->getUserFeed($userPK, null);
-            Log::debug('getUserFeed: ' . \json_encode($response));
+//            Log::debug('getUserFeed: ' . \json_encode($response));
 
             if ($response->getStatus() != 'ok') {
                 Log::debug('bad status: ' . $response->getStatus());
@@ -326,6 +326,8 @@ class MyInstagram
             foreach ($posts as $num => $post) {
                 $this->instagram->media->like($post->getId());
 
+                Log::debug('media liked');
+                
                 sleep(rand(4,9));
 
                 if ($num > 2) {
