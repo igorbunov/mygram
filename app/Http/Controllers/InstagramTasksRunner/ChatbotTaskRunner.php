@@ -285,7 +285,7 @@ class ChatbotTaskRunner
 
             try {
                 if ($newUser->is_private_profile == 0) {
-                    MyInstagram::getInstanse()->likeSomePosts($newUser->pk);
+                    MyInstagram::getInstanse()->likeSomePosts($account->nickname, $newUser->pk);
                 }
 
                 $subRes = MyInstagram::getInstanse()->subscribe($newUser->pk);
