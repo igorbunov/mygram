@@ -310,6 +310,33 @@ class MyInstagram
         return $this->instagram->people->follow($userPK);
     }
 
+    public function likeSomePosts(string $userPK)
+    {
+        try {
+            $response = $this->instagram->timeline->getUserFeed($userPK, null);
+            Log::debug('getUserFeed: ' . \json_encode($response));
+
+            if ($response->getStatus() != 'ok') {
+                Log::debug('bad status: ' . $response->getStatus());
+                return;
+            }
+
+            $posts = ($response->isItems()) ? $response->getItems() : [];
+
+            foreach ($posts as $num => $post) {
+                $this->instagram->media->like($post->getId());
+
+                sleep(rand(4,9));
+
+                if ($num > 2) {
+                    break;
+                }
+            }
+        } catch (\Exception $err) {
+            Log::error('error like some posts: ' . \json_encode($err->getMessage()));
+        }
+    }
+
     public function getInfo()
     {
         $result = [];
