@@ -289,6 +289,8 @@ class ChatbotTaskRunner
                 if ($subRes->isOk()) {
                     Log::debug('['.$account->nickname.'] подписался (chatbot): ' . $newUser->username);
                 }
+
+                sleep(rand(5, 10));
             } catch (\Exception $err0) {
                 Log::debug('ошибка подписки ' . $newUser->username . ' ' . \json_encode($err0->getMessage()));
             }
