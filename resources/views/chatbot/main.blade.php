@@ -68,7 +68,6 @@
                     @endif
                 </div>
                 <div style="display: flex; padding: 5px 15px; justify-content: space-between; max-width: 520px;">
-                {{--<div style="display: flex; padding: 5px 15px; justify-content: space-between;  width: 450px;">--}}
                     <div style="margin: 0 5px;">В очереди: {{ $chatbotStats->in_queue }}</div>
                     <div style="margin: 0 5px;">Всего: {{ $chatbotStats->total }}</div>
                     <div style="margin: 0 5px;">Сегодня: {{ $chatbotStats->sended_today }}</div>

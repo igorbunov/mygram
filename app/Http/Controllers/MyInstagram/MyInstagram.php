@@ -438,7 +438,7 @@ class MyInstagram
                             continue;
                         }
 
-                        $isPrivate = $user->getIsPrivate();
+                        $isPrivate = ($user->getIsPrivate()) ? 1 : 0;
 
 //                        if ($isPrivate) {
 //                            Log::debug('private profile: ' . $user->getUsername());
@@ -547,15 +547,16 @@ class MyInstagram
 
                         foreach($users as $user) {
                             $userPk = $user->getPk();
+                            $isPrivate = ($user->getIsPrivate()) ? 1 : 0;
 
-                            if (!array_key_exists($userPk, $results) and $user->getIsPrivate() == 0) {
+                            if (!array_key_exists($userPk, $results)) {
                                 $results[$userPk] = [
                                     'chatbot_id' => $chatbotId,
                                     'username' => $user->getUsername(),
                                     'pk' => $userPk,
                                     'json' => \json_encode($user),
                                     'picture' => $user->getProfilePicUrl(),
-                                    'is_private_profile' => 0
+                                    'is_private_profile' => $isPrivate
                                 ];
                             }
                         }
