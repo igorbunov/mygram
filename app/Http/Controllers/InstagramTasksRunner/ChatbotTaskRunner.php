@@ -410,7 +410,7 @@ class ChatbotTaskRunner
                                 'phone' => $otvet['phone']
                             ]);
 
-                            Log::debug('['.$account->nickname.'] , чат с: '.$threadTitle.' вопрос про ори, написали имейл');
+                            Log::debug('['.$account->nickname.'] чат с: '.$threadTitle.' вопрос про ори, написали имейл');
 
                             ChatHeader::edit([
                                 'thread_id' => $threadId,

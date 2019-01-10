@@ -32,7 +32,7 @@ class BotController
     private $negativeClearAnswers = ['нет',  'no', 'not', 'ні', 'нетт', 'неа'];
 
     private $negativeAnswers = [
-        'не интересно', 'уже есть', 'вже є', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно', 'я работаю',
+        'не интересует', 'не интересно', 'уже есть', 'вже є', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно', 'я работаю',
         'не цікаво', 'не цікавить', 'не потрібно', 'не цікаво', 'вже працюю', 'сотрудничаю', 'коллега', 'коллеги',
         'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво', 'сама ищу', 'сам ищу',  'клуб', 'не хочу', 'уже в',
         'nope', 'no thanks', 'no need', 'уже с вами', 'работаем уже', 'уже работаем', 'идеального', 'колега', 'колеги'
@@ -44,8 +44,8 @@ class BotController
         'имено', 'ват', 'подробности', 'подробно', 'нужно делать', 'нужна делать', 'что', 'заключается',
         'детальніше', 'що за робота', 'що за работа', 'що робити', 'що робити', 'що потрібно',
         'що треба', 'розкажіть', 'роскажіть', 'умови', 'яку', 'як', 'можливо', 'про що', 'про шо', 'робота',
-        'детальніше', 'розкажи', 'саме', 'подробиці', 'потрібно робити', 'що', '?', '??', '???', 'в чому полягає робота',
-        'чем заниматься', 'чем заниматся', 'какое направление'
+        'детальніше', 'саме', 'подробиці', 'потрібно робити', 'що', '?', '??', '???', 'в чому полягає робота',
+        'чем заниматься', 'чем заниматся', 'какое направление', 'конкретніше', 'конкретнее'
     ];
 
     private $oriClearAnswers = ['ори', 'орі', 'ori'];
@@ -189,7 +189,6 @@ class BotController
             }
         }
 
-//        dd($hasOtherMessages, $messages);
         if ($hasOtherMessages or !array_key_exists($this->curStage, $this->myStages)) {
 
             $result['status'] = self::STATUS_DIALOG_FINISHED;
@@ -301,6 +300,9 @@ class BotController
 
             $result['status'] = '';
             return $result;
+//        } else {
+//            $result['status'] = self::STATUS_WAITING_ANSWER;
+//            return $result;
         }
 
         if ($myMessagesCount > 4 OR $hasOtherMessages) {
@@ -329,6 +331,7 @@ class BotController
         switch ($this->curStage) {
             case 'simpleOfer':
             case 'helloOfer':
+
                 if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
                     break;
@@ -373,6 +376,8 @@ class BotController
                     $result['txt'] = $this->myStages['viberOfer']['myMessages'][0];
                     break;
                 }
+
+                $result['status'] = self::STATUS_WAITING_ANSWER;
                 break;
             case 'hello':
                 $result['status'] = self::STATUS_WAITING_ANSWER;
@@ -395,6 +400,9 @@ class BotController
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
                     break;
                 }
+
+                $result['status'] = self::STATUS_WAITING_ANSWER;
+
                 break;
             case 'oriQuestion':
                 if ($this->strposa($totalAnswer, $this->negativeAnswers)) {
@@ -422,6 +430,7 @@ class BotController
                     break;
                 }
 
+                $result['status'] = self::STATUS_WAITING_ANSWER;
                 break;
         }
 

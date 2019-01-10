@@ -21,7 +21,7 @@ class ChatbotController extends Controller
             ['isMy' => false, 'text' => 'Добрый день']
         ]);
 
-        $this->checkTest(1, $res, '','','');
+        $this->checkTest(1, $res, $bot::STATUS_WAITING_ANSWER,'','');
 
         unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
@@ -30,7 +30,7 @@ class ChatbotController extends Controller
         ]);
 
         $this->checkTest(2, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
-//dd($res);
+
         unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?'],
@@ -152,8 +152,8 @@ class ChatbotController extends Controller
             ['isMy' => false, 'text' => 'пизда']
         ]);
 
-        $this->checkTest(15, $res, '','','');
-
+        $this->checkTest(15, $res, $bot::STATUS_WAITING_ANSWER,'','');
+//dd($res);
         unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'а'],
@@ -328,6 +328,24 @@ class ChatbotController extends Controller
         ]);
 
         $this->checkTest(32, $res, '','','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Здравствуйте']
+
+        ]);
+
+        $this->checkTest(33, $res, $bot::STATUS_WAITING_ANSWER,'','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Спасибо не интересует(боюсь что не справлюсь)']
+
+        ]);
+
+        $this->checkTest(34, $res, $bot::STATUS_DIALOG_FINISHED,'','');
 
 //        dd($res);
     }
