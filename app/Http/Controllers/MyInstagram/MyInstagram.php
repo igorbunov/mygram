@@ -325,17 +325,17 @@ class MyInstagram
 
             $counter = 0;
             foreach ($posts as $num => $post) {
+                if ($counter >= 2) {
+                    break;
+                }
+
+                $counter++;
+
                 $this->instagram->media->like($post->getId());
 
                 Log::debug('['.$nickname.'] media liked');
 
                 sleep(rand(4,9));
-
-                if ($counter > 2) {
-                    break;
-                }
-
-                $counter++;
             }
         } catch (\Exception $err) {
             Log::error('error like some posts: ' . \json_encode($err->getMessage()));
