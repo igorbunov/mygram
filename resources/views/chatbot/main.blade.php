@@ -67,12 +67,12 @@
                         </div>
                     @endif
                 </div>
-                <div style="display: flex; padding: 5px 15px; justify-content: space-between; max-width: 520px;">
-                    <div style="margin: 0 5px;">В очереди: {{ $chatbotStats->in_queue }}</div>
-                    <div style="margin: 0 5px;">Всего: {{ $chatbotStats->total }}</div>
-                    <div style="margin: 0 5px;">Сегодня: {{ $chatbotStats->sended_today }}</div>
-                    <div style="margin: 0 5px;">Вчера: {{ $chatbotStats->sended_yesterday }}</div>
-                    <div style="margin: 0 5px;">Неделя: {{ $chatbotStats->sended_weekly }}</div>
+                <div class="chatbot-stats-block">
+                    <div>Очередь: {{ $chatbotStats->in_queue }}</div>
+                    <div>Всего: {{ $chatbotStats->total }}</div>
+                    <div>Сегодня: {{ $chatbotStats->sended_today }}</div>
+                    <div>Вчера: {{ $chatbotStats->sended_yesterday }}</div>
+                    <div>Неделя: {{ $chatbotStats->sended_weekly }}</div>
                 </div>
             </div>
         </section>

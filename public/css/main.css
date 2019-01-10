@@ -127,8 +127,15 @@ ul, li {
 .safelist-toggle-on-off > span{
     padding: 5px;
 }
-
-
+.chatbot-stats-block{
+    display: flex;
+    padding: 5px 15px;
+    justify-content: space-between;
+    max-width: 520px;
+}
+.chatbot-stats-block > div{
+    margin: 0 5px;
+}
 
 
 
