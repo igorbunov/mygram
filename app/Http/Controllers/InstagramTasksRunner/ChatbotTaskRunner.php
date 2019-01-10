@@ -283,6 +283,16 @@ class ChatbotTaskRunner
 
             ChatbotAccounts::setSended($chatBot, $newUser->pk, true, $accountId);
 
+            try {
+                $subRes = MyInstagram::getInstanse()->subscribe($newUser->pk);
+
+                if ($subRes->isOk()) {
+                    Log::debug('['.$account->nickname.'] подписался (chatbot): ' . $newUser->username);
+                }
+            } catch (\Exception $err0) {
+                Log::debug('ошибка подписки ' . $newUser->username . ' ' . \json_encode($err0->getMessage()));
+            }
+
             $response = MyInstagram::getInstanse()->sendDirect($newUser->pk, 'Доброго времени суток. Предлагаю работу в Инстаграм. Интересно?');
 
             if ($response->isOk()) {
@@ -465,7 +475,7 @@ class ChatbotTaskRunner
 
                             if ($otvet['txt'] == '') {
                                 try {
-                                    $emailMessage = $emailMessage = view('chatbot.mail_chat', [
+                                    $emailMessage = view('chatbot.mail_chat', [
                                         'account' => $account->nickname,
                                         'dialog' => $messArr,
                                         'threadTitle' => $threadTitle,

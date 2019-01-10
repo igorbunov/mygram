@@ -305,6 +305,10 @@ class MyInstagram
     {
         return $this->instagram->people->unfollow($userPK);
     }
+    public function subscribe(string $userPK)
+    {
+        return $this->instagram->people->follow($userPK);
+    }
 
     public function getInfo()
     {
