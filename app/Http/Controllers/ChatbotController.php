@@ -470,11 +470,16 @@ class ChatbotController extends Controller
 
         $allAccounts = ChatbotAccounts::getAll($chatbot);
 
+
+
+        $chatbotStats = Chatbot::getStats($chatbot);
+
         $res = [
             'title' => 'Чат бот'
             , 'activePage' => 'chatbot'
             , 'accounts' => $accounts
             , 'chatbot' => $chatbot
+            , 'chatbotStats' => $chatbotStats
             , 'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
             , 'accountPicture' => User::getAccountPictureUrl($userId)
             , 'chatBotAccounts' => $allAccounts['data']

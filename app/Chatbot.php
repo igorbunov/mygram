@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Chatbot extends Model
 {
@@ -11,6 +12,25 @@ class Chatbot extends Model
     const STATUS_SYNCHRONIZED = 'synchronized';
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_FINISHED = 'finished';
+
+    public static function getStats(Chatbot $chatBot)
+    {
+        $res = DB::selectOne(" SELECT 
+                IFNULL(SUM(IF(DATE(c.updated_at) = CURDATE(), 1, 0)), 0) AS sended_today
+                , IFNULL(SUM(IF(DATE(c.updated_at) = CURDATE() - INTERVAL 1 DAY, 1, 0)), 0) AS sended_yesterday
+                , IFNULL(SUM(IF(DATE(c.updated_at) >= CURDATE() - INTERVAL 7 DAY, 1, 0)), 0) AS sended_weekly
+                , COUNT(1) AS total
+            FROM chatbot_accounts c
+            WHERE c.chatbot_id = :id AND c.is_sended = 1 AND c.sender_account_id > 0
+            LIMIT 1", [':id' => $chatBot->id]);
+
+        $res->in_queue = DB::selectOne("SELECT COUNT(1) AS cnt
+            FROM chatbot_accounts c
+            WHERE c.chatbot_id = :id AND c.is_sended = 0 AND c.sender_account_id >= 0
+            LIMIT 1", [':id' => $chatBot->id])->cnt;
+
+        return $res;
+    }
 
     public static function setStatus(int $id, string $status)
     {
