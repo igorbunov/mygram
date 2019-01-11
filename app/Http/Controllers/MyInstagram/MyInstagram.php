@@ -303,7 +303,11 @@ class MyInstagram
 
     public function unsubscribe(string $userPK)
     {
-        return $this->instagram->people->unfollow($userPK);
+        try {
+            return $this->instagram->people->unfollow($userPK);
+        } catch (\Exception $err) {
+            Log::error('error unsubscribe: ' . \json_encode($err->getMessage()));
+        }
     }
     public function subscribe(string $userPK)
     {

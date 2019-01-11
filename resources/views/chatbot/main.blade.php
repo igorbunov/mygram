@@ -46,7 +46,7 @@
                 <div style="padding: 5px 15px; justify-content: space-between;  width: 450px;">
                     <h4>Диалогов сегодня:</h4>
                     @foreach($statsByAccount as $stByAccount)
-                        @if($stByAccount->delay > 10)
+                        @if($stByAccount->delay > 15)
                             <div style="font-style:italic;">
                                 {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }} (ждем {{ $stByAccount->delay }} мин.)
                             </div>
@@ -55,7 +55,7 @@
                                 {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }} (ждем {{ $stByAccount->delay }} мин.)
                             </div>
                         @endif
-                       
+
                     @endforeach
                 </div>
 
