@@ -7,6 +7,19 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
+    public static function getDirectStats(Chatbot $chatBot)
+    {
+        return DB::select("SELECT 
+                a.sender_account_id
+                , k.nickname
+                , COUNT(1) AS cnt
+            FROM chatbot_accounts a
+            INNER JOIN accounts k ON k.id = a.sender_account_id
+            WHERE a.chatbot_id = :chatbotId AND a.is_sended = 1 AND DATE(a.updated_at) = CURDATE()
+            GROUP BY a.sender_account_id
+            ORDER BY cnt DESC", [':chatbotId' => $chatBot->id]);
+    }
+
     public static function setIsInSendlist(Chatbot $chatBot, string $nickname, int $isChecked)
     {
         $res = DB::selectOne("SELECT id
@@ -127,7 +140,8 @@ class ChatbotAccounts extends Model
     {
         return self::where([
             'chatbot_id' => $chatBot->id,
-            'is_sended' => 0
+            'is_sended' => 0,
+            'sender_account_id' => 0
         ])->orderBy('id', 'ASC')->limit($limit)->get();
     }
 

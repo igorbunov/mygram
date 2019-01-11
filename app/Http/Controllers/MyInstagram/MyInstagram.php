@@ -307,7 +307,11 @@ class MyInstagram
     }
     public function subscribe(string $userPK)
     {
-        return $this->instagram->people->follow($userPK);
+        try {
+            return $this->instagram->people->follow($userPK);
+        } catch (\Exception $err) {
+            Log::error('error subscribe: ' . \json_encode($err->getMessage()));
+        }
     }
 
     public function likeSomePosts($nickname, string $userPK)

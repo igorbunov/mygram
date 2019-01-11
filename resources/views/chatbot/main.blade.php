@@ -23,16 +23,7 @@
             <div class="row">
                 <div style="display: flex; padding: 5px 15px; justify-content: space-between;">
 
-                    <div style="padding: 0 5px;height: 360px;">
-                        {{--<label>Сколько аккаунтов по хештегу загрузить? (от 1 до 100):</label>--}}
-
-                        {{--<input type="number" style="width: 100%;" step="10" id="chatbot-max-accounts" min="1" max="100" value="{{ $chatbot->max_accounts }}"--}}
-                            {{--@if($chatbot->status == \App\Chatbot::STATUS_UPDATING || $chatbot->status == \App\Chatbot::STATUS_IN_PROGRESS)--}}
-                                {{--disabled--}}
-                            {{--@endif--}}
-                        {{--/>--}}
-
-
+                    <div style="padding: 0 5px;">
 
                         <label>Аккаунты (каждый с новой строки):</label>
 
@@ -52,8 +43,19 @@
                 </div>
             </div>
             <div class="row">
+                <div style="padding: 5px 15px; justify-content: space-between;  width: 450px;">
+                    <h4>Диалогов сегодня:</h4>
+                    @foreach($statsByAccount as $stByAccount)
+                        <div>
+                            {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }}
+                        </div>
+                    @endforeach
+                </div>
+
+            </div>
+            <div class="row">
                 <div style="display: flex; padding: 5px 15px; justify-content: space-between;  width: 450px;">
-                    <div>Статус: {{ $chatbot->statusRus }}</div>
+                    <div style="font-weight: bold;">Статус: {{ $chatbot->statusRus }}</div>
 
                     @if($chatbot->status == \App\Chatbot::STATUS_SYNCHRONIZED or $chatbot->status == \App\Chatbot::STATUS_EMPTY)
                         <div class="btn-dark start-chatbot-task" data-status="{{ $chatbot->status }}">

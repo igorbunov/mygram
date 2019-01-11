@@ -473,6 +473,7 @@ class ChatbotController extends Controller
 
 
         $chatbotStats = Chatbot::getStats($chatbot);
+        $statsByAccount = ChatbotAccounts::getDirectStats($chatbot);
 
         $res = [
             'title' => 'Чат бот'
@@ -480,6 +481,7 @@ class ChatbotController extends Controller
             , 'accounts' => $accounts
             , 'chatbot' => $chatbot
             , 'chatbotStats' => $chatbotStats
+            , 'statsByAccount' => $statsByAccount
             , 'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId)
             , 'accountPicture' => User::getAccountPictureUrl($userId)
             , 'chatBotAccounts' => $allAccounts['data']

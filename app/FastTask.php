@@ -309,11 +309,12 @@ class FastTask extends Model
 //                $chatbotId = $task->task_id;
 
                 try {
+                    Log::debug('['.$task->account_id.'] sendFirstMessage');
                     ChatbotTaskRunner::sendFirstMessage($task->account_id);
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task sendFirstMessage: ' . $errorMessage);
+                    Log::debug('['.$task->account_id.'] Error running task sendFirstMessage: ' . $errorMessage);
 
                     self::mailToDeveloper('['.$task->account_id.'] Директ не отправился, превышен лимит. sendFirstMessage', $errorMessage);
 
