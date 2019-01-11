@@ -397,4 +397,20 @@ class FastTask extends Model
 
         return $res->save();
     }
+
+    public static function getDelayForAccount(int $accountId, string $taskType)
+    {
+        $res = DB::selectOne("SELECT 
+            f.delay
+        FROM fast_tasks f
+        WHERE f.task_type = :type AND f.account_id = :accountId
+        ORDER BY id DESC
+        LIMIT 1", [':type' => $taskType, ':accountId' => $accountId]);
+
+        if (is_null($res)) {
+            return 'не известно';
+        }
+
+        return $res->delay;
+    }
 }

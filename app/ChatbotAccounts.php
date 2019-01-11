@@ -17,7 +17,7 @@ class ChatbotAccounts extends Model
             INNER JOIN accounts k ON k.id = a.sender_account_id
             WHERE a.chatbot_id = :chatbotId AND a.is_sended = 1 AND DATE(a.updated_at) = CURDATE()
             GROUP BY a.sender_account_id
-            ORDER BY cnt DESC", [':chatbotId' => $chatBot->id]);
+            ORDER BY a.sender_account_id ASC", [':chatbotId' => $chatBot->id]);
     }
 
     public static function setIsInSendlist(Chatbot $chatBot, string $nickname, int $isChecked)

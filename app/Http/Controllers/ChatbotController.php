@@ -475,6 +475,10 @@ class ChatbotController extends Controller
         $chatbotStats = Chatbot::getStats($chatbot);
         $statsByAccount = ChatbotAccounts::getDirectStats($chatbot);
 
+        foreach($statsByAccount as $i => $acc) {
+            $statsByAccount[$i]->delay = FastTask::getDelayForAccount($acc->sender_account_id, FastTask::TYPE_SEND_FIRST_CHATBOT_MESSAGE);
+        }
+
         $res = [
             'title' => 'Чат бот'
             , 'activePage' => 'chatbot'

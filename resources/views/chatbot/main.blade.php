@@ -46,9 +46,16 @@
                 <div style="padding: 5px 15px; justify-content: space-between;  width: 450px;">
                     <h4>Диалогов сегодня:</h4>
                     @foreach($statsByAccount as $stByAccount)
-                        <div>
-                            {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }}
-                        </div>
+                        @if($stByAccount->delay > 10)
+                            <div style="font-style:italic;">
+                                {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }} (ждем {{ $stByAccount->delay }} мин.)
+                            </div>
+                        @else
+                            <div style="font-weight: bold;">
+                                {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }} (ждем {{ $stByAccount->delay }} мин.)
+                            </div>
+                        @endif
+                       
                     @endforeach
                 </div>
 
