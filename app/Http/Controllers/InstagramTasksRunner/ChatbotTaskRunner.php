@@ -285,8 +285,8 @@ class ChatbotTaskRunner
 
             try {
                 $errorList = [
-                    'Gorbunova.nadya_',
-                    'nadin_opanasenko'
+//                    'Gorbunova.nadya_',
+//                    'nadin_opanasenko'
                 ];
 
                 if (!in_array($account->nickname, $errorList)) {
