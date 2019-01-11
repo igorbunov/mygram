@@ -3,15 +3,8 @@
 namespace App\Console;
 
 use App\FastTask;
-use App\Http\Controllers\InstagramTasksRunner\AccountFirstLoginRunner;
-use App\Http\Controllers\InstagramTasksRunner\DatabaseCleaner;
-use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\TaskGenerator\ChatbotTaskCreatoreController;
-use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
+use App\Http\Controllers\TaskGenerator\AllTasksGenerator;
 use App\Http\Controllers\TaskGenerator\FastTaskGenerator;
-use App\Http\Controllers\TaskGenerator\UnsubscribeTaskCreatorController;
-use App\Tariff;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
@@ -42,40 +35,20 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function() {
             Log::debug('== Run chedule tariff changer == ');
-            Tariff::tariffTick();
-            TaskController::disableAccountsAndTasksByEndTariff();
-            DatabaseCleaner::clearFastTasks();
+            if (env('PROJECT_PATH') != '/home/pata/projects/myinst/') {
+                AllTasksGenerator::everyDayGenerator();
+            } else {
+                AllTasksGenerator::everyDayLocalGenerator();
+            }
         })->daily();
 
-        if (env('PROJECT_PATH') == '/home/pata/projects/myinst/') {
-            $schedule->call(function() {
-                Log::debug('== Run schedule tasks generator == ');
-
-                ChatbotTaskCreatoreController::tasksGenerator();
-
-//                DirectTaskCreatorController::tasksGenerator();
-//                UnsubscribeTaskCreatorController::tasksGenerator();
-            })->everyMinute();
-        } else {
-            $schedule->call(function() {
-                if (env('IS_DIRECT_WORKS', false)) {
-                    DirectTaskCreatorController::tasksGenerator();
-                }
-
-                if (env('IS_UNSUBSCRIBE_WORKS', false)) {
-                    UnsubscribeTaskCreatorController::tasksGenerator();
-                }
-
-                if (env('IS_CHATBOT_WORKS', false)) {
-                    try {
-                        ChatbotTaskCreatoreController::tasksGenerator();
-                    } catch (\Exception $err) {
-                        Log::debug('error ChatbotTaskCreatoreController ' . $err->getMessage() . ' ' . $err->getTraceAsString());
-                    }
-
-                }
-            })->everyMinute();//TODO: remove
-        }
+        $schedule->call(function() {
+            if (env('PROJECT_PATH') != '/home/pata/projects/myinst/') {
+                AllTasksGenerator::everyMinuteGenerator();
+            } else {
+                AllTasksGenerator::everyMinuteLocalGenerator();
+            }
+        })->everyMinute();
     }
 
     /**
