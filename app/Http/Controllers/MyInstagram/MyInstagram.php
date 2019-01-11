@@ -338,7 +338,7 @@ class MyInstagram
                 sleep(rand(4,9));
             }
         } catch (\Exception $err) {
-            Log::error('error like some posts: ' . \json_encode($err->getMessage()));
+            Log::error('['.$nickname.'] error like some posts: ' . \json_encode($err->getMessage()));
         }
     }
 

@@ -24,7 +24,7 @@ class AccountSubscribers extends Model
             $result[$row->pk] = 1;
         }
 
-        Log::debug('getAllAccountsUsersPKS : ' . \json_encode($result));
+//        Log::debug('getAllAccountsUsersPKS : ' . \json_encode($result));
 
         return $result;
     }

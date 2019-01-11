@@ -284,8 +284,15 @@ class ChatbotTaskRunner
             ChatbotAccounts::setSended($chatBot, $newUser->pk, true, $accountId);
 
             try {
-                if ($newUser->is_private_profile == 0) {
-                    MyInstagram::getInstanse()->likeSomePosts($account->nickname, $newUser->pk);
+                $errorList = [
+                    'Gorbunova.nadya_',
+                    'nadin_opanasenko'
+                ];
+
+                if (!in_array($account->nickname, $errorList)) {
+                    if ($newUser->is_private_profile == 0) {
+                        MyInstagram::getInstanse()->likeSomePosts($account->nickname, $newUser->pk);
+                    }
                 }
 
                 $subRes = MyInstagram::getInstanse()->subscribe($newUser->pk);
