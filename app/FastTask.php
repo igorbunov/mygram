@@ -401,7 +401,7 @@ class FastTask extends Model
     public static function getDelayForAccount(int $accountId, string $taskType)
     {
         $res = DB::selectOne("SELECT 
-            f.delay
+            TIMESTAMPDIFF(MINUTE, NOW(), f.updated_at + INTERVAL f.delay MINUTE) AS delay
         FROM fast_tasks f
         WHERE f.task_type = :type AND f.account_id = :accountId
         ORDER BY id DESC
@@ -411,6 +411,6 @@ class FastTask extends Model
             return 'не известно';
         }
 
-        return $res->delay;
+        return ($res->delay < 0) ? 'скоро' : $res->delay;
     }
 }
