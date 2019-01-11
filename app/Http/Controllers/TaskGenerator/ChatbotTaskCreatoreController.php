@@ -75,8 +75,7 @@ class ChatbotTaskCreatoreController
                             }
 
                             if (env('IS_CHATBOT_FIRST_MESSAGE_WORKS', false)) {
-                                if ($account->nickname != 'houpek_nadin'
-                                    and $account->nickname != 'Gorbunova.nadya_') {//TODO: кроме главного аккаунта
+                                if ($account->nickname != 'houpek_nadin') {//TODO: кроме главного аккаунта
                                     if (self::generateFirstMessageTask($chatBot, $account)) {
 //                                        Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
                                     }
