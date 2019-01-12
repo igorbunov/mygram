@@ -10,8 +10,7 @@ class User extends Model
     public static function getActiveAndConrifmed()
     {
         $res = User::where([
-            'is_confirmed' => 1,
-            'is_active' => 1
+            'is_confirmed' => 1
         ])->get();
 
         if (is_null($res)) {
