@@ -43,19 +43,18 @@
                 </div>
             </div>
             <div class="row">
-                <div style="padding: 5px 15px; justify-content: space-between;  width: 450px;">
-                    <h4>Диалогов сегодня:</h4>
+                <h4 style="padding: 5px 15px;" >Диалогов сегодня:</h4>
+                <div class="chatbot-dialog-statuses">
                     @foreach($statsByAccount as $stByAccount)
                         @if($stByAccount->delay > 15)
-                            <div style="font-style:italic;">
-                                {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }} (ждем {{ $stByAccount->delay }} мин.)
-                            </div>
+                            <div style="font-style:italic;">{{ $stByAccount->nickname }}</div>
+                            <div>{{ $stByAccount->cnt }}</div>
+                            <div>(ждет {{ $stByAccount->delay }} мин.)</div>
                         @else
-                            <div style="font-weight: bold;">
-                                {{ $stByAccount->nickname }} : {{ $stByAccount->cnt }} (ждем {{ $stByAccount->delay }} мин.)
-                            </div>
+                            <div style="font-weight: bold;">{{ $stByAccount->nickname }}</div>
+                            <div>{{ $stByAccount->cnt }}</div>
+                            <div>(ждет {{ $stByAccount->delay }} мин.)</div>
                         @endif
-
                     @endforeach
                 </div>
 

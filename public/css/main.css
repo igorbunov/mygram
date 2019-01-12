@@ -124,6 +124,12 @@ ul, li {
     display: flex;
     align-items: center;
 }
+.chatbot-dialog-statuses{
+    padding: 5px 15px;
+    width: 450px;
+    display: grid;
+    grid-template-columns: minmax(180px, 3fr) 30px 4fr;
+}
 .safelist-toggle-on-off > span{
     padding: 5px;
 }

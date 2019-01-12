@@ -69,7 +69,7 @@ class UnsubscribeTaskRunner
 
             AccountSubscriptions::setUnsubscribed($following->id, true);
 
-            if (!$response->isOk()) {
+            if (is_null($response) or !$response->isOk()) {
                 $resultArr['success'] = 0;
                 $resultArr['error_message'] = $response->getMessage();
                 Log::error('['.$account->nickname.'] error unsubscribing from: ' . $following->username . ' ' . $resultArr['error_message']);

@@ -408,9 +408,9 @@ class FastTask extends Model
         LIMIT 1", [':type' => $taskType, ':accountId' => $accountId]);
 
         if (is_null($res)) {
-            return 'не известно';
+            return '0';
         }
 
-        return ($res->delay < 0) ? 'скоро' : $res->delay;
+        return ($res->delay < 0) ? '0' : $res->delay;
     }
 }
