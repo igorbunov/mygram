@@ -15,85 +15,31 @@ use App\ChatHeader;
 use App\DirectTask;
 use App\DirectTaskReport;
 use App\FastTask;
-use App\Tariff;
-use App\TaskList;
-use App\User;
 use Illuminate\Support\Facades\Log;
 
 class ChatbotTaskCreatoreController
 {
-    public static function tasksGenerator()
+    public static function tasksGenerator(Chatbot $chatBot, array $accounts)
     {
-//        Log::debug('======== generate chatbot tasks =======');
-        $users = User::where(['is_confirmed' => 1])->get();
+        try {
+            foreach ($accounts as $account) {
+                self::generateGetInboxTask($chatBot, $account);
 
-//        Log::debug('found users: ' . count($users));
+                if (env('IS_CHATBOT_FIRST_MESSAGE_WORKS', false)) {
+                    $directTasks = DirectTask::getDirectTasksByForAccount($account, true);
 
-        foreach ($users as $user) {
-            $tariff = Tariff::getUserCurrentTariff($user->id);
-
-            if (is_null($tariff)) {
-//                Log::debug('tariff is not valid for user: ' . $user->id);
-                continue;
-            }
-
-            $tasksTypes = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
-
-            if (count($tasksTypes) == 0) {
-                Log::debug('task types not found: ' . $tariff->tariff_list_id);
-                continue;
-            }
-
-            $accounts = account::getActiveAccountsByUser($user->id);
-
-//            Log::debug("found active accounts: " . count($accounts));
-
-            try {
-                foreach ($accounts as $account) {
-//                    if ($account->nickname == 'houpek_nadin') { //TODO: remove in future
-//                        continue;
-//                    }
-
-                    foreach ($tasksTypes as $taskType) {
-//                        Log::debug('$taskType->type ' . $taskType->type);
-                        if (TaskList::TYPE_CHATBOT == $taskType->type) {
-//                            $taskListId = $taskType->id;
-
-                            $chatBot = Chatbot::getByUserId($user->id);
-
-                            if (is_null($chatBot)) {
-//                                Log::debug("no chatbot exists");
-                            }
-
-                            if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
-//                                Log::debug("chatbot {$chatBot->id} status not in progress: " . $chatBot->status);
-                                continue;
-                            }
-
-                            if (self::generateGetInboxTask($chatBot, $account)) {
-//                                Log::debug("chatbot get inbox task added to fast tasks: " . $chatBot->id);
-                            }
-
-                            if (env('IS_CHATBOT_FIRST_MESSAGE_WORKS', false)) {
-                                if ($account->nickname != 'houpek_nadin') {//TODO: кроме главного аккаунта
-                                    if (self::generateFirstMessageTask($chatBot, $account)) {
-//                                        Log::debug("chatbot first message task added to fast tasks: " . $chatBot->id);
-                                    }
-                                }
-                            }
-
-                            if (self::generateBotAnswerTask($chatBot, $account)) {
-//                                Log::debug("chatbot answer task added to fast tasks: " . $chatBot->id);
-                            }
-                        }
+                    if (!is_null($directTasks) and count($directTasks) > 0) {
+                        continue;
                     }
-                }
-            } catch (\Exception $err) {
-                Log::error('error: ' . $err->getMessage());
-            }
-        }
 
-//        Log::debug('======== done generate chatbot tasks =======');
+                    self::generateFirstMessageTask($chatBot, $account);
+                }
+
+                self::generateBotAnswerTask($chatBot, $account);
+            }
+        } catch (\Exception $err) {
+            Log::error('error: ' . $err->getMessage());
+        }
     }
 
     private static function generateGetInboxTask(Chatbot $chatBot, account $account)
@@ -127,12 +73,6 @@ class ChatbotTaskCreatoreController
             $randomDelayMinutes+= 10;
         }
 
-//        if (!FastTask::isHadRestInLastOneAndHalfHoursUnsubscribeTasks($account->id)) {
-//            $randomDelayMinutes = rand(20, 30);
-//        }
-
-//        Log::debug('GetInbox delay time (minutes): ' . $randomDelayMinutes);
-
         FastTask::addTask($account->id,
             FastTask::TYPE_GET_DIRECT_INBOX,
             $chatBot->id,
@@ -152,10 +92,10 @@ class ChatbotTaskCreatoreController
         }
 
         $todayDirectCount = ChatbotAccounts::getTodayDirectMessagesCount($chatBot, $account);
-        $directTask = DirectTask::getActiveDirectTaskByTaskListId(0, $account->id, true);
+        $directTasks = DirectTask::getDirectTasksByForAccount($account, true);
 
-        if (!is_null($directTask)) {
-            $todayDirectCount += DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
+        if (!is_null($directTasks) and count($directTasks) > 0) {
+            $todayDirectCount += DirectTaskReport::getTodayFriendDirectMessagesCount($directTasks[0]->id);
         }
 
         if ($todayDirectCount >= env('NOT_FRIEND_DIRECT_LIMITS_BY_DAY', 50)) {
@@ -175,8 +115,8 @@ class ChatbotTaskCreatoreController
 
         $lastHourDirectCount = ChatbotAccounts::getLastHourDirectMessagesCount($chatBot, $account);
 
-        if (!is_null($directTask)) {
-            $subres = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTask->id);
+        if (!is_null($directTasks) and count($directTasks) > 0) {
+            $subres = DirectTaskReport::getLastHourFriendDirectMessagesCount($directTasks[0]->id);
             $lastHourDirectCount += $subres;
 
         }
@@ -220,7 +160,6 @@ class ChatbotTaskCreatoreController
         $waiting = ChatHeader::getWaitingAnalisysCount($chatBot, $account, ChatHeader::STATUS_DIALOG_NEED_ANALIZE);
 
         if ($waiting > 0) {
-//        Log::debug('waiting analisys: ' . $waiting . ', add fast task');
             $randomDelayMinutes = rand(1,2);
 
             if (FastTask::isNight()) {

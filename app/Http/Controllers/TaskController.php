@@ -7,13 +7,13 @@ use App\AccountSubscribers;
 use App\AccountSubscriptions;
 use App\DirectTask;
 use App\DirectTaskReport;
+use App\FastTask;
 use App\Http\Controllers\InstagramTasksRunner\DirectToSubsTasksRunner;
 use App\Http\Controllers\TaskGenerator\DirectTaskCreatorController;
 use App\Safelist;
 use App\Tariff;
 use App\TariffList;
 use App\Task;
-use App\TaskList;
 use App\UnsubscribeTask;
 use App\User;
 use Illuminate\Http\Request;
@@ -43,52 +43,78 @@ class TaskController extends Controller
             throw new \Exception('У пользователя нет тарифа');
         }
 
-        $taskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
-
         $account = account::getAccountById($accountId, false);
 
         if (is_null($account)) {
             throw new \Exception('Не найден аккаунт');
         }
 
-        $avaliableTaskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
-
         $directTasks = [];
-        $unsubscribeTask = [];
+        $unsubscribeTasks = [];
 
-        foreach ($avaliableTaskList as $taskListItem) {
-            if (TaskList::TYPE_DIRECT == $taskListItem->type) {
-                $directTasks = DirectTask::getDirectTasksByTaskListId($taskListItem->id, $accountId, $onlyActiveTasks);
-//                dd('aa' . \json_encode($directTasks));
-                if (is_null($directTasks)) {
+        $avaliableTaskList = TariffList::getAvaliableTypes($tariff);
 
-                    continue;
-                }
+        foreach ($avaliableTaskList as $taskType) {
+            switch ($taskType) {
+                case TariffList::TYPE_DIRECT:
+                    $directTasks = DirectTask::getDirectTasksByForAccount($account, $onlyActiveTasks);
 
-                foreach ($directTasks as $i => $directTask) {
-                    $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
-                    $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
-                    $directTasks[$i]->inQueue = count($unsendedFollowers);
-                    $directTasks[$i]->taskType = $taskListItem->type;
-                }
-            } else if (TaskList::TYPE_UNSUBSCRIBE == $taskListItem->type) {
-                $unsubscribeTask = UnsubscribeTask::getActiveUnsubscribeTaskByTaskListId($taskListItem->id, $accountId, $onlyActiveTasks);
+                    if (is_null($directTasks) or count($directTasks) == 0) {
+                        continue;
+                    }
 
-                if (is_null($unsubscribeTask)) {
-                    continue;
-                }
+                    foreach ($directTasks as $i => $directTask) {
+                        $directTasks[$i]->sendedToday = DirectTaskReport::getTodayFriendDirectMessagesCount($directTask->id);
+                        $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
+                        $directTasks[$i]->inQueue = count($unsendedFollowers);
+                        $directTasks[$i]->taskType = TariffList::TYPE_DIRECT;
+                    }
 
-                $unsubscribeTask->taskList = $taskListItem;
-                $unsubscribeTask->taskType = $taskListItem->type;
-                $unsubscribeTask->safelistStats = AccountSubscriptions::getStatistics($accountId);
+                    break;
+                case TariffList::TYPE_UNSUBSCRIBE:
+                    $unsubscribeTasks = UnsubscribeTask::getUnsubscribeTasksByAccount($account, $onlyActiveTasks);
+
+                    if (is_null($unsubscribeTasks) or count($unsubscribeTasks) == 0) {
+                        continue;
+                    }
+
+                    foreach ($unsubscribeTasks as $i => $task) {
+                        $unsubscribeTasks[$i]->taskType = TariffList::TYPE_UNSUBSCRIBE;
+                        $unsubscribeTasks[$i]->safelistStats = AccountSubscriptions::getStatistics($accountId);
+                    }
+
+                    break;
             }
+        }
+
+        $subTariffList = TariffList::getAvaliableTypes($tariff);
+        $taskList = [];
+
+        foreach ($subTariffList as $item) {
+            switch ($item) {
+                case TariffList::TYPE_DIRECT:
+                    $taskList[] = [
+                        'id' => $item,
+                        'selected' => 'selected',
+                        'title' => 'Директ приветствие'
+                    ];
+                    break;
+                case TariffList::TYPE_UNSUBSCRIBE:
+                    $taskList[] = [
+                        'id' => $item,
+                        'selected' => '',
+                        'title' => 'Масс отписка'
+                    ];
+                    break;
+            }
+
         }
 
         return view('account_task', [
             'title' => 'Задачи @' . $account->nickname,
             'activePage' => 'tasks',
             'directTasks' => $directTasks,
-            'unsubscribeTask' => $unsubscribeTask,
+            'unsubscribeTasks' => $unsubscribeTasks,
             'account' => $account,
             'taskList' => $taskList,
             'onlyActiveTasks' => $onlyActiveTasks,
@@ -132,7 +158,6 @@ class TaskController extends Controller
 
         try {
             $accountId = (int) $req->post('account_id', 0);
-            $taskListId = (int) $req->post('task_list_id', 0);
             $directText = $req->post('direct_text', '');
             $taskType = $req->post('task_type');
 
@@ -142,9 +167,6 @@ class TaskController extends Controller
             if ($accountId == 0) {
                 return response()->json(['success' => false, 'message' => 'Не найден аккаунт']);
             }
-            if ($taskListId == 0) {
-                return response()->json(['success' => false, 'message' => 'Не указан тип задания']);
-            }
 
             $tariff = Tariff::getUserCurrentTariff($userId);
 
@@ -152,49 +174,52 @@ class TaskController extends Controller
                 return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
             }
 
+            $taskTypes = TariffList::getAvaliableTypes($tariff);
+
+            if (!in_array($taskType, $taskTypes)) {
+                return response()->json(['success' => false, 'message' => 'Не разрешено для вашего тарифа']);
+            }
+
             if (!account::isAccountBelongsToUser($userId, $accountId)) {
                 return response()->json(['success' => false, 'message' => 'Это не ваш аккаунт']);
             }
 
-            $taskList = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
+            $account = account::getAccountById($accountId);
 
-            if (count($taskList) == 0) {
-                return response()->json(['success' => false, 'message' => 'Это задание недоступно для вашего тарифа']);
-            }
+            switch ($taskType) {
+                case TariffList::TYPE_DIRECT:
+                    $directTasks = DirectTask::getDirectTasksByForAccount($account, true);
 
-            foreach ($taskList as $taskListItem) {
-                if ($taskListItem->id == $taskListId) {
-                    if (TaskList::TYPE_DIRECT == $taskListItem->type) {
-                        $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $accountId, true);
+                    if (!is_null($directTasks) and count($directTasks) > 0) {
+                        return response()->json(['success' => false, 'message' => 'Нельзя создавать два директ задания']);
+                    } else {
+                        $direct = new DirectTask();
+                        $direct->account_id = $accountId;
+                        $direct->status = DirectTask::STATUS_ACTIVE;
+                        $direct->message = $directText;
+                        $direct->save();
 
-                        if (!is_null($directTask)) {
-                            return response()->json(['success' => false, 'message' => 'Нельзя создавать два директ задания']);
-                        } else {
-                            $direct = new DirectTask();
-                            $direct->account_id = $accountId;
-                            $direct->status = DirectTask::STATUS_ACTIVE;
-                            $direct->task_list_id = $taskListId;
-                            $direct->message = $directText;
-                            $direct->save();
-
-                            return response()->json(['success' => true]);
-                        }
-                    } else if (TaskList::TYPE_UNSUBSCRIBE == $taskListItem->type) {
-                        $unsubscribeTask = UnsubscribeTask::getActiveUnsubscribeTaskByTaskListId($taskListId, $accountId,true);
-
-                        if (!is_null($unsubscribeTask)) {
-                            return response()->json(['success' => false, 'message' => 'Нельзя создавать два задания отписки']);
-                        } else {
-                            $task = new UnsubscribeTask();
-                            $task->account_id = $accountId;
-                            $task->status = DirectTask::STATUS_ACTIVE;
-                            $task->task_list_id = $taskListId;
-                            $task->save();
-
-                            return response()->json(['success' => true]);
-                        }
+                        return response()->json(['success' => true]);
                     }
-                }
+
+                    break;
+                case TariffList::TYPE_UNSUBSCRIBE:
+                    $unsubscribeTasks = UnsubscribeTask::getUnsubscribeTasksByAccount($account,true);
+
+
+                    if (!is_null($unsubscribeTasks) and count($unsubscribeTasks) > 0) {
+                        return response()->json(['success' => false, 'message' => 'Нельзя создавать два задания отписки']);
+                    } else {
+                        $task = new UnsubscribeTask();
+                        $task->account_id = $accountId;
+                        $task->status = DirectTask::STATUS_ACTIVE;
+                        $task->save();
+
+                        return response()->json(['success' => true]);
+                    }
+
+                    break;
+
             }
         } catch (\Exception $err) {
             return response()->json(['success' => false, 'message' => $err->getMessage()]);
@@ -211,37 +236,37 @@ class TaskController extends Controller
         $taskType = $req->post('task_type', '');
 
         if (!DirectTask::isValidStatus($status)) {
-            return response()->json(['success' => false, 'error' => 'not valid status']);
+            return response()->json(['success' => false, 'message' => 'not valid status']);
         }
 
         if ($accountId == 0) {
-            return response()->json(['success' => false, 'error' => 'not set account id']);
+            return response()->json(['success' => false, 'message' => 'not set account id']);
         }
 
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
-            return response()->json(['success' => false, 'error' => 'Необходимо авторизоваться']);
+            return response()->json(['success' => false, 'message' => 'Необходимо авторизоваться']);
         }
 
         if (!account::isAccountBelongsToUser($userId, $accountId)) {
-            return response()->json(['success' => false, 'error' => 'Это не ваш аккаунт']);
+            return response()->json(['success' => false, 'message' => 'Это не ваш аккаунт']);
         }
 
-        if ($taskType == TaskList::TYPE_DIRECT) {
+        if ($taskType == TariffList::TYPE_DIRECT) {
             $activeTaskCount = DirectTask::getActiveTasksCountByAccountId($accountId);
 
             if ($status == DirectTask::STATUS_ACTIVE and $activeTaskCount > 0) {
                 return response()->json([
                     'success' => false,
-                    'error' => 'У аккаунта уже есть одно активное задание. Сначала деактивируйте его.'
+                    'message' => 'У аккаунта уже есть одно активное задание. Сначала деактивируйте его.'
                 ]);
             }
 
             $direct = DirectTask::getDirectTaskById($taskId, $accountId, false);
 
             if (is_null($direct)) {
-                return response()->json(['success' => false, 'error' => 'Задание не найдено']);
+                return response()->json(['success' => false, 'message' => 'Задание не найдено']);
             }
 
             $direct->status = $status;
@@ -255,28 +280,26 @@ class TaskController extends Controller
                 'success' => true,
                 'accountId' => $direct->account_id
             ]);
-        } else if ($taskType == TaskList::TYPE_UNSUBSCRIBE) {
+        } else if ($taskType == TariffList::TYPE_UNSUBSCRIBE) {
             $activeUnsubscribeTask = UnsubscribeTask::getUnsubscribeTaskById($taskId, $accountId, false);
 
             if (is_null($activeUnsubscribeTask)) {
-                return response()->json(['success' => false, 'error' => 'Задание не найдено']);
+                return response()->json(['success' => false, 'message' => 'Задание не найдено']);
             }
 
-//            if ($status == UnsubscribeTask::STATUS_ACTIVE and
-//                ($activeUnsubscribeTask->status == UnsubscribeTask::STATUS_ACTIVE
-//                    or $activeUnsubscribeTask->status == UnsubscribeTask::STATUS_PAUSED)) {
-//                return response()->json([
-//                    'success' => false,
-//                    'error' => 'У аккаунта уже есть одно активное задание. Сначала деактивируйте его.'
-//                ]);
-//            }
+            if ($status == UnsubscribeTask::STATUS_ACTIVE) {
+                $account = account::getAccountById($accountId);
+                $unsubscribeTasks = UnsubscribeTask::getUnsubscribeTasksByAccount($account,true);
+
+                if (!is_null($unsubscribeTasks) and count($unsubscribeTasks) > 0) {
+                    if ($activeUnsubscribeTask->status != UnsubscribeTask::STATUS_PAUSED) {
+                        return response()->json(['success' => false, 'message' => 'Нельзя создавать два задания отписки']);
+                    }
+                }
+            }
 
             $activeUnsubscribeTask->status = $status;
             $activeUnsubscribeTask->save();
-
-//            if ($status == DirectTask::STATUS_DEACTIVATED) {
-//                AccountSubscribers::deleteOldFollowers($accountId);
-//            }
 
             return response()->json([
                 'success' => true,
@@ -284,12 +307,12 @@ class TaskController extends Controller
             ]);
         }
 
-        return response()->json(['success' => false, 'error' => 'not set task type']);
+        return response()->json(['success' => false, 'message' => 'not set task type']);
     }
 
     public static function disableAccountsAndTasksByEndTariff()
     {
-        $users = User::where(['is_confirmed' => 1])->get();
+        $users = User::getActiveAndConrifmed();
 
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);

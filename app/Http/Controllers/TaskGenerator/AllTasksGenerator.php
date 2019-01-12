@@ -8,35 +8,61 @@
 
 namespace App\Http\Controllers\TaskGenerator;
 
+use App\account;
+use App\Chatbot;
+use App\FastTask;
 use App\Http\Controllers\InstagramTasksRunner\DatabaseCleaner;
 use App\Http\Controllers\TaskController;
 use App\Tariff;
+use App\TariffList;
+use App\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AllTasksGenerator
 {
-    public static function everyMinuteGenerator()
+    public static function everyTenMinuteDBCleaner()
     {
         DB::delete("UPDATE fast_tasks
             SET `status` = 'error'
-            WHERE `status` = 'in_process' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) > 5");
+            WHERE `status` = 'in_process' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) > 10");
+    }
 
-        if (env('IS_DIRECT_WORKS', false)) {
-            DirectTaskCreatorController::tasksGenerator();
-        }
+    public static function everyMinuteGenerator()
+    {
+        $users = User::getActiveAndConrifmed();
 
-        if (env('IS_UNSUBSCRIBE_WORKS', false)) {
-            UnsubscribeTaskCreatorController::tasksGenerator();
-        }
+        foreach ($users as $user) {
+            $tariff = Tariff::getUserCurrentTariff($user->id);
 
-        if (env('IS_CHATBOT_WORKS', false)) {
-            try {
-                ChatbotTaskCreatoreController::tasksGenerator();
-            } catch (\Exception $err) {
-                Log::debug('error ChatbotTaskCreatoreController ' . $err->getMessage() . ' ' . $err->getTraceAsString());
+            if (is_null($tariff)) {
+                continue;
             }
 
+            $accounts = account::getActiveAccountsByUser($user->id);
+
+            if (env('IS_DIRECT_WORKS', false)) {
+                if (Tariff::isAvaliable($tariff, TariffList::TYPE_DIRECT)) {
+                    DirectTaskCreatorController::tasksGenerator($accounts);
+                }
+            }
+
+            if (env('IS_UNSUBSCRIBE_WORKS', false) and !FastTask::isNight()) {
+                if (Tariff::isAvaliable($tariff, TariffList::TYPE_UNSUBSCRIBE)) {
+                    UnsubscribeTaskCreatorController::tasksGenerator($accounts);
+                }
+            }
+
+            if (env('IS_CHATBOT_WORKS', false)) {
+                if (Tariff::isAvaliable($tariff, TariffList::TYPE_CHATBOT)) {
+                    $chatBot = Chatbot::getByUserId($user->id);
+
+                    if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
+                        return;
+                    }
+
+                    ChatbotTaskCreatoreController::tasksGenerator($chatBot, $accounts);
+                }
+            }
         }
     }
 

@@ -6,7 +6,7 @@
             <section class="account-tasks {{ $task->status }}">
                 <div class="row">
                     <div class="col-lg-12 d-flex">
-                        <div class="p-2 account-tasks-type-title">{{ $task->taskList->title }}</div>
+                        <div class="p-2 account-tasks-type-title">{{ \App\TariffList::TYPE_DIRECT }}</div>
 
                         <div class="p-2 ml-auto">
                             @if($currentTariff != null)
@@ -78,12 +78,11 @@
         @endforeach
 
 
-
-        @if($unsubscribeTask != null)
+        @foreach ($unsubscribeTasks as $unsubscribeTask)
                 <section class="account-tasks {{ $unsubscribeTask->status }}">
                     <div class="row">
                         <div class="col-lg-12 d-flex">
-                            <div class="p-2 account-tasks-type-title">{{ $unsubscribeTask->taskList->title }}</div>
+                            <div class="p-2 account-tasks-type-title">{{ \App\TariffList::TYPE_UNSUBSCRIBE }}</div>
 
                             <div class="p-2 ml-auto">
                                 @if($currentTariff != null)
@@ -137,8 +136,9 @@
                     </div>
 
                 </section>
+        @endforeach
 
-        @endif
+
 
 
             @if($currentTariff != null)
@@ -164,17 +164,11 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <label for="add-task-task-type" class="my-label">Тип задания</label>
-                                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="add-task-task-type" name="task_list_id">
-                                    @foreach($taskList as $i => $taskListItem)
-                                        @if($i == 0)
-                                            <option selected value="{{ $taskListItem->id }}"
-                                                    data-task-type="{{ $taskListItem->type }}">
-                                                {{ $taskListItem->title }}</option>
-                                        @else
-                                            <option value="{{ $taskListItem->id }}"
-                                                    data-task-type="{{ $taskListItem->type }}">
-                                                {{ $taskListItem->title }}</option>
-                                        @endif
+                                <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="add-task-task-type" name="task_type">
+                                    @foreach($taskList as $taskListItem)
+                                        <option {{ $taskListItem['selected'] }} value="{{ $taskListItem['id'] }}"
+                                                data-task-type="{{ $taskListItem['id'] }}">
+                                            {{ $taskListItem['title'] }}</option>
                                     @endforeach
                                 </select>
                             </div>

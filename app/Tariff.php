@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\DB;
 
 class Tariff extends Model
 {
-    public function tariffList() {
-        return $this->belongsTo('App\TariffList', 'tariff_list_id', 'id');
-    }
+    public static function isAvaliable(Tariff $tariff, string $type)
+    {
+        $actions = $tariff->description;
 
-    public function user() {
-        return $this->belongsTo('App\User', 'user_id', 'id');
-    }
+        $actions = explode(',', $actions);
 
+        return (in_array($type, $actions));
+    }
     public static function getUserCurrentTariff(int $userId = 0, bool $asArray = false)
     {
         if ($userId == 0) {
@@ -44,7 +44,7 @@ class Tariff extends Model
             return null;
         }
 
-        $tariffList = $tariff->tariffList;
+        $tariffList = TariffList::getListByTariff($tariff);
 
         return [
             'name' => $tariffList->name,

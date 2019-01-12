@@ -43,6 +43,10 @@ class Kernel extends ConsoleKernel
         })->daily();
 
         $schedule->call(function() {
+            AllTasksGenerator::everyTenMinuteDBCleaner();
+        })->everyTenMinutes();
+
+        $schedule->call(function() {
             if (env('PROJECT_PATH') != '/home/pata/projects/myinst/') {
                 AllTasksGenerator::everyMinuteGenerator();
             } else {

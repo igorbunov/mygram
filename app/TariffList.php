@@ -6,8 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class TariffList extends Model
 {
-    public function tariff() {
-        return $this->hasMany('App\Tariff', 'tariff_list_id', 'id');
+    const TYPE_DIRECT = 'direct';
+    const TYPE_UNSUBSCRIBE = 'unsubscribe';
+    const TYPE_CHATBOT = 'chatbot';
+
+    public static function getListByTariff(Tariff $tariff)
+    {
+        return self::find($tariff->tariff_list_id);
+    }
+
+    public static function getAvaliableTypes(Tariff $tariff)
+    {
+        $res = TariffList::getListByTariff($tariff);
+
+        return explode(',', $res->description);
     }
 
     public static function getActiveTariffList(bool $asArray = false)

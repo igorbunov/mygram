@@ -8,13 +8,9 @@
 
 namespace App\Http\Controllers\TaskGenerator;
 
-use App\account;
 use App\DirectTask;
 use App\DirectTaskReport;
 use App\FastTask;
-use App\Tariff;
-use App\TaskList;
-use App\User;
 use Illuminate\Support\Facades\Log;
 
 class DirectTaskCreatorController
@@ -23,64 +19,25 @@ class DirectTaskCreatorController
      * Вызывает генератор получения новых подпищиков и генератор директ ответов
      * генератор подпищиков работает только если есть активный директ таск
      */
-    public static function tasksGenerator()
+    public static function tasksGenerator(array $accounts)
     {
-//        Log::debug('generate tasks');
-        $users = User::where(['is_confirmed' => 1])->get();
+        try {
+            foreach ($accounts as $account) {
+                $directTasks = DirectTask::getDirectTasksByForAccount($account, true);
 
-//        Log::debug('found users: ' . count($users));
+                if (is_null($directTasks) or count($directTasks) == 0) { continue; }
 
-        foreach ($users as $user) {
-            $tariff = Tariff::getUserCurrentTariff($user->id);
+                $directTask = $directTasks[0];
 
-            if (is_null($tariff)) {
-//                Log::debug('tariff is not valid for user: ' . $user->id);
-                continue;
-            }
+                GetNewSubsTaskCreatorController::generateGetSubsTask($directTask);
 
-            $tasksTypes = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
-
-            if (count($tasksTypes) == 0) {
-                Log::debug('task types not found: ' . $tariff->tariff_list_id);
-                continue;
-            }
-
-            $accounts = account::getActiveAccountsByUser($user->id);
-
-//            Log::debug("found active accounts: " . count($accounts));
-
-            try {
-                foreach ($accounts as $account) {
-                    foreach ($tasksTypes as $taskType) {
-                        if (TaskList::TYPE_DIRECT == $taskType->type) {
-                            $taskListId = $taskType->id;
-                            $directTask = DirectTask::getActiveDirectTaskByTaskListId($taskListId, $account->id, true);
-
-                            if (is_null($directTask)) {
-//                                Log::debug('No direct tasks found ' . $taskListId . ' ' . $account->id);
-                                continue;
-                            }
-
-                            // run get subs task
-                            if (GetNewSubsTaskCreatorController::generateGetSubsTask($directTask)) {
-//                                Log::debug("get subs task added to fast tasks: " . $directTask->id);
-                            }
-
-                            if ($directTask->status == DirectTask::STATUS_ACTIVE) {
-                                // run generate direct task
-                                if (self::generateDirectTask($directTask)) {
-//                                    Log::debug("direct task added to fast tasks: " . $directTask->id);
-                                }
-                            }
-                        }
-                    }
+                if ($directTask->status == DirectTask::STATUS_ACTIVE) {
+                    self::generateDirectTask($directTask);
                 }
-            } catch (\Exception $err) {
-                Log::error('error: ' . $err->getMessage());
             }
+        } catch (\Exception $err) {
+            Log::error('error: ' . $err->getMessage());
         }
-
-//        Log::debug('generate tasks end');
     }
 
     private static function generateDirectTask(DirectTask $directTask): bool

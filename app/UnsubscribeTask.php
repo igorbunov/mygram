@@ -31,27 +31,33 @@ class UnsubscribeTask extends Model
         return (is_null($res)) ? null : $res->toArray();
     }
 
-    public static function getActiveUnsubscribeTaskByTaskListId(int $taskListId, int $accountId, bool $activeAndPaused = false, bool $asArray = false)
+    private static function getActiveAndPausedUnsubscribeTasksByAccount(account $account)
     {
-        $res = null;
         $filter = [
-            'account_id' => $accountId,
-            'task_list_id' => $taskListId
+            'account_id' => $account->id
         ];
-//dd($activeAndPaused);
+
+        $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->get();
+
+        return $res;
+    }
+    private static function getAllUnsubscribeTasksByAccount(account $account)
+    {
+        $filter = [
+            'account_id' => $account->id
+        ];
+
+        $res = self::where($filter)->get();
+
+        return $res;
+    }
+    public static function getUnsubscribeTasksByAccount(account $account, bool $activeAndPaused = false)
+    {
         if ($activeAndPaused) {
-            $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->first();
-        } else {
-//            $filter['status'] = self::STATUS_ACTIVE;
-
-            $res = self::where($filter)->first();
+            return self::getActiveAndPausedUnsubscribeTasksByAccount($account);
         }
 
-        if (!$asArray) {
-            return $res;
-        }
-
-        return (is_null($res)) ? null : $res->toArray();
+        return self::getAllUnsubscribeTasksByAccount($account);
     }
 
     public static function updateStatistics(int $directTaskId, bool $isDone = false)

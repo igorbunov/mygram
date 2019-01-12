@@ -7,13 +7,18 @@ use Illuminate\Support\Facades\Log;
 
 class User extends Model
 {
-    public function accounts()
+    public static function getActiveAndConrifmed()
     {
-        return $this->hasMany('App\account', 'user_id', 'id');
-    }
+        $res = User::where([
+            'is_confirmed' => 1,
+            'is_active' => 1
+        ])->get();
 
-    public function tariffs() {
-        return $this->hasMany('App\Tariff', 'user_id', 'id');
+        if (is_null($res)) {
+            return [];
+        }
+
+        return $res;
     }
 
     public static function sendEmail(int $userId, string $subject, string $message)

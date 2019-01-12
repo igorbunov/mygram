@@ -202,15 +202,15 @@ class FastTask extends Model
                         if (self::updateDelay($task->id, 180)) {
                             Log::debug('Delay updated for account: ' . $task->account_id);
 
-                            AccountController::mailToClient($task->account_id, 'Ошибка директ автоответа', 'При попытке отправить директ сообщение возникла ошибка. Задача рассылки продолжится через 3 часа.');
-
-                            AccountController::mailToClient($task->account_id, 'Ошибка директ ответ подписщикам', 'Инст отклонил директ сообщение (спам). Задача рассылки продолжится через 3 часа.');
+                            AccountController::mailToClient($task->account_id, 'Ошибка директ ответ подписщикам', 'Инстаграм отклонил директ сообщение. Задача рассылки продолжится через 3 часа.');
                         }
                     }
 
-                    Log::debug('Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage . ' ' . $err->getTraceAsString());
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи runDirectTasks', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task DirectToSubsTasksRunner::runDirectTasks: ' . $errorMessage . ' ' . $err->getTraceAsString());
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи runDirectTasks', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
@@ -222,9 +222,11 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task AccountFirstLoginRunner::runRefresh: ' . $errorMessage);
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи runRefresh', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task AccountFirstLoginRunner::runRefresh: ' . $errorMessage);
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи runRefresh', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
@@ -236,9 +238,11 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task AccountWhiteListRunner::refreshWhitelist: ' . $errorMessage);
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи refreshWhitelist', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task AccountWhiteListRunner::refreshWhitelist: ' . $errorMessage);
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи refreshWhitelist', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
@@ -250,9 +254,11 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task get new subscribers: ' . $errorMessage);
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи subscribers', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task get new subscribers: ' . $errorMessage);
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи subscribers', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
@@ -264,9 +270,11 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task unsubscribe: ' . $errorMessage . ' trace: ' . $err->getTraceAsString());
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи unsubscribe', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task unsubscribe: ' . $errorMessage . ' trace: ' . $err->getTraceAsString());
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи unsubscribe', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
@@ -280,9 +288,11 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task refresh chatbot list: ' . $errorMessage);
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи refresh chatbot list', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task refresh chatbot list: ' . $errorMessage);
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи refresh chatbot list', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                     Chatbot::setStatus($chatbotId, Chatbot::STATUS_SYNCHRONIZED);
@@ -290,39 +300,39 @@ class FastTask extends Model
 
                 break;
             case self::TYPE_GET_DIRECT_INBOX:
-//                $chatbotId = $task->task_id;
-
                 try {
                     ChatbotTaskRunner::getDirectInbox($task->account_id);
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task TYPE_GET_DIRECT_INBOX: ' . $errorMessage);
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи TYPE_GET_DIRECT_INBOX', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task TYPE_GET_DIRECT_INBOX: ' . $errorMessage);
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи TYPE_GET_DIRECT_INBOX', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }
 
                 break;
             case self::TYPE_SEND_FIRST_CHATBOT_MESSAGE:
-//                $chatbotId = $task->task_id;
+                $account = account::getAccountById($task->account_id);
 
                 try {
-                    Log::debug('['.$task->account_id.'] sendFirstMessage');
+                    Log::debug('['.$account->nickname.'] sendFirstMessage');
                     ChatbotTaskRunner::sendFirstMessage($task->account_id);
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('['.$task->account_id.'] Error running task sendFirstMessage: ' . $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task sendFirstMessage: ' . $errorMessage);
 
-                    self::mailToDeveloper('['.$task->account_id.'] Директ не отправился, превышен лимит. sendFirstMessage', $errorMessage);
+                    self::mailToDeveloper('['.$account->nickname.'] Ошибка первого сообщения, превышен лимит. sendFirstMessage', $errorMessage);
 
-                    AccountController::mailToClient($task->account_id, 'Ошибка первого сообщения', 'Инст отклонил директ сообщение (спам). Задача рассылки продолжится через 3 часа.');
+                    AccountController::mailToClient($task->account_id, 'Ошибка первого сообщения', 'Инстаграм отклонил директ сообщение. Задача рассылки продолжится через 3 часа.');
 
                     if (strpos($errorMessage, 'DirectSendItemResponse: Feedback required') !== false) {
                         if (self::updateDelay($task->id, 180)) {
-                            Log::debug('Delay updated for account: ' . $task->account_id);
+                            Log::debug('['.$account->nickname.'] Delay updated for account: ' . $task->account_id);
                         }
                     }
                 } finally {
@@ -338,9 +348,11 @@ class FastTask extends Model
                 } catch (\Exception $err) {
                     $errorMessage = $err->getMessage();
 
-                    Log::debug('Error running task analizeDialogAndAnswer: ' . $errorMessage . ' ' . $err->getTraceAsString());
+                    $account = account::getAccountById($task->account_id);
 
-                    self::mailToDeveloper('ошибка выполнения задачи analizeDialogAndAnswer', $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task analizeDialogAndAnswer: ' . $errorMessage . ' ' . $err->getTraceAsString());
+
+                    self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи analizeDialogAndAnswer', $errorMessage);
                 } finally {
                     FastTask::setStatus($task->id, FastTask::STATUS_EXECUTED);
                 }

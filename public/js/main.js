@@ -514,10 +514,9 @@ $(document).ready(function() {
     });
 
     $('#add-task-task-type').change(function () {
-        var taskListId = $(this).val(),
-            taskType = $(this).find(':selected').data('taskType');
+        var taskType = $(this).find(':selected').data('taskType');
 
-            console.log(taskListId, taskType);
+            console.log(taskType);
 
             if (taskType == 'direct') {
                 $('#add-direct-task').show();
@@ -548,7 +547,7 @@ $(document).ready(function() {
                     location.href = '/account/' + data.accountId;
                 } else {
                     // console.log('error', data.error);
-                    alert(data.error);
+                    alert(data.message);
                 }
             }
         });
@@ -691,7 +690,6 @@ $(document).ready(function() {
         var taskType = $("#add-task-task-type").find(':selected').data('taskType');
         var accountId = $('#add-task-account-id').val();
         var directText = $('#add-direct-task-text').val();
-        var taskListId = $('#add-task-task-type').val();
 
         $.ajax({
             url: '/create_task',
@@ -703,7 +701,6 @@ $(document).ready(function() {
             data: {
                 account_id: accountId,
                 direct_text: directText,
-                task_list_id: taskListId,
                 task_type: taskType
             },
             success: function(data) {

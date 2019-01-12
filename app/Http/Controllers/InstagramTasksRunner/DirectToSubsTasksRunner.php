@@ -13,7 +13,6 @@ use App\DirectTaskReport;
 use App\FastTask;
 use App\Http\Controllers\MyInstagram\MyInstagram;
 use App\Tariff;
-use App\TaskList;
 use App\User;
 use Illuminate\Support\Facades\Log;
 use InstagramAPI\Instagram;

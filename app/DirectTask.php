@@ -17,18 +17,6 @@ class DirectTask extends Model
         return in_array($status, [self::STATUS_ACTIVE, self::STATUS_DEACTIVATED, self::STATUS_PAUSED]);
     }
 
-    public function taskList() {
-        return $this->belongsTo('App\TaskList', 'task_list_id', 'id');
-    }
-
-    public function account() {
-        return $this->belongsTo('App\account', 'account_id', 'id');
-    }
-
-    public function taskReports() {
-        return $this->hasMany('App\DirectTaskReport', 'direct_task_id', 'id');
-    }
-
     public static function getActiveTasksCountByAccountId(int $accountId)
     {
         $filter = [
@@ -62,58 +50,34 @@ class DirectTask extends Model
     }
 
 
-    public static function getDirectTasksByTaskListId(int $taskListId, int $accountId, bool $onlyActive = false, bool $asArray = false)
+    private static function getActiveAndPausedDirectTasksForAccount(account $account)
     {
         $filter = [
-            'account_id' => $accountId,
-            'task_list_id' => $taskListId
+            'account_id' => $account->id
         ];
 
-        $res = null;
+        $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->get();
 
-        if ($onlyActive) {
-            $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->get();
-        } else {
-            $res = self::where($filter)->get();
-        }
+        return $res;
+    }
+    private static function getAllDirectTasksForAccount(account $account)
+    {
+        $filter = [
+            'account_id' => $account->id
+        ];
 
-        if (!$asArray) {
-            return $res;
-        }
+        $res = self::where($filter)->get();
 
-        $result = [];
-
-        foreach ($res as $row) {
-            $result[] = $row->toArray();
-        }
-
-        return $result;
+        return $res;
     }
 
-    public static function getActiveDirectTaskByTaskListId(int $taskListId, int $accountId, bool $activeAndPaused = false, bool $asArray = false)
+    public static function getDirectTasksByForAccount(account $account, bool $activeAndPaused = false)
     {
-        $res = null;
-        $filter = [
-            'account_id' => $accountId
-        ];
-
-        if ($taskListId > 0) {
-            $filter['task_list_id'] = $taskListId;
-        }
-
         if ($activeAndPaused) {
-            $res = self::where($filter)->whereIn('status', array(self::STATUS_ACTIVE, self::STATUS_PAUSED))->first();
-        } else {
-            $filter['status'] = self::STATUS_ACTIVE;
-
-            $res = self::where($filter)->first();
+            return self::getActiveAndPausedDirectTasksForAccount($account);
         }
 
-        if (!$asArray) {
-            return $res;
-        }
-
-        return (is_null($res)) ? null : $res->toArray();
+        return self::getAllDirectTasksForAccount($account);
     }
 
     public static function updateStatistics(int $directTaskId)

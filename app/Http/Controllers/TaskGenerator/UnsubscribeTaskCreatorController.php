@@ -7,16 +7,9 @@
  */
 namespace App\Http\Controllers\TaskGenerator;
 
-use App\account;
-use App\AccountSubscriptions;
-use App\DirectTask;
-use App\DirectTaskReport;
 use App\FastTask;
-use App\Tariff;
-use App\TaskList;
 use App\UnsubscribeTask;
 use App\UnsubscribeTaskReport;
-use App\User;
 use Illuminate\Support\Facades\Log;
 
 class UnsubscribeTaskCreatorController
@@ -24,64 +17,23 @@ class UnsubscribeTaskCreatorController
     /*
      * Вызывает генератор массовой отписки
      */
-    public static function tasksGenerator()
+    public static function tasksGenerator(array $accounts)
     {
-        if (FastTask::isNight()) {
-            return false;
-        }
-//        Log::debug('generate tasks');
-        $users = User::where(['is_confirmed' => 1])->get();
+        try {
+            foreach ($accounts as $account) {
+                $unsubscribeTasks = UnsubscribeTask::getUnsubscribeTasksByAccount($account, true);
 
-//        Log::debug('found users: ' . count($users));
-
-        foreach ($users as $user) {
-            $tariff = Tariff::getUserCurrentTariff($user->id);
-
-            if (is_null($tariff)) {
-//                Log::debug('tariff is not valid for user: ' . $user->id);
-                continue;
-            }
-
-            $tasksTypes = TaskList::getAvaliableTasksForTariffListId($tariff->tariff_list_id);
-
-            if (count($tasksTypes) == 0) {
-                Log::debug('task types not found: ' . $tariff->tariff_list_id);
-                continue;
-            }
-
-            $accounts = account::getActiveAccountsByUser($user->id);
-
-//            Log::debug("found active accounts: " . count($accounts));
-
-            try {
-                foreach ($accounts as $account) {
-                    foreach ($tasksTypes as $taskType) {
-                        if (TaskList::TYPE_UNSUBSCRIBE == $taskType->type) {
-//                            Log::debug("generate unsubscribe task");
-
-                            $taskListId = $taskType->id;
-                            $unsubscribeTask = UnsubscribeTask::getActiveUnsubscribeTaskByTaskListId($taskListId, $account->id, true);
-
-                            if (is_null($unsubscribeTask)) {
-//                                Log::debug('No unsubscribe tasks found ' . $taskListId . ' ' . $account->id);
-                                continue;
-                            }
-
-                            if ($unsubscribeTask->status == UnsubscribeTask::STATUS_ACTIVE) {
-                                // run generate unsubscribe task
-                                if (self::generateUnsubscribeTask($unsubscribeTask)) {
-//                                    Log::debug("unsubscribe task added to fast tasks: " . $unsubscribeTask->id);
-                                }
-                            }
-                        }
-                    }
+                if (is_null($unsubscribeTasks) or count($unsubscribeTasks) == 0) {
+                    continue;
                 }
-            } catch (\Exception $err) {
-                Log::error('error: ' . $err->getMessage());
-            }
-        }
 
-//        Log::debug('generate tasks end');
+                if ($unsubscribeTasks[0]->status == UnsubscribeTask::STATUS_ACTIVE) {
+                    self::generateUnsubscribeTask($unsubscribeTasks[0]);
+                }
+            }
+        } catch (\Exception $err) {
+            Log::error('error: ' . $err->getMessage());
+        }
     }
 
     private static function generateUnsubscribeTask(UnsubscribeTask $unsubscribeTask): bool
