@@ -17,6 +17,7 @@ use App\Tariff;
 use App\TariffList;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AllTasksGenerator
 {
@@ -31,29 +32,35 @@ class AllTasksGenerator
     {
         $users = User::getActiveAndConrifmed();
 
+        Log::debug('found users: ' . count($users));
+
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
 
             if (is_null($tariff)) {
+                Log::debug('bad tariff');
                 continue;
             }
 
+            Log::debug('good tariff');
+
             $accounts = account::getActiveAccountsByUser($user->id);
+            Log::debug('found accounts: ' . count($accounts));
 
             if (env('IS_DIRECT_WORKS', false)) {
-                if (Tariff::isAvaliable($tariff, TariffList::TYPE_DIRECT)) {
+                if (TariffList::isAvaliable($tariff, TariffList::TYPE_DIRECT)) {
                     DirectTaskCreatorController::tasksGenerator($accounts);
                 }
             }
 
             if (env('IS_UNSUBSCRIBE_WORKS', false) and !FastTask::isNight()) {
-                if (Tariff::isAvaliable($tariff, TariffList::TYPE_UNSUBSCRIBE)) {
+                if (TariffList::isAvaliable($tariff, TariffList::TYPE_UNSUBSCRIBE)) {
                     UnsubscribeTaskCreatorController::tasksGenerator($accounts);
                 }
             }
 
             if (env('IS_CHATBOT_WORKS', false)) {
-                if (Tariff::isAvaliable($tariff, TariffList::TYPE_CHATBOT)) {
+                if (TariffList::isAvaliable($tariff, TariffList::TYPE_CHATBOT)) {
                     $chatBot = Chatbot::getByUserId($user->id);
 
                     if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {

@@ -10,16 +10,22 @@ class TariffList extends Model
     const TYPE_UNSUBSCRIBE = 'unsubscribe';
     const TYPE_CHATBOT = 'chatbot';
 
-    public static function getListByTariff(Tariff $tariff)
+    public static function getTariffType(Tariff $tariff)
     {
         return self::find($tariff->tariff_list_id);
     }
 
     public static function getAvaliableTypes(Tariff $tariff)
     {
-        $res = TariffList::getListByTariff($tariff);
+        $res = self::getTariffType($tariff);
 
         return explode(',', $res->description);
+    }
+    public static function isAvaliable(Tariff $tariff, string $type)
+    {
+        $res = self::getAvaliableTypes($tariff);
+
+        return (in_array($type, $res));
     }
 
     public static function getActiveTariffList(bool $asArray = false)
