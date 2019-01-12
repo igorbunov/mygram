@@ -148,24 +148,12 @@ class account extends Model
         return $this->hasMany('App\DirectTask', 'account_id', 'id');
     }
 
-    public static function getActiveAccountsByUser(int $userId, bool $asArray = false)
+    public static function getActiveAccountsByUser(int $userId)
     {
-        $res = self::where([
+        return self::where([
             'user_id' => $userId,
             'is_active' => 1
         ])->get();
-
-        if (!$asArray) {
-            return $res;
-        }
-
-        $result = [];
-
-        foreach ($res as $row) {
-            $result[] = $row->toArray();
-        }
-
-        return $result;
     }
 
     public static function getAccountById(int $accountId, bool $onlyActive = true, bool $asArray = false)

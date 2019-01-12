@@ -17,7 +17,7 @@ class UnsubscribeTaskCreatorController
     /*
      * Вызывает генератор массовой отписки
      */
-    public static function tasksGenerator(array $accounts)
+    public static function tasksGenerator($accounts)
     {
         try {
             foreach ($accounts as $account) {

@@ -19,7 +19,7 @@ class DirectTaskCreatorController
      * Вызывает генератор получения новых подпищиков и генератор директ ответов
      * генератор подпищиков работает только если есть активный директ таск
      */
-    public static function tasksGenerator(array $accounts)
+    public static function tasksGenerator($accounts)
     {
         try {
             foreach ($accounts as $account) {

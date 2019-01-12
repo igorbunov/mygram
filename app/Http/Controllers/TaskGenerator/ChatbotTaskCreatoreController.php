@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Log;
 
 class ChatbotTaskCreatoreController
 {
-    public static function tasksGenerator(Chatbot $chatBot, array $accounts)
+    public static function tasksGenerator(Chatbot $chatBot, $accounts)
     {
         try {
             foreach ($accounts as $account) {

@@ -47,6 +47,10 @@ class AllTasksGenerator
             $accounts = account::getActiveAccountsByUser($user->id);
             Log::debug('found accounts: ' . count($accounts));
 
+            if (count($accounts) == 0) {
+                continue;
+            }
+
             if (env('IS_DIRECT_WORKS', false)) {
                 if (TariffList::isAvaliable($tariff, TariffList::TYPE_DIRECT)) {
                     DirectTaskCreatorController::tasksGenerator($accounts);
