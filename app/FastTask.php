@@ -326,7 +326,7 @@ class FastTask extends Model
 
                     Log::debug('['.$account->nickname.'] Error running task sendFirstMessage: ' . $errorMessage);
 
-                    self::mailToDeveloper('['.$account->nickname.'] Ошибка первого сообщения, превышен лимит. sendFirstMessage', $errorMessage);
+                    self::mailToDeveloper('['.$account->nickname.'] Ошибка первого сообщения, превышен лимит. sendFirstMessage', '['.$account->nickname.'] Инстаграм отклонил директ сообщение. Задача рассылки продолжится через 3 часа');
 
                     AccountController::mailToClient($task->account_id, 'Ошибка первого сообщения', 'Инстаграм отклонил директ сообщение. Задача рассылки продолжится через 3 часа.');
 

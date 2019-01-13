@@ -68,6 +68,7 @@ class TaskController extends Controller
                         $unsendedFollowers = AccountSubscribers::getUnsendedFollowers($accountId);
                         $directTasks[$i]->inQueue = count($unsendedFollowers);
                         $directTasks[$i]->taskType = TariffList::TYPE_DIRECT;
+                        $directTasks[$i]->title = TariffList::translateTaskType(TariffList::TYPE_DIRECT);
                     }
 
                     break;
@@ -81,34 +82,15 @@ class TaskController extends Controller
                     foreach ($unsubscribeTasks as $i => $task) {
                         $unsubscribeTasks[$i]->taskType = TariffList::TYPE_UNSUBSCRIBE;
                         $unsubscribeTasks[$i]->safelistStats = AccountSubscriptions::getStatistics($accountId);
+                        $unsubscribeTasks[$i]->title = TariffList::translateTaskType(TariffList::TYPE_UNSUBSCRIBE);
                     }
 
                     break;
             }
         }
 
-        $subTariffList = TariffList::getAvaliableTypes($tariff);
-        $taskList = [];
-
-        foreach ($subTariffList as $item) {
-            switch ($item) {
-                case TariffList::TYPE_DIRECT:
-                    $taskList[] = [
-                        'id' => $item,
-                        'selected' => 'selected',
-                        'title' => 'Директ приветствие'
-                    ];
-                    break;
-                case TariffList::TYPE_UNSUBSCRIBE:
-                    $taskList[] = [
-                        'id' => $item,
-                        'selected' => '',
-                        'title' => 'Масс отписка'
-                    ];
-                    break;
-            }
-
-        }
+        $tariffTaskList = TariffList::getAvaliableTypes($tariff);
+        $taskList = $this->translateTaskTypes($tariffTaskList);
 
         return view('account_task', [
             'title' => 'Задачи @' . $account->nickname,
@@ -121,6 +103,29 @@ class TaskController extends Controller
             'currentTariff' => Tariff::getUserCurrentTariffForMainView($userId),
             'accountPicture' => User::getAccountPictureUrl($userId, $accountId)
         ]);
+    }
+
+    public function translateTaskTypes($tariffTaskList): array
+    {
+        $taskList = [];
+
+        foreach ($tariffTaskList as $item) {
+            if ($item == TariffList::TYPE_DIRECT) {
+                $taskList[] = [
+                    'id' => $item,
+                    'selected' => 'selected',
+                    'title' => TariffList::translateTaskType($item)
+                ];
+            } else if ($item == TariffList::TYPE_UNSUBSCRIBE) {
+                $taskList[] = [
+                    'id' => $item,
+                    'selected' => '',
+                    'title' => TariffList::translateTaskType($item)
+                ];
+            }
+        }
+
+        return $taskList;
     }
 
     public function index($error = '')

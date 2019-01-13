@@ -23,6 +23,18 @@ class TariffController extends Controller
     {
         $list = TariffList::getActiveTariffList();
 
+        foreach($list as $i => $item) {
+            $subItems = explode(',', $item->description);
+
+//            dd($subItems);
+            $subItemResult = [];
+            foreach($subItems as $subItem) {
+                $subItemResult[] = TariffList::translateTaskType($subItem);
+            }
+
+            $list[$i]->descriptionRus = implode(', ',  $subItemResult);
+        }
+//dd($list->toArray());
         return view('tariffs', [
             'title' => 'Тарифы',
             'activePage' => 'tariffs',

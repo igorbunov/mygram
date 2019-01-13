@@ -6,7 +6,7 @@
             <section class="account-tasks {{ $task->status }}">
                 <div class="row">
                     <div class="col-lg-12 d-flex">
-                        <div class="p-2 account-tasks-type-title">{{ \App\TariffList::TYPE_DIRECT }}</div>
+                        <div class="p-2 account-tasks-type-title">{{ $task->title }}</div>
 
                         <div class="p-2 ml-auto">
                             @if($currentTariff != null)
@@ -82,7 +82,7 @@
                 <section class="account-tasks {{ $unsubscribeTask->status }}">
                     <div class="row">
                         <div class="col-lg-12 d-flex">
-                            <div class="p-2 account-tasks-type-title">{{ \App\TariffList::TYPE_UNSUBSCRIBE }}</div>
+                            <div class="p-2 account-tasks-type-title">{{ $unsubscribeTask->title }}</div>
 
                             <div class="p-2 ml-auto">
                                 @if($currentTariff != null)

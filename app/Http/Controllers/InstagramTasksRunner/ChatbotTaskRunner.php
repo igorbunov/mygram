@@ -313,10 +313,6 @@ class ChatbotTaskRunner
             } else {
                 Log::error('['.$account->nickname.'] error send message to (chatbot): ' . $newUser->username . ' error: ' . \json_encode($response));
             }
-//            Error running task sendFirstMessage: InstagramAPI\Response\DirectSendItemResponse: Feedback required.
-//            $sleepTime = rand(5, 25);
-//            Log::debug('Sleep: ' . $sleepTime);
-//            sleep($sleepTime);
 
             break;
         }

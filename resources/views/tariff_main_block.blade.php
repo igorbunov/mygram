@@ -13,13 +13,11 @@
                         </div>
                         <div class="card-body">
                             @if ($tariff->is_trial == 1)
-
                                 <input type="hidden" name="accounts_count" value="1" />
 
-                                <h2 class="card-title pricing-card-title">{{ $tariff->price_one_uah }} грн<small class="text-muted"> / {{ $tariff->length_in_days }} дня</small></h2>
                                 <ul class="list-unstyled mt-3 mb-4">
                                     <li>кол-во аккаунтов: 1</li>
-                                    <li><b>{!! $tariff->description  !!}</b></li>
+                                    <li><b>{!! $tariff->descriptionRus  !!}</b></li>
                                 </ul>
                             @else
                                 <h2 class="card-title pricing-card-title">
@@ -40,7 +38,7 @@
                                             <option>10</option>
                                         </select>
                                     </li>
-                                    <li><b>{!! $tariff->description  !!}</b></li>
+                                    <li><b>{!! $tariff->descriptionRus  !!}</b></li>
                                 </ul>
                             @endif
 

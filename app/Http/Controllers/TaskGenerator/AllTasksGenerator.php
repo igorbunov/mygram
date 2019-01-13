@@ -21,13 +21,6 @@ use Illuminate\Support\Facades\Log;
 
 class AllTasksGenerator
 {
-    public static function everyTenMinuteDBCleaner()
-    {
-        DB::delete("UPDATE fast_tasks
-            SET `status` = 'error'
-            WHERE `status` = 'in_process' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) > 10");
-    }
-
     public static function everyMinuteGenerator()
     {
         $users = User::getActiveAndConrifmed();
@@ -75,6 +68,13 @@ class AllTasksGenerator
                 }
             }
         }
+    }
+
+    public static function everyTenMinuteDBCleaner()
+    {
+        DB::delete("UPDATE fast_tasks
+            SET `status` = 'error'
+            WHERE `status` = 'in_process' AND TIMESTAMPDIFF(MINUTE, created_at, NOW()) > 10");
     }
 
     public static function everyDayGenerator()

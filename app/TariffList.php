@@ -10,6 +10,19 @@ class TariffList extends Model
     const TYPE_UNSUBSCRIBE = 'unsubscribe';
     const TYPE_CHATBOT = 'chatbot';
 
+    public static function translateTaskType(string $type): string
+    {
+        if ($type == TariffList::TYPE_DIRECT) {
+            return 'Директ приветствие';
+        } else if ($type == TariffList::TYPE_UNSUBSCRIBE) {
+            return 'Массовая отписка';
+        } else if ($type == TariffList::TYPE_CHATBOT) {
+            return 'Чат бот';
+        }
+
+        return '';
+    }
+    
     public static function getTariffType(Tariff $tariff)
     {
         return self::find($tariff->tariff_list_id);
