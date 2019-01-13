@@ -71,6 +71,7 @@ ul, li {
 #add-task-form {
     display: none;
     margin-top: 25px;
+    margin-bottom: 10px;
 }
 #add-direct-task {
     display: block;

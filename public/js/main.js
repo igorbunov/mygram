@@ -511,6 +511,7 @@ $(document).ready(function() {
 
     $('#add-task-btn').click(function () {
         $('#add-task-form').show();
+        $("html, body").animate({ scrollTop: $(document).height() }, 500);
     });
 
     $('#add-task-task-type').change(function () {

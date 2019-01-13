@@ -28,11 +28,9 @@ class ChatbotTaskCreatoreController
                 if (env('IS_CHATBOT_FIRST_MESSAGE_WORKS', false)) {
                     $directTasks = DirectTask::getDirectTasksByForAccount($account, true);
 
-                    if (!is_null($directTasks) and count($directTasks) > 0) {
-                        continue;
+                    if (is_null($directTasks) or count($directTasks) == 0) {
+                        self::generateFirstMessageTask($chatBot, $account);
                     }
-
-                    self::generateFirstMessageTask($chatBot, $account);
                 }
 
                 self::generateBotAnswerTask($chatBot, $account);
