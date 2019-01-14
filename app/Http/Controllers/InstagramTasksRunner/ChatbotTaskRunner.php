@@ -122,9 +122,16 @@ class ChatbotTaskRunner
                     foreach($threads as $thread) {
                         $threadId = $thread->getThreadId();
                         $threadTitle = $thread->getThreadTitle();
-//                        Log::debug('thread title: ' . $threadTitle);
                         $lastMessageId = $thread->getNewestCursor();
-                        $companionPK = $thread->getUsers()[0]->getPk();
+
+                        $users = $thread->getUsers();
+
+                        if (count($users) == 0) {
+                            Log::debug('['.$account->nickname.']не получил юзеров в диалоге: ' . $threadTitle);
+                            continue;
+                        }
+
+                        $companionPK = $users[0]->getPk();
                         $inSafeList = false;
 
                         if (array_key_exists($companionPK, $allAccountsSafelist)) {
