@@ -60,11 +60,13 @@ class AllTasksGenerator
                 if (TariffList::isAvaliable($tariff, TariffList::TYPE_CHATBOT)) {
                     $chatBot = Chatbot::getByUserId($user->id);
 
-                    if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
-                        return;
-                    }
+                    if (!is_null($chatBot)) {
+                        if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
+                            return;
+                        }
 
-                    ChatbotTaskCreatoreController::tasksGenerator($chatBot, $accounts);
+                        ChatbotTaskCreatoreController::tasksGenerator($chatBot, $accounts);
+                    }
                 }
             }
         }
