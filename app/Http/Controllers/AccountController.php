@@ -99,18 +99,18 @@ class AccountController extends Controller
             return response()->json(['success' => false, 'message' => 'Заполните все поля']);
         }
 
-//        $proxyIP = ProxyIps::getFreeIp($accountId);
+        $proxyIP = ProxyIps::getFreeIp($accountId);
 
-//        if (is_null($proxyIP)) {
-//            return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
-//        }
+        if (is_null($proxyIP)) {
+            return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
+        }
 
         if ($accountId == 0) {
             $accountId = account::addNew([
                 'user_id' => $userId,
                 'nickname' => $nickname,
                 'password' => Crypt::encryptString($password),
-//                'proxy_ip' => $proxyIP->proxy_string
+                'proxy_ip' => $proxyIP->proxy_string
             ]);
         } else {
             $accountId = account::editById([
@@ -118,7 +118,7 @@ class AccountController extends Controller
                 'user_id' => $userId,
                 'nickname' => $nickname,
                 'password' => Crypt::encryptString($password),
-//                'proxy_ip' => $proxyIP->proxy_string
+                'proxy_ip' => $proxyIP->proxy_string
             ]);
         }
 
@@ -126,11 +126,11 @@ class AccountController extends Controller
             return response()->json(['success' => false, 'message' => 'Не удалось создать аккаунт']);
         }
 
-//        try {
-//            ProxyIps::setAccountId($proxyIP, $accountId);
-//        } catch (\Exception $err) {
-//            return response()->json(['success' => false, 'message' => $err->getMessage()]);
-//        }
+        try {
+            ProxyIps::setAccountId($proxyIP, $accountId);
+        } catch (\Exception $err) {
+            return response()->json(['success' => false, 'message' => $err->getMessage()]);
+        }
 
         $fastTaskId = FastTask::addTask($accountId, FastTask::TYPE_TRY_LOGIN);
 
