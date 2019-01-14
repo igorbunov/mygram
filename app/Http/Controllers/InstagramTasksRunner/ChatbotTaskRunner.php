@@ -128,6 +128,7 @@ class ChatbotTaskRunner
 
                         if (count($users) == 0) {
                             Log::debug('['.$account->nickname.']не получил юзеров в диалоге: ' . $threadTitle);
+                            Log::debug('dialog: ' . \json_encode($thread));
                             continue;
                         }
 
