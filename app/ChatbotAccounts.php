@@ -51,7 +51,7 @@ class ChatbotAccounts extends Model
         $res = DB::select("SELECT SQL_CALC_FOUND_ROWS *
             FROM chatbot_accounts 
             WHERE chatbot_id = :botId
-              AND is_sended = 0 OR (is_sended = 1 AND sender_account_id = -1)
+              AND (is_sended = 0 OR (is_sended = 1 AND sender_account_id = -1))
             LIMIT :start, :limit", [':botId' => $chatBot->id, ':start' => $start, ':limit' => $limit]);
 
         $total = DB::selectOne(DB::raw("SELECT FOUND_ROWS() AS total"))->total;

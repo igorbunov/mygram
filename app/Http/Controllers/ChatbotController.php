@@ -441,7 +441,7 @@ class ChatbotController extends Controller
         $accounts = User::getAccountsByUser($userId, true);
 
         $chatbot = Chatbot::getByUserId($userId);
-
+//dd($userId, $chatbot->id);
         if (is_null($chatbot)) {
             Chatbot::add(['user_id' => $userId, 'hashtags' => '']);
 
