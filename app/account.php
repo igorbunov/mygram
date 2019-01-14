@@ -134,6 +134,9 @@ class account extends Model
         if (isset($data['check_api_path'])) {
             $account->check_api_path = $data['check_api_path'];
         }
+        if (isset($data['proxy_ip'])) {
+            $account->proxy_ip = $data['proxy_ip'];
+        }
 
         $account->save();
 

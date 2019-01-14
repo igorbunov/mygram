@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\account;
 use App\FastTask;
+use App\ProxyIps;
 use App\Tariff;
 use App\User;
+use GuzzleHttp\Handler\Proxy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -97,24 +99,37 @@ class AccountController extends Controller
             return response()->json(['success' => false, 'message' => 'Заполните все поля']);
         }
 
+        $proxyIP = ProxyIps::getFreeIp($accountId);
+
+        if (is_null($proxyIP)) {
+            return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
+        }
+
         if ($accountId == 0) {
             $accountId = account::addNew([
                 'user_id' => $userId,
                 'nickname' => $nickname,
-                'password' => Crypt::encryptString($password)
+                'password' => Crypt::encryptString($password),
+                'proxy_ip' => $proxyIP->proxy_string
             ]);
         } else {
             $accountId = account::editById([
                 'account_id' => $accountId,
                 'user_id' => $userId,
                 'nickname' => $nickname,
-                'password' => Crypt::encryptString($password)
+                'password' => Crypt::encryptString($password),
+                'proxy_ip' => $proxyIP->proxy_string
             ]);
-//            dd($accountId);
         }
 
         if ($accountId == 0) {
             return response()->json(['success' => false, 'message' => 'Не удалось создать аккаунт']);
+        }
+
+        try {
+            ProxyIps::setAccountId($proxyIP, $accountId);
+        } catch (\Exception $err) {
+            return response()->json(['success' => false, 'message' => $err->getMessage()]);
         }
 
         $fastTaskId = FastTask::addTask($accountId, FastTask::TYPE_TRY_LOGIN);
