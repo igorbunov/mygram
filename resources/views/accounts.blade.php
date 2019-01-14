@@ -36,9 +36,6 @@
                                 <button type="button" style="margin-right: 20px;" class="btn btn-basic account-activate" data-account-id="{{ $account->id }}">Активировать</button>
                             </div>
                         @elseif($account->is_confirmed == 0 and 'sended' == $account->verify_code)
-                            {{--<div style="color: darkblue;">--}}
-                                {{--<h3>Введите код из смс</h3>--}}
-                            {{--</div>--}}
                             <div>
                                 <button type="button" class="btn btn-basic account-enter-code"
                                 data-account-id="{{ $account->id }}">Ввести код</button>

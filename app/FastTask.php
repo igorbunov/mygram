@@ -307,7 +307,7 @@ class FastTask extends Model
 
                     $account = account::getAccountById($task->account_id);
 
-                    Log::debug('['.$account->nickname.'] Error running task TYPE_GET_DIRECT_INBOX: ' . $errorMessage);
+                    Log::debug('['.$account->nickname.'] Error running task TYPE_GET_DIRECT_INBOX: ' . $errorMessage . ' trace: ' . $err->getTraceAsString());
 
                     self::mailToDeveloper('['.$account->nickname.'] ошибка выполнения задачи TYPE_GET_DIRECT_INBOX', $errorMessage);
                 } finally {
