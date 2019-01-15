@@ -52,6 +52,9 @@ class account extends Model
             if (isset($info['response'])) {
                 $account->response = $info['response'];
             }
+            if (isset($info['proxy_ip'])) {
+                $account->proxy_ip = $info['proxy_ip'];
+            }
 
             $account->save();
         }

@@ -211,6 +211,12 @@ class ChatbotTaskRunner
 
                 foreach($threads as $thread) {
                     $status = ChatHeader::STATUS_WAITING_ANSWER;
+                    $users = $thread->getUsers();
+
+                    if (is_null($users) or count($users) == 0) {
+                        continue;
+                    }
+
                     $companionPK = $thread->getUsers()[0]->getPk();
 
                     if (array_key_exists($companionPK, $allAccountsSafelist)) {

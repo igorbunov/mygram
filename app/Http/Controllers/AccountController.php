@@ -101,7 +101,7 @@ class AccountController extends Controller
 
         $proxyIP = ProxyIps::getFreeIp($accountId);
 
-        if (is_null($proxyIP)) {
+        if (is_null($proxyIP) or empty($proxyIP->proxy_string)) {
             return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
         }
 

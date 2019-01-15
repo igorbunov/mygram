@@ -147,7 +147,6 @@ class MyInstagram
             Log::debug('this->instagram->account_id: ' . \json_encode($this->instagram->account_id));
 
             if ($err0 instanceof ChallengeRequiredException) {
-                Log::debug('before inst params');
                 Log::debug('inst params: ' . \json_encode(['_uuid' => $this->instagram->uuid,'guid' => $this->instagram->uuid,'device_id' => $this->instagram->device_id,'_uid' => $this->instagram->account_id,'_csrftoken' => $this->instagram->client->getToken()]));
 
                 $checkApiPath = '';
@@ -157,10 +156,15 @@ class MyInstagram
                     Log::debug('checkApiPath: '. $checkApiPath);
                 } else {
                     $checkApiPath = $this->account->check_api_path;
-
+                    Log::debug('checkApiPath2: '. $checkApiPath);
                     if (is_null($this->instagram->account_id)) {
-                        $this->instagram->account_id = $this->account->pk; //TODO: do this
-                        Log::debug('set account id ' . $this->instagram->account_id);
+                        $usrPK = str_replace('challenge/' , '', $checkApiPath);
+                        $pos = strpos($usrPK, '/');
+                        $usrPK = substr($usrPK, 0, $pos);
+
+                        $this->instagram->account_id = $usrPK;
+                        $this->account->pk = $usrPK;
+                        Log::debug('set account id ' . $this->instagram->account_id . ' ' .$usrPK);
                     }
                 }
 
@@ -185,16 +189,16 @@ class MyInstagram
                 Log::debug('customResponse: ' . \json_encode($customResponse));
 
                 if ($customResponse['status'] === 'ok') {
+                    if (isset($customResponse['user_id'])) {
+                        $this->account->pk = $customResponse['user_id'];
+                        Log::debug('customResponse->user_id: ' . $this->account->pk);
+                    } else if (property_exists($customResponse, 'user_id')) {
+                        $this->account->pk = $customResponse->user_id;
+                        Log::debug('customResponse->user_id: ' . $this->account->pk);
+                    }
+
                     if (empty($this->account->verify_code)) {
                         Log::debug('SMS SENDED');
-
-                        if (isset($customResponse['user_id'])) {
-                            $this->account->pk = $customResponse['user_id'];
-                            Log::debug('customResponse->user_id: ' . $this->account->pk);
-                        } else if (property_exists($customResponse, 'user_id')) {
-                            $this->account->pk = $customResponse->user_id;
-                            Log::debug('customResponse->user_id: ' . $this->account->pk);
-                        }
 
                         account::setInfo($account->id, [
                             'verify_code' => 'sended',
