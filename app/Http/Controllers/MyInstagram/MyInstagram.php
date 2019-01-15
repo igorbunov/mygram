@@ -192,9 +192,12 @@ class MyInstagram
                     if (isset($customResponse['user_id'])) {
                         $this->account->pk = $customResponse['user_id'];
                         Log::debug('customResponse->user_id: ' . $this->account->pk);
-                    } else if (property_exists($customResponse, 'user_id')) {
+                    } else if (!is_array($customResponse) and property_exists($customResponse, 'user_id')) {
                         $this->account->pk = $customResponse->user_id;
                         Log::debug('customResponse->user_id: ' . $this->account->pk);
+                    } else if (is_object($customResponse) and $customResponse->isLoggedInUser()) {
+                        $this->account->pk = $customResponse->getLoggedInUser()->getPk();
+                        Log::debug('customResponse->getLoggedInUser->getPK(): ' . $this->account->pk);
                     }
 
                     if (empty($this->account->verify_code)) {
