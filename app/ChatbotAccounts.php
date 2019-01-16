@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
+    public static function deleteUnselected(Chatbot $chatBot)
+    {
+        return DB::delete("DELETE FROM chatbot_accounts 
+            WHERE chatbot_id = :chatbotId AND is_sended = 1 AND sender_account_id = -1"
+        , [':chatbotId' => $chatBot->id]);
+    }
+
     public static function getDirectStats(Chatbot $chatBot)
     {
         return DB::select("SELECT 

@@ -521,6 +521,10 @@ class ChatbotController extends Controller
 
         Chatbot::setStatus($chatbot->id, $status);
 
+        if ($status == Chatbot::STATUS_IN_PROGRESS) {
+            ChatbotAccounts::deleteUnselected($chatbot);
+        }
+
         return response()->json(['success' => true]);
     }
 
