@@ -99,7 +99,18 @@ class AccountController extends Controller
             return response()->json(['success' => false, 'message' => 'Заполните все поля']);
         }
 
-        $proxyIP = ProxyIps::getFreeIp($accountId);
+        $proxyIP = null;
+
+        if ($accountId > 0) {
+            $proxyIP = ProxyIps::getFreeIp($accountId);
+
+            if (is_null($proxyIP)) {
+                $proxyIP = ProxyIps::getFreeIp(0);
+            }
+        } else {
+            $proxyIP = ProxyIps::getFreeIp($accountId);
+        }
+
 
         if (is_null($proxyIP) or empty($proxyIP->proxy_string)) {
             return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
