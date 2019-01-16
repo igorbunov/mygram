@@ -303,11 +303,11 @@ class ChatbotTaskRunner
 //                    'nadin_opanasenko'
                 ];
 
-                if (!in_array($account->nickname, $errorList)) {
-                    if ($newUser->is_private_profile == 0) {
-                        MyInstagram::getInstanse()->likeSomePosts($account->nickname, $newUser->pk);
-                    }
-                }
+//                if (!in_array($account->nickname, $errorList)) {
+//                    if ($newUser->is_private_profile == 0) {
+//                        MyInstagram::getInstanse()->likeSomePosts($account->nickname, $newUser->pk);
+//                    }
+//                }
 
                 $subRes = MyInstagram::getInstanse()->subscribe($newUser->pk);
 
