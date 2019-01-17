@@ -416,119 +416,6 @@ class MyInstagram
         return $followersAsArray;
     }
 
-//    public function findUsersByHashtag(array $hashtags, int $limit, int $chatbotId, int $userId)
-//    {
-//        $results = [];
-//
-//        Log::debug('limit = ' . $limit . ' count(hashtags) = ' . count($hashtags));
-//
-//        foreach($hashtags as $i => $tag) {
-//            $maxId = null;
-//            $count = 0;
-//
-//            $zeroCounts = 0;
-//
-//            do {
-//                Log::debug('search hashtag: ' . $tag);
-//                $subResult = [];
-//                $isBreak = false;
-//                $response = null;
-//                $items = null;
-//
-//                try {
-//                    $response = $this->instagram->hashtag->getFeed($tag, $this->rankToken, $maxId);
-//                    $items = ($response->isItems()) ? $response->getItems() : $response->getRankedItems();
-//                } catch(\Exception $err1) {
-//                    sleep(4);
-//                    continue;
-//                }
-//
-//                if (!is_null($items)) {
-//                    foreach ($items as $item) {
-//                        $user = $item->getUser();
-//                        $userPK = $user->getPk();
-//
-//                        if (array_key_exists($userPK, $results)) {
-//                            Log::debug('already in list: ' . $user->getUsername());
-//                            continue;
-//                        }
-//
-//                        $isPrivate = ($user->getIsPrivate()) ? 1 : 0;
-//
-////                        if ($isPrivate) {
-////                            Log::debug('private profile: ' . $user->getUsername());
-////                            continue;
-////                        }
-//
-//                        if (!ChatbotAccounts::canBeAdded($chatbotId, $userPK, $userId)) {
-//                            Log::debug('cantBeAdded: ' . $user->getUsername());
-//                            continue;
-//                        }
-//
-//                        $profilePictureUrl = $user->getProfilePicUrl();
-//
-//                        $userRow = [
-//                            'chatbot_id' => $chatbotId,
-//                            'username' => $user->getUsername(),
-//                            'pk' => $userPK,
-//                            'json' => \json_encode($item),
-//                            'picture' => $profilePictureUrl,
-//                            'is_private_profile' => $isPrivate
-//                        ];
-//
-//                        $results[$userPK] = $userRow;
-//                        $subResult[] = $userRow;
-//
-//                        $count++;
-//
-//                        if ($count >= $limit) {
-//                            Log::debug('limit done, count: ' . $count);
-//                            $isBreak = true;
-//                            break;
-//                        }
-//                    }
-//
-//                    Log::debug('count($results) 2: ' . count($results));
-//                    if ($count($results) == 0) {
-//                        $zeroCounts++;
-//                    }
-//
-//                    if ($zeroCounts > 5) {
-//                        break;
-//                    }
-//                } else {
-//                    Log::debug('items is null ' . \json_encode($response));
-//                }
-//
-//                if ($isBreak) {
-//                    Log::debug('isBreak = true');
-//                    $maxId = null;
-//                } else {
-//                    $maxId = $response->getNextMaxId();
-//                }
-//
-//                Log::debug('count $results 1: ' . count($results));
-//
-//                if (count($subResult) > 0) {
-//                    foreach($subResult as $user) {
-//                        ChatbotAccounts::add($user);
-//                    }
-//
-//                    Chatbot::edit([
-//                        'id' => $chatbotId,
-//                        'total_chats' => ChatbotAccounts::getCount($chatbotId)
-//                    ]);
-//
-//                    $subResult = [];
-//                }
-//
-//                sleep(rand(5, 15));
-//            } while ($maxId !== null);
-//        }
-//
-//        return $results;
-//    }
-
     public function findUsersByLikes(array $userAccounts, int $chatbotId, int $userId)
     {
         $results = [];
@@ -563,6 +450,16 @@ class MyInstagram
                         foreach($users as $user) {
                             $userPk = $user->getPk();
                             $isPrivate = ($user->getIsPrivate()) ? 1 : 0;
+
+                            if ($user->isGender()) {
+                                $gender = $user->getGender();
+//                                (1 = male, 2 = female, 3 = unknown).
+
+                                 if ($gender == 1) {
+                                     Log::debug('skip male [' . $user->getUsername() . ']: ' . $gender);
+                                     continue;
+                                 }
+                            }
 
                             if (!array_key_exists($userPk, $results)) {
                                 $results[$userPk] = [
