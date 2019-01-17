@@ -356,6 +356,28 @@ class ChatbotController extends Controller
 
         $this->checkTest(35, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
 
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Да'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'В двух словах можно с чем связана работа?']
+
+        ]);
+
+        $this->checkTest(36, $res, $bot::STATUS_WAITING_ANSWER,'Давать людям информацию в соц сетях. Это в двух словах, более подробно в Вайбер сообществе.','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Да'],
+            ['isMy' => true, 'text' => 'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить'],
+            ['isMy' => false, 'text' => 'Хотя бы вид деятельности']
+
+        ]);
+
+        $this->checkTest(37, $res, $bot::STATUS_WAITING_ANSWER,'Давать людям информацию в соц сетях. Это в двух словах, более подробно в Вайбер сообществе.','');
+
 //        dd($res);
     }
 
@@ -444,7 +466,8 @@ class ChatbotController extends Controller
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
-            return view('main_not_logined');
+            return redirect('login');
+//            return view('main_not_logined');
         }
 
         $accounts = User::getAccountsByUser($userId, true);

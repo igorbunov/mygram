@@ -128,7 +128,8 @@ class SafelistController extends Controller
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
-            return view('main_not_logined');
+            return redirect('login');
+//            return view('main_not_logined');
         }
 
         $accounts = User::getAccountsByUser($userId, true);
@@ -193,7 +194,8 @@ class SafelistController extends Controller
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
-            return view('main_not_logined');
+            return redirect('login');
+//            return view('main_not_logined');
         }
 
         if (!account::isAccountBelongsToUser($userId, $accountId)) {

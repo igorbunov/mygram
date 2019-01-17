@@ -49,7 +49,8 @@ class AccountController extends Controller
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
-            return view('main_not_logined');
+            return redirect('login');
+//            return view('main_not_logined');
         }
 
         $accounts = User::getAccountsByUser($userId, $onlyActive);
