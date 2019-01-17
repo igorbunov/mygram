@@ -66,7 +66,7 @@ class ChatbotTaskRunner
             'style', 'moda', 'clothes', 'odezhda', 'look', 'apple', 'watch',
             'fitness', 'sport', 'doll', 'toys', 'parfume', 'shoes' , 'mag', 'official',
             'fashion', 'cosmet', 'shugar', 'babe', 'eco', 'food', 'ru', 'russia', 'travel',
-            'box', 'decor', 'jewelry', 'galler'
+            'box', 'decor', 'jewelry', 'galler', 'iphone', 'ipad'
         ];
 
         foreach($newUsers as $userPk => $userRow) {

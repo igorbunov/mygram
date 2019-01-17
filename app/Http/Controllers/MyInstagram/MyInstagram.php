@@ -423,6 +423,9 @@ class MyInstagram
         Log::debug(' count(userAccounts) = ' . count($userAccounts));
 
         foreach($userAccounts as $i => $userAccount) {
+            if (trim($userAccount) == '') {
+                continue;
+            }
 //            Log::debug('search userAccount: ' . $userAccount);
 
             $response = null;
