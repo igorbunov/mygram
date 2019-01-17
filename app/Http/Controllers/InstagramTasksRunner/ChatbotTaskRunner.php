@@ -59,21 +59,42 @@ class ChatbotTaskRunner
 
         $allAccountsSubsDirect = AccountSubscribers::getAllAccountsUsersPKS($account->user_id);
 
-        $botController = new BotController();
-
         $blackListNicknames = [
-            'ua', 'store', 'shop', 'ukraine',
-            'style', 'moda', 'clothes', 'odezhda', 'look', 'apple', 'watch',
-            'fitness', 'sport', 'doll', 'toys', 'parfume', 'shoes' , 'mag', 'official',
-            'fashion', 'cosmet', 'shugar', 'babe', 'eco', 'food', 'ru', 'russia', 'travel',
-            'box', 'decor', 'jewelry', 'galler', 'iphone', 'ipad'
+            'ua', 'store', 'shop', 'ukraine', 'salon', 'busines', 'salon', 'nails', 'bissnes', 'dress',
+            'style', 'moda', 'clothes', 'odezhda', 'look', 'apple', 'watch', 'design', 'pharmacy', 'agency',
+            'fitness', 'sport', 'doll', 'toys', 'parfume', 'shoes' , 'mag', 'official', 'avon', 'smm',
+            'fashion', 'cosmet', 'shugar', 'babe', 'eco', 'food', 'ru', 'russia', 'travel', 'master',
+            'box', 'decor', 'jewelry', 'galler', 'iphone', 'ipad', 'service', 'beauty', 'showroom', 'catalog',
+            'marketing', 'free', 'tkani', 'child', 'baby', 'skidki', 'lingerie', 'nogotki'
         ];
+
+        $manNames = ['Aleksandr','Alexander','Sasha','Aleksey','Alexey','Alyosha','Anatoly','Anatoliy','Tolya','Andrey','Andrei','Andryusha','Anton','Arkady','Arkadiy','Arkasha','Artem','Artyom','Tyoma','Artur','Boris','Borya','Vadim','Vadik','Valentin','Valya','Valeriy','Valera','Vasily','Vasiliy','Vasya','Viktor','Victor','Vitya','Vitaly','Vitaliy','Vitya','Vladimir','Vova','Volodya','Vladislav','Vlad','Slava','Vyacheslav','Viacheslav','Slava','Gennady','Gennadiy','Gena','Georgy','Georgiy','Gosha','Gleb','Grigory','Grigoriy','Grisha','Daniil','Danila','Denis','Dmitry','Dmitriy','Dima','Yevgeny','Yevgeniy','Zhenya','Yegor','Egor','Gosha','Zakhar','Zahar','Ivan','Vanya','Igor','Ilya','Ilia','Ilyusha','Innokenty','Innokentiy','Kesha','Iosif','Kirill','Konstantin','Kostya','Lev','Lyova','Leonid','Lyonya','Maksim','Maxim','Max','Matvey','Matvei','Mikhail','Misha','Moisey','Nikita','Nikolay','Nikolai','Kolya','Oleg','Pavel','Pasha','Pyotr','Petr','Petya','Roman','Roma','Ruslan','Svyatoslav','Sviatoslav','Slava','Semyon','Senya','Syoma','Sergey','Sergei','Seryozha','Stanislav','Stas','Stepan','Styopa','Timofey','Timofei','Tima','Timur','Timour','Fedor','Fyodor','Fedya','Filipp','Philipp','Filya','Eduard','Edward','Edik','Yuri','Yuriy','Yury','Yura','Yakov','Iakov','Yasha','Yan','Ian','Yaroslav'];
 
         foreach($newUsers as $userPk => $userRow) {
             if (!array_key_exists($userPk, $allAccountsSafelist)
                 and !array_key_exists($userPk, $allAccountsSubsDirect)) {
 
-                if (!$botController->strposa($userRow['username'], $blackListNicknames)) {
+                $isBad = false;
+
+                foreach($blackListNicknames as $badNickname) {
+                    if (strpos($userRow['username'], $badNickname) !== false) {
+                        $isBad = true;
+                        break;
+                    }
+                }
+
+                if ($isBad) {
+                    continue;
+                }
+
+                foreach($manNames as $manNickname) {
+                    if (strpos($userRow['username'], $manNickname) !== false) {
+                        $isBad = true;
+                        break;
+                    }
+                }
+
+                if (!$isBad) {
                     ChatbotAccounts::add($userRow);
                 }
             }

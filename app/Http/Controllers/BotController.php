@@ -183,7 +183,10 @@ class BotController
         foreach($messages as $num => $msg) {
             if (!$msg['isMy'] and $this->isPhoneNumber($msg['text'])) {
                 $result['status'] = self::STATUS_DIALOG_FINISHED;
-                $result['phone'] = $msg['text'];
+
+                if (mb_strlen($msg['text']) < 100) {
+                    $result['phone'] = $msg['text'];
+                }
 
                 return $result;
             }
