@@ -24,16 +24,16 @@ class BotController
         'интересно', 'интересует', 'давайте', 'давай', 'хорошо',  'трави', 'говори',
         'рассказывай', 'раскажите', 'раскажи', 'расскажи', 'игтересно', 'готов', 'готова', 'отлично',
         'yep', 'like', 'okey', 'okay', 'канешно', 'канечно', 'конечно', 'интиресно',
-        'согласен', 'согласна', 'оке',  'слушаю', 'звичайно', 'очень',
+        'согласен', 'согласна', 'оке',  'слушаю', 'звичайно', 'очень', 'мене цікавить',
         'цікаво', 'готовий', 'добре', 'розповідай', 'розкажіть', 'розкажи', 'відмінно'
     ];
 
-    private $positiveClearAnswers = ['да', 'ага', 'угу', 'так', 'yes', 'ok', 'da', 'ок'];
-    private $negativeClearAnswers = ['нет',  'no', 'not', 'ні', 'нетт', 'неа'];
+    private $positiveClearAnswers = ['да', 'ага', 'угу', 'так', 'yes','ok', 'da', 'ок'];
+    private $negativeClearAnswers = ['нет',  'no', 'not','ні', 'нетт', 'неа'];
 
     private $negativeAnswers = [
-        'не интересует', 'не интересно', 'уже есть', 'вже є', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно', 'я работаю',
-        'не цікаво', 'не цікавить', 'не потрібно', 'не цікаво', 'вже працюю', 'сотрудничаю', 'коллега', 'коллеги',
+        'не интересует', 'могу предложить', 'не интересно', 'уже есть', 'вже є', 'уже работаю', 'есть работа', 'нет спасибо', 'неинтересно', 'я работаю',
+        'не цікаво',  'не потрібно', 'не цікавить', 'не цікаво', 'вже працюю', 'сотрудничаю', 'коллега', 'коллеги',
         'вжє робота', 'мене е робота', 'ні дякую', 'нецікаво', 'сама ищу', 'сам ищу',  'клуб', 'не хочу', 'уже в',
         'nope', 'no thanks', 'no need', 'уже с вами', 'работаем уже', 'уже работаем', 'идеального', 'колега', 'колеги'
     ];
@@ -48,7 +48,7 @@ class BotController
         'чем заниматься', 'чем заниматся', 'какое направление', 'конкретніше', 'конкретнее'
     ];
 
-    private $oriClearAnswers = ['ори', 'орі', 'ori'];
+    private $oriClearAnswers = ['ори', 'орі', 'ori', 'оря'];
     private $oriQuestions = [
         'орифлейм', 'сетевой', 'продажи', 'реклама', 'маркетинг', 'эйвон', 'джерелия',
         'продавать', 'рекламировать', 'фаберлик', 'косметика', 'oriflame', 'faberlic',
@@ -230,10 +230,6 @@ class BotController
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
                     $result['ori'] = true;
                     return $result;
-
-//                    $this->checkDouble($messages, $this->myStages['oriQuestion']['myMessages'][0]);
-//                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
-//                    return $result;
                 }
                 if ($this->strposa($totalAnswer, $this->positiveAnswers)
                     or $this->strposaExact($totalAnswer, $this->positiveClearAnswers)) {
@@ -300,9 +296,6 @@ class BotController
 
             $result['status'] = '';
             return $result;
-//        } else {
-//            $result['status'] = self::STATUS_WAITING_ANSWER;
-//            return $result;
         }
 
         if ($myMessagesCount > 4 OR $hasOtherMessages) {
@@ -347,17 +340,11 @@ class BotController
                     $result['ori'] = true;
 
                     break;
-
-//                    $this->checkDouble($messages, $this->myStages['oriQuestion']['myMessages'][0]);
-//                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
-                    break;
                 }
 
                 if ($this->strposa($totalAnswer, $this->oriQuestions)) {
                     $result['status'] = self::STATUS_DIALOG_FINISHED;
                     $result['ori'] = true;
-//                    $this->checkDouble($messages, $this->myStages['oriQuestion']['myMessages'][0]);
-//                    $result['txt'] = $this->myStages['oriQuestion']['myMessages'][0];
                     break;
                 }
 
@@ -466,9 +453,42 @@ class BotController
     public function strposa($haystack, $needle) {
         if(!is_array($needle)) $needle = array($needle);
 
+        $notWord = [".",",",";",":","!","@","#","$","%","^","&","*",
+            "(",")","[","]","-","=","+","_","``","\n","\r","№","\\","/","|", " "];
+
         foreach($needle as $query) {
             $query = mb_strtolower($query);
-            if(strpos($haystack, $query) !== false) return true; // stop on first true result
+
+            $begin = mb_stripos($haystack, $query);
+
+//            echo '<pre>';
+//            var_dump($query, $begin);
+//            echo '</pre>';
+
+//dd($begin);
+            if($begin !== false) {
+                $len = mb_strlen($query);
+
+//                var_dump($len);
+
+                if ($begin > 0) {
+                    $prevChar = mb_substr($haystack, $begin-1, 1);
+
+//                    echo '<pre>';
+//                    var_dump($begin, $prevChar, $haystack, $query);
+//                    echo '</pre>';
+
+                    if (in_array($prevChar, $notWord)) {
+//                        var_dump('ok');
+                        return true;
+                    } else {
+//                        var_dump('error');
+                        continue;
+                    }
+                }
+
+                return true;
+            }
         }
 
         return false;
@@ -489,7 +509,7 @@ class BotController
             $query = mb_strtolower($query);
 
             $res = str_replace([".",",",";",":","!","@","#","$","%","^","&","*",
-                "(",")","[","]","-","=","+","_","``","\n","\r","№","\\","/","|", " "], '`', $haystack);
+                "(",")","[","]","-","=","+","_","``","\n","\r","№","\\","/","|", " ", "?"], '`', $haystack);
 
             $res = explode('`', $res);
 

@@ -192,8 +192,8 @@ class ChatbotController extends Controller
             ['isMy' => false, 'text' => 'Это оря?']
         ]);
 
-        $this->checkTest(20, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
-
+        $this->checkTest(20, $res, $bot::STATUS_DIALOG_FINISHED,'','', true);
+//dd($res);
         unset($bot); $bot = new BotController();
         $res = $bot->getAnswer([
             ['isMy' => true, 'text' => 'Добрый день! Предлагаю работу в Instagram. Интересно?'],
@@ -346,6 +346,15 @@ class ChatbotController extends Controller
         ]);
 
         $this->checkTest(34, $res, $bot::STATUS_DIALOG_FINISHED,'','');
+
+        unset($bot); $bot = new BotController();
+        $res = $bot->getAnswer([
+            ['isMy' => true, 'text' => 'Привет! Предлагаю работу в Instagram. Интересно?'],
+            ['isMy' => false, 'text' => 'Доброго вечора, мене цікавить ваша пропозиція.']
+
+        ]);
+
+        $this->checkTest(35, $res, $bot::STATUS_WAITING_ANSWER,'Смотрите, объяснять всю суть в переписке долго. Оставьте ваш номер телефона и я добавлю вас в Вайбер сообщество, где изложены все подробности работы. Самостоятельно все сможете изучить','');
 
 //        dd($res);
     }
