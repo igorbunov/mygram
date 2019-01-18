@@ -509,6 +509,10 @@ $(document).ready(function() {
         }
     });
 
+    $(".show-chatbot-instruction").click(function () {
+        $(".chatbot-instruction").show(500);
+    });
+
     $('#add-task-btn').click(function () {
         $('#add-task-form').show();
         $("html, body").animate({ scrollTop: $(document).height() }, 500);

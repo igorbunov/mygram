@@ -5,6 +5,9 @@
     top: 0;
     bottom: 0;
 }
+.chatbot-instruction{
+    display: none;
+}
 .div-center {
     width: 400px;
     height: 400px;
@@ -320,13 +323,16 @@ ul, li {
 .btn-dark{
     cursor: pointer;
 }
-.btn-dark.refresh-follow-list, .btn-dark.refresh-bot-list, .btn-dark.start-chatbot-task{
+.btn-dark.refresh-follow-list, .btn-dark.refresh-bot-list, .btn-dark.start-chatbot-task, .show-chatbot-instruction{
     width: 224px;
     height: 52px;
     padding: 16px 18px;
     border-radius: 5px;
     display:flex;
     align-items: center;
+}
+.show-chatbot-instruction{
+    width: 316px;
 }
 .btn-dark.refresh-bot-list{
     height: 56px;

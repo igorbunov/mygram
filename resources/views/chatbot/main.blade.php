@@ -3,7 +3,11 @@
 @section('main_content')
     <div class="container container-nopadding">
         <section id="chatbot-instruction" class="chatbot-container">
-            <div class="row">
+            <div class="btn-dark show-chatbot-instruction">
+                <span style="margin-right: 22px;">Показать инструкцию по чатботу</span>
+                <i class="fas fa-angle-down"></i>
+            </div>
+            <div class="row chatbot-instruction">
                 <div class="col-lg-12">
                     <p>Чат бот работает по списку пользователей, которые он загрузит по лайкам их первых 3х постов
                         пользователей которых вы укажете (Польватели для бота).
