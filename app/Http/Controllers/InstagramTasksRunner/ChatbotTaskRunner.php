@@ -319,11 +319,6 @@ class ChatbotTaskRunner
             ChatbotAccounts::setSended($chatBot, $newUser->pk, true, $accountId);
 
             try {
-                $errorList = [
-//                    'Gorbunova.nadya_',
-//                    'nadin_opanasenko'
-                ];
-
 //                if (!in_array($account->nickname, $errorList)) {
 //                    if ($newUser->is_private_profile == 0) {
 //                        MyInstagram::getInstanse()->likeSomePosts($account->nickname, $newUser->pk);
@@ -332,8 +327,10 @@ class ChatbotTaskRunner
 
                 $subRes = MyInstagram::getInstanse()->subscribe($newUser->pk);
 
-                if ($subRes->isOk()) {
+                if (!is_null($subRes) AND $subRes->isOk()) {
                     Log::debug('['.$account->nickname.'] подписался (chatbot): ' . $newUser->username);
+                } else {
+                    Log::debug('['.$account->nickname.'] не удалось подписатся (chatbot): ' . \json_encode($subRes));
                 }
 
                 sleep(rand(5, 10));
