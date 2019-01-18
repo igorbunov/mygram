@@ -11,7 +11,7 @@
         <div class="chatbot-account-container">
             <a href="https://www.instagram.com/{{ $listUser->username }}/" target="_blank">
                 <div>
-                    <img style="width: 64px; height: 64px;" class="rounded-circle" src="{{ $listUser->picture }}" />
+                    <img style="width: 80px; height: 80px;" class="rounded-circle" src="{{ $listUser->picture }}" />
                 </div>
             </a>
             <div onclick="onChatbotAccountClick(this);">
