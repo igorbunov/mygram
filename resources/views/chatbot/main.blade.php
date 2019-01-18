@@ -25,7 +25,11 @@
                     5. Получать на почту сообщения о том что диалог с каким-то пользователем был закончен.</p>
                 </div>
             </div>
-            <div class="row">
+            @if($chatbot->status == \App\Chatbot::STATUS_IN_PROGRESS)
+                <div class="row chatbot-accounts-for-start">
+            @else
+                <div class="row">
+            @endif
                 <div style="display: flex; padding: 5px 15px; justify-content: space-between;">
 
                     <div style="padding: 0 5px;">

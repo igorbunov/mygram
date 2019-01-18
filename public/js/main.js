@@ -511,6 +511,7 @@ $(document).ready(function() {
 
     $(".show-chatbot-instruction").click(function () {
         $(".chatbot-instruction").show(500);
+        $(".chatbot-accounts-for-start").show(500);
     });
 
     $('#add-task-btn').click(function () {

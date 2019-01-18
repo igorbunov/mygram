@@ -331,6 +331,9 @@ ul, li {
     display:flex;
     align-items: center;
 }
+.chatbot-accounts-for-start{
+    display: none;
+}
 .show-chatbot-instruction{
     width: 230px;
 }
