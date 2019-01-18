@@ -535,6 +535,9 @@ ul, li {
     .items-to-hide{
         display: none;
     }
+    #logout-btn{
+        display: none;
+    }
     .sidenav-trigger{
         display: block !important;
     }

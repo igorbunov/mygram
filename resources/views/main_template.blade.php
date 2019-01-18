@@ -12,7 +12,7 @@
                         <span class="h1 programm-text">mygram</span>
                     </div>
                     <div style="margin: 6px 12px 0 0;">
-                        <a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a>
+                        <a id="logout-btn" href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a>
                     </div>
                 </div>
 
@@ -112,6 +112,9 @@
                     <li class="menu__item">
                         <a href="{{ url('chatbot') }}" @if($activePage == 'chatbot') class="active_link" @endif>Чат бот</a>
                     </li>
+                    {{--<li style="margin-top: 100px;">--}}
+                        {{--<a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a>--}}
+                    {{--</li>--}}
                     {{--<li class="menu__item">--}}
                         {{--<a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>--}}
                     {{--</li>--}}
@@ -135,6 +138,7 @@
                     {{--</li>--}}
                 </ul>
             </nav>
+            <a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" style="margin-top:200px;" role="button" aria-pressed="true">Выйти</a>
         </div>
     </ul>
 
