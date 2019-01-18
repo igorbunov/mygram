@@ -4,7 +4,7 @@
     <div class="container container-nopadding">
         <section id="chatbot-instruction" class="chatbot-container">
             <div class="btn-dark show-chatbot-instruction">
-                <span style="margin-right: 22px;">Показать инструкцию</span>
+                <span style="margin-right: 44px;">Показать инструкцию</span>
                 <i class="fas fa-angle-down"></i>
             </div>
             <div class="row chatbot-instruction">
