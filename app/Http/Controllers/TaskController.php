@@ -70,6 +70,8 @@ class TaskController extends Controller
                         $directTasks[$i]->inQueue = count($unsendedFollowers);
                         $directTasks[$i]->taskType = TariffList::TYPE_DIRECT;
                         $directTasks[$i]->title = TariffList::translateTaskType(TariffList::TYPE_DIRECT);
+//                        $directTasks[$i]->delay = 4;
+                        $directTasks[$i]->delay = FastTask::getDelayForAccount($accountId, FastTask::TYPE_DIRECT_ANSWER);
                     }
 
                     break;

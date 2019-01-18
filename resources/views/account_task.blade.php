@@ -67,10 +67,11 @@
                              data-task-type="{{ $task->taskType }}"
                              data-account-id="{{ $account->id }}"
                              data-task-id="{{ $task->id }}"
-                             {{--data-toggle="modal" data-target="#exampleModalCenter"--}}
                             >
                             <i class="fas fa-trash"></i>
                         </div>
+
+                        <div style="margin: 0 0 6px 12px">ждем ({{ $task->delay }} мин.)</div>
                     </div>
                 </div>
 
