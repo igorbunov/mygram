@@ -57,9 +57,9 @@
                                         <a href="{{ url('chatbot') }}" @if($activePage == 'chatbot') class="active_link" @endif>Чат бот</a>
                                     </li>
                                 @endif
-                                    <li class="menu__item">
-                                        <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
-                                    </li>
+                                    {{--<li class="menu__item">--}}
+                                        {{--<a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>--}}
+                                    {{--</li>--}}
                                     {{--<li class="menu__item">--}}
                                         {{--<a href="{{ url('limits') }}" @if($activePage == 'limits') class="active_link" @endif>Лимиты</a>--}}
                                     {{--</li>--}}
@@ -112,9 +112,9 @@
                     <li class="menu__item">
                         <a href="{{ url('chatbot') }}" @if($activePage == 'chatbot') class="active_link" @endif>Чат бот</a>
                     </li>
-                    <li class="menu__item">
-                        <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
-                    </li>
+                    {{--<li class="menu__item">--}}
+                        {{--<a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>--}}
+                    {{--</li>--}}
                     {{--<li class="menu__item">--}}
                         {{--<a href="{{ url('limits') }}" @if($activePage == 'limits') class="active_link" @endif>Лимиты</a>--}}
                     {{--</li>--}}

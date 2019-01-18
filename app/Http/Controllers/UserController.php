@@ -170,6 +170,9 @@ class UserController extends Controller
             session(['user_id' => $user->id]);
             session(['user_email' => $user->email]);
 
+            $tariff = new TariffController();
+            $tariff->activateMaximumTariff();
+
             return redirect('/');
         }
 

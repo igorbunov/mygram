@@ -46,8 +46,8 @@ Route::group(['middleware' => 'myauth'], function () {
     Route::post('change_account', 'AccountController@changeStatus');
     Route::post('account_sync', 'AccountController@sync');
     Route::post('fast_task_status', 'FastTaskController@checkTaskStatus');
-    Route::get('tariffs', 'TariffController@index');
-    Route::post('checkout', 'TariffController@checkout');
+//    Route::get('tariffs', 'TariffController@index');
+//    Route::post('checkout', 'TariffController@checkout');
 
     Route::get('limits', function () {
         $curTariff = \App\Tariff::getUserCurrentTariffForMainView();

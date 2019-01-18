@@ -286,35 +286,60 @@ class TariffController extends Controller
         return count($result) > 0;
     }
 
-    private function activateTrialTariff()
+    public function activateMaximumTariff()
     {
-        $result = TariffList::where([
-            'is_active' => 1
-            , 'is_trial' => 1
-        ])->get()->first();
+        $userId = (int) session('user_id');
 
-        if (!is_null($result)) {
-            $userId = (int) session('user_id');
-
-            if ($userId == 0) {
-                throw new Exception('session is dead');
-            }
-
-            $ac = new Tariff();
-            $ac->tariff_list_id = $result['id'];
-            $ac->user_id = $userId;
-            $ac->is_active = 1;
-            $ac->is_payed = 1;
-            $ac->payment_id = 'trial';
-            $ac->currency = 'UAH';
-            $ac->ip = $_SERVER['REMOTE_ADDR'];
-            $ac->amount = 0;
-            $ac->accounts_count = '1';
-            $ac->payment_response = '';
-            $ac->payment_message = '';
-            $ac->dt_start = DB::select('select now() as dt')[0]->dt;
-            $ac->dt_end = DB::select('select now() + interval 3 day as dt')[0]->dt;
-            $ac->save();
+        if ($userId == 0) {
+            throw new Exception('session is dead');
         }
+
+        $ac = new Tariff();
+        $ac->tariff_list_id = 2;
+        $ac->user_id = $userId;
+        $ac->is_active = 1;
+        $ac->is_payed = 1;
+        $ac->payment_id = 'trial';
+        $ac->currency = 'UAH';
+        $ac->ip = $_SERVER['REMOTE_ADDR'];
+        $ac->amount = 0;
+        $ac->accounts_count = '1';
+        $ac->payment_response = '';
+        $ac->payment_message = '';
+        $ac->dt_start = DB::select('select now() as dt')[0]->dt;
+        $ac->dt_end = DB::select('select now() + interval 1 MONTH as dt')[0]->dt;
+        $ac->save();
     }
+//
+//    private function activateTrialTariff()
+//    {
+//        $result = TariffList::where([
+//            'is_active' => 1
+//            , 'is_trial' => 1
+//        ])->get()->first();
+//
+//        if (!is_null($result)) {
+//            $userId = (int) session('user_id');
+//
+//            if ($userId == 0) {
+//                throw new Exception('session is dead');
+//            }
+//
+//            $ac = new Tariff();
+//            $ac->tariff_list_id = $result['id'];
+//            $ac->user_id = $userId;
+//            $ac->is_active = 1;
+//            $ac->is_payed = 1;
+//            $ac->payment_id = 'trial';
+//            $ac->currency = 'UAH';
+//            $ac->ip = $_SERVER['REMOTE_ADDR'];
+//            $ac->amount = 0;
+//            $ac->accounts_count = '1';
+//            $ac->payment_response = '';
+//            $ac->payment_message = '';
+//            $ac->dt_start = DB::select('select now() as dt')[0]->dt;
+//            $ac->dt_end = DB::select('select now() + interval 3 day as dt')[0]->dt;
+//            $ac->save();
+//        }
+//    }
 }

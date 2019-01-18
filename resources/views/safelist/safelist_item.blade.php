@@ -8,23 +8,45 @@
 
 <section id="safelist" data-account-id="{{ $accountId }}">
     @foreach($safelist as $listUser)
-        <div onclick="onSafelistClick(this);">
-            <div>
-                <img style="width: 50px; height: 50px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />
-            </div>
-            <div class="safelist-nickname">
-                {{ $listUser['username'] }}
-            </div>
-            @if($listUser['is_in_safelist'] == 1)
-                <div class="my-checkbox checkbox-checked">
-                    <i class="fa fa-check"></i>
+        <div class="chatbot-account-container">
+            <a href="https://www.instagram.com/{{ $listUser['username'] }}/" target="_blank">
+                <div>
+                    <img style="width: 80px; height: 80px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />
                 </div>
-            @else
-                <div class="my-checkbox checkbox-unchecked">
-                    <i class="fa fa-check"></i>
+            </a>
+            <div onclick="onSafelistClick(this);">
+                <div class="safelist-nickname">
+                    {{ $listUser['username'] }}
                 </div>
-            @endif
+                @if($listUser['is_in_safelist'] == 1)
+                    <div class="my-checkbox checkbox-checked">
+                        <i class="fa fa-check"></i>
+                    </div>
+                @else
+                    <div class="my-checkbox checkbox-unchecked">
+                        <i class="fa fa-check"></i>
+                    </div>
+                @endif
+            </div>
         </div>
+
+        {{--<div onclick="onSafelistClick(this);">--}}
+            {{--<div>--}}
+                {{--<img style="width: 50px; height: 50px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />--}}
+            {{--</div>--}}
+            {{--<div class="safelist-nickname">--}}
+                {{--{{ $listUser['username'] }}--}}
+            {{--</div>--}}
+            {{--@if($listUser['is_in_safelist'] == 1)--}}
+                {{--<div class="my-checkbox checkbox-checked">--}}
+                    {{--<i class="fa fa-check"></i>--}}
+                {{--</div>--}}
+            {{--@else--}}
+                {{--<div class="my-checkbox checkbox-unchecked">--}}
+                    {{--<i class="fa fa-check"></i>--}}
+                {{--</div>--}}
+            {{--@endif--}}
+        {{--</div>--}}
     @endforeach
 </section>
 
