@@ -94,7 +94,12 @@ ul, li {
     margin: 12px 0;
     display: flex;
 }
-#safelist > div, #chatbotaccounts-list > div{
+
+.chatbot-account-container{
+    display: flex;
+    cursor: pointer;
+}
+#safelist > div, .chatbot-account-container{
     display: flex;
     align-items: center;
     border: 1px solid white;
@@ -103,13 +108,27 @@ ul, li {
     padding: 5px;
     background-color: darkseagreen;
 }
-#safelist > div > div:nth-child(2n), #chatbotaccounts-list > div > div:nth-child(2n){
+#safelist > div > div:nth-child(2n){
     padding: 5px;
     flex-grow: 1;
-    font-size: 30px;
 }
 
-#safelist > div > div:nth-child(3n), #chatbotaccounts-list > div > div:nth-child(3n){
+.chatbot-account-container > div:nth-child(2n){
+    display: flex;
+    flex-grow: 1;
+    margin-left: 5px;
+}
+.chatbot-account-container > div:nth-child(2n) > div:nth-child(1n){
+    flex-grow: 1;
+    font-size: 5vw;
+}
+.chatbot-account-container > div:nth-child(2n) > div:nth-child(2n){
+    flex-grow: 0;
+    font-size: 7vw;
+}
+
+
+#safelist > div > div:nth-child(3n){
     padding-right: 15px;
     font-size: 40px;
 }
@@ -522,5 +541,13 @@ ul, li {
         padding: 5px;
         flex-grow: 1;
         font-size: 24px;
+    }
+}
+@media screen and (min-width: 770px) {
+    .chatbot-account-container > div:nth-child(2n) > div:nth-child(1n){
+        font-size: 38px;
+    }
+    .chatbot-account-container > div:nth-child(2n) > div:nth-child(2n){
+        font-size: 42px;
     }
 }

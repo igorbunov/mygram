@@ -60,24 +60,24 @@
                                     <li class="menu__item">
                                         <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
                                     </li>
-                                    <li class="menu__item">
-                                        <a href="{{ url('limits') }}" @if($activePage == 'limits') class="active_link" @endif>Лимиты</a>
-                                    </li>
-                                    <li class="menu__item">
-                                        <a href="{{ url('about') }}" @if($activePage == 'about') class="active_link" @endif>О компании</a>
-                                    </li>
-                                    <li class="menu__item">
-                                        <a href="{{ url('support') }}" @if($activePage == 'support') class="active_link" @endif>Поддержка</a>
-                                    </li>
-                                    <li class="menu__item">
-                                        <a href="{{ url('agreement') }}" @if($activePage == 'agreement') class="active_link" @endif>Соглашение</a>
-                                    </li>
-                                    <li class="menu__item">
-                                        <a href="{{ url('contacts') }}" @if($activePage == 'contacts') class="active_link" @endif>Контакты</a>
-                                    </li>
-                                    <li class="menu__item">
-                                        <a href="{{ url('return') }}" @if($activePage == 'return') class="active_link" @endif>Условия возврата</a>
-                                    </li>
+                                    {{--<li class="menu__item">--}}
+                                        {{--<a href="{{ url('limits') }}" @if($activePage == 'limits') class="active_link" @endif>Лимиты</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li class="menu__item">--}}
+                                        {{--<a href="{{ url('about') }}" @if($activePage == 'about') class="active_link" @endif>О компании</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li class="menu__item">--}}
+                                        {{--<a href="{{ url('support') }}" @if($activePage == 'support') class="active_link" @endif>Поддержка</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li class="menu__item">--}}
+                                        {{--<a href="{{ url('agreement') }}" @if($activePage == 'agreement') class="active_link" @endif>Соглашение</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li class="menu__item">--}}
+                                        {{--<a href="{{ url('contacts') }}" @if($activePage == 'contacts') class="active_link" @endif>Контакты</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li class="menu__item">--}}
+                                        {{--<a href="{{ url('return') }}" @if($activePage == 'return') class="active_link" @endif>Условия возврата</a>--}}
+                                    {{--</li>--}}
                             </ul>
                         </nav>
                     </div>
@@ -115,24 +115,24 @@
                     <li class="menu__item">
                         <a href="{{ url('tariffs') }}" @if($activePage == 'tariffs') class="active_link" @endif>Тарифы</a>
                     </li>
-                    <li class="menu__item">
-                        <a href="{{ url('limits') }}" @if($activePage == 'limits') class="active_link" @endif>Лимиты</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="{{ url('about') }}" @if($activePage == 'about') class="active_link" @endif>О компании</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="{{ url('support') }}" @if($activePage == 'support') class="active_link" @endif>Поддержка</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="{{ url('agreement') }}" @if($activePage == 'agreement') class="active_link" @endif>Соглашение</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="{{ url('contacts') }}" @if($activePage == 'contacts') class="active_link" @endif>Контакты</a>
-                    </li>
-                    <li class="menu__item">
-                        <a href="{{ url('return') }}" @if($activePage == 'return') class="active_link" @endif>Условия возврата</a>
-                    </li>
+                    {{--<li class="menu__item">--}}
+                        {{--<a href="{{ url('limits') }}" @if($activePage == 'limits') class="active_link" @endif>Лимиты</a>--}}
+                    {{--</li>--}}
+                    {{--<li class="menu__item">--}}
+                        {{--<a href="{{ url('about') }}" @if($activePage == 'about') class="active_link" @endif>О компании</a>--}}
+                    {{--</li>--}}
+                    {{--<li class="menu__item">--}}
+                        {{--<a href="{{ url('support') }}" @if($activePage == 'support') class="active_link" @endif>Поддержка</a>--}}
+                    {{--</li>--}}
+                    {{--<li class="menu__item">--}}
+                        {{--<a href="{{ url('agreement') }}" @if($activePage == 'agreement') class="active_link" @endif>Соглашение</a>--}}
+                    {{--</li>--}}
+                    {{--<li class="menu__item">--}}
+                        {{--<a href="{{ url('contacts') }}" @if($activePage == 'contacts') class="active_link" @endif>Контакты</a>--}}
+                    {{--</li>--}}
+                    {{--<li class="menu__item">--}}
+                        {{--<a href="{{ url('return') }}" @if($activePage == 'return') class="active_link" @endif>Условия возврата</a>--}}
+                    {{--</li>--}}
                 </ul>
             </nav>
         </div>
