@@ -24,12 +24,23 @@ class Chatbot extends Model
             WHERE c.chatbot_id = :id AND c.is_sended = 1 AND c.sender_account_id > 0
             LIMIT 1", [':id' => $chatBot->id]);
 
-        $res->in_queue = DB::selectOne("SELECT COUNT(1) AS cnt
-            FROM chatbot_accounts c
-            WHERE c.chatbot_id = :id AND c.is_sended = 0 AND c.sender_account_id >= 0
-            LIMIT 1", [':id' => $chatBot->id])->cnt;
+        $res->in_queue = self::getInQueueChats($chatBot);
 
         return $res;
+    }
+
+    public static function getInQueueChats(Chatbot $chatBot)
+    {
+        $res = DB::selectOne("SELECT COUNT(1) AS cnt
+            FROM chatbot_accounts c
+            WHERE c.chatbot_id = :id AND c.is_sended = 0 AND c.sender_account_id >= 0
+            LIMIT 1", [':id' => $chatBot->id]);
+
+        if (is_null($res)) {
+            return -1;
+        }
+
+        return $res->cnt;
     }
 
     public static function setStatus(int $id, string $status)

@@ -351,6 +351,11 @@ class ChatbotTaskRunner
 
         ChatbotAccounts::updateStatistics($chatBot);
 
+        if (Chatbot::getInQueueChats($chatBot) == 0) {
+            AccountController::mailToClient($accountId, 'Закончена очередь для чатбота', 'Очередь для чатбота закончена, необходимо составить новый список рассылки');
+            FastTask::mailToDeveloper('Закончена очередь для чатбота', 'Чатбот ' . $chatBot->id);
+        }
+
 //        Log::debug('done');
     }
 
