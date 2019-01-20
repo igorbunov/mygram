@@ -289,6 +289,11 @@ class ChatbotTaskRunner
             return;
         }
 
+
+        if (Chatbot::getInQueueChats($chatBot) == 0) {
+            return;
+        }
+
 //        Log::debug('chatbot: ' . \json_encode($chatBot->toArray()));
 
 //        chatbot_accounts is_sended
