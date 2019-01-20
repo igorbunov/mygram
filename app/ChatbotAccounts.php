@@ -25,7 +25,7 @@ class ChatbotAccounts extends Model
             FROM chat_headers h
             INNER JOIN accounts a ON a.id = h.account_id
             WHERE h.chatbot_id = :id AND h.status = 'dialog_finished' AND h.taken_phone <> '' {$filter}
-            ORDER BY h.updated_at ASC", [':id' => $chatBot->id]);
+            ORDER BY h.updated_at DESC", [':id' => $chatBot->id]);
 
         if (is_null($res)) {
             return [];
