@@ -111,6 +111,9 @@ class ChatHeader extends Model
         if (isset($data['status'])) {
             $res->status = $data['status'];
         }
+        if (isset($data['taken_phone'])) {
+            $res->taken_phone = $data['taken_phone'];
+        }
 
         return $res->save();
     }
