@@ -28,7 +28,7 @@ class BotController
         'цікаво', 'готовий', 'добре', 'розповідай', 'розкажіть', 'розкажи', 'відмінно'
     ];
 
-    private $positiveClearAnswers = ['да', 'ага', 'угу', 'так', 'yes','ok', 'da', 'ок'];
+    private $positiveClearAnswers = ['да', 'ага', 'угу', 'так', 'yes','ok', 'da', 'ок', 'допустим'];
     private $negativeClearAnswers = ['нет',  'no', 'not','ні', 'нетт', 'неа'];
 
     private $negativeAnswers = [

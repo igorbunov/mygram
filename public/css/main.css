@@ -475,7 +475,7 @@ ul, li {
     transform: translateX(0%) !important;
     -webkit-transform: translateX(0%) !important;
     transform: translateX(0%) !important;
-    transition: 1s;
+    transition: 0.5s;
 }
 
 .sidenav{
