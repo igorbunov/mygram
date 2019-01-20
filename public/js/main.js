@@ -20,7 +20,7 @@ $(document).ready(function() {
 
             res.push('</div>');
             res.push('<div class="chatbot-taken-phones">');
-            res.push('<i><div>чат с ' + r.thread_title + ':</div></i>');
+            res.push('<i><div>' + r.thread_title + ':</div></i>');
             res.push('<div>' + r.taken_phone + '</div>');
             res.push('</div>');
             res.push('</div>');
