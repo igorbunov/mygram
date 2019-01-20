@@ -33,9 +33,9 @@ class DirectTaskCreatorController
                 GetNewSubsTaskCreatorController::generateGetSubsTask($directTask);
 
                 if ($directTask->status == DirectTask::STATUS_ACTIVE) {
-                    $count = AccountSubscribers::getUnsendedFollowers($account->id);
+                    $unsendedCount = AccountSubscribers::getUnsendedFollowers($account->id);
 
-                    if ($count > 0) {
+                    if (count($unsendedCount) > 0) {
                         self::generateDirectTask($directTask);
                     }
                 }
