@@ -20,6 +20,7 @@ class ChatbotAccounts extends Model
                 h.thread_title,
                 h.taken_phone,
                 DATE_FORMAT(h.updated_at, '%H:%i %d.%m.%Y') AS dt,
+                DATE_FORMAT(h.updated_at, '%H:%i') AS tm,
                 h.updated_at
             FROM chat_headers h
             INNER JOIN accounts a ON a.id = h.account_id
@@ -31,8 +32,8 @@ class ChatbotAccounts extends Model
         }
 
         foreach($res as $i => $row) {
-            unset($res[$i]->updated_at);
-            unset($res[$i]->dt);
+//            unset($res[$i]->updated_at);
+//            unset($res[$i]->dt);
         }
 
         return $res;

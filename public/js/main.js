@@ -1,16 +1,44 @@
 $(document).ready(function() {
-    $('.chatbot-numbers-today, .chatbot-numbers-all').click(function () {
-        var numbers = $(this).data('numbers'),
-            res = [];
+
+    var showModalChatbotNumbers = function(numbers, isToday) {
+        var res = [], len = numbers.length-1, counter = 0;
 
         numbers.forEach(function (r) {
-            res.push("<p style='font-size: 12px;border-bottom:1px solid black;'><b>" + r.nickname + "</b> чат с: <b>" + r.thread_title + "</b>");
-            res.push("<br/>телефон: <b>" + r.taken_phone + "</b></p>");
+            if (counter++ == len) {
+                res.push('<div>');
+            } else {
+                res.push('<div style="border-bottom: 1px solid white;">');
+            }
+            res.push('<div class="chatbot-taken-phones-header">');
+            res.push('<div>@' + r.nickname + '</div>');
+
+            if (isToday) {
+                res.push('<div>' + r.tm + '</div>');
+            } else {
+                res.push('<div>' + r.dt + '</div>');
+            }
+
+            res.push('</div>');
+            res.push('<div class="chatbot-taken-phones">');
+            res.push('<i><div>чат с ' + r.thread_title + ':</div></i>');
+            res.push('<div>' + r.taken_phone + '</div>');
+            res.push('</div>');
+            res.push('</div>');
         });
 
         $("#chatbot-taken-numbers").html(res.join(''));
-
         $('#chatbot-taken-numbers').modal({closeExisting: false,showClose: false});
+    };
+
+    $('.chatbot-numbers-today').click(function () {
+        var numbers = $(this).data('numbers');
+
+        showModalChatbotNumbers(numbers, true);
+    });
+    $('.chatbot-numbers-all').click(function () {
+        var numbers = $(this).data('numbers');
+
+        showModalChatbotNumbers(numbers, false);
     });
 
 
