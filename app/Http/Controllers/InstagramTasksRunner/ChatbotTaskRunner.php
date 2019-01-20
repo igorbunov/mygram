@@ -471,9 +471,16 @@ class ChatbotTaskRunner
                             FastTask::mailToDeveloper('Чатбот (вопрос про орифлейм)', $emailMessage);
                         } else if ($otvet['status'] != '') {
                             if ($otvet['phone'] != '') {
+                                $phoneTaken = $otvet['phone'];
+
+                                if (mb_strlen($phoneTaken) > 240) {
+                                    $phoneTaken = substr($phoneTaken, '0','240');
+                                }
+
                                 ChatHeader::edit([
                                     'thread_id' => $threadId,
-                                    'status' => ChatHeader::STATUS_DIALOG_FINISHED
+                                    'status' => ChatHeader::STATUS_DIALOG_FINISHED,
+                                    'taken_phone' => $phoneTaken
                                 ]);
 
                                 try {

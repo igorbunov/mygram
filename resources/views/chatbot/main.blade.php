@@ -90,6 +90,10 @@
                     <div>Вчера: {{ $chatbotStats->sended_yesterday }}</div>
                     <div>Неделя: {{ $chatbotStats->sended_weekly }}</div>
                     <div>Всего: {{ $chatbotStats->total }}</div>
+                </div><br/>
+                <div class="chatbot-stats-block">
+                    <div>Номеров сегодня: <span data-numbers="{{ $takenPhonesToday }}" class="chatbot-numbers-today">{{ $takenPhonesTodayCount }}</span></div>
+                    <div>Номеров всего: <span data-numbers="{{ $takenPhonesAllTime }}" class="chatbot-numbers-all">{{ $takenPhonesAllTimeCount }}</span></div>
                 </div>
             </div>
         </section>
@@ -97,5 +101,9 @@
         <div id="chatbot-accounts-container">
             @include('chatbot.chatbot_account_item')
         </div>
+    </div>
+
+    <div id="chatbot-taken-numbers" class="modal">
+        {{--<p>В скором времени Вам будет предоставлена вся подробная информация.</p>--}}
     </div>
 @stop

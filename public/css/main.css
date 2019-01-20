@@ -477,7 +477,12 @@ ul, li {
     transform: translateX(0%) !important;
     transition: 0.5s;
 }
-
+.chatbot-numbers-today, .chatbot-numbers-all{
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+    font-weight: bold;
+}
 .sidenav{
     position: fixed;
     width: 300px;

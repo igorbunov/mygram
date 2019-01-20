@@ -1,4 +1,19 @@
 $(document).ready(function() {
+    $('.chatbot-numbers-today, .chatbot-numbers-all').click(function () {
+        var numbers = $(this).data('numbers'),
+            res = [];
+
+        numbers.forEach(function (r) {
+            res.push("<p style='font-size: 12px;border-bottom:1px solid black;'><b>" + r.nickname + "</b> чат с: <b>" + r.thread_title + "</b>");
+            res.push("<br/>телефон: <b>" + r.taken_phone + "</b></p>");
+        });
+
+        $("#chatbot-taken-numbers").html(res.join(''));
+
+        $('#chatbot-taken-numbers').modal({closeExisting: false,showClose: false});
+    });
+
+
     var changetChatbotStatus = function (status) {
         $.ajax({
             url: '/change_chatbot_status',

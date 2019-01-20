@@ -7,6 +7,37 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
+    public static function getTakenPhones(Chatbot $chatBot, $onlyToday = true)
+    {
+        $filter = '';
+
+        if ($onlyToday) {
+            $filter = ' AND DATE(h.updated_at) = CURDATE() ';
+        }
+
+        $res = DB::select("SELECT DISTINCT
+                a.nickname,
+                h.thread_title,
+                h.taken_phone,
+                DATE_FORMAT(h.updated_at, '%H:%i %d.%m.%Y') AS dt,
+                h.updated_at
+            FROM chat_headers h
+            INNER JOIN accounts a ON a.id = h.account_id
+            WHERE h.chatbot_id = :id AND h.status = 'dialog_finished' AND h.taken_phone <> '' {$filter}
+            ORDER BY h.updated_at ASC", [':id' => $chatBot->id]);
+
+        if (is_null($res)) {
+            return [];
+        }
+
+        foreach($res as $i => $row) {
+            unset($res[$i]->updated_at);
+            unset($res[$i]->dt);
+        }
+
+        return $res;
+    }
+
     public static function deleteUnselected(Chatbot $chatBot)
     {
         return DB::delete("DELETE FROM chatbot_accounts 

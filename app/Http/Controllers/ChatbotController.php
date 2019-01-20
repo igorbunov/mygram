@@ -529,6 +529,14 @@ class ChatbotController extends Controller
             $statsByAccount[$i]->delay = FastTask::getDelayForAccount($acc->sender_account_id, FastTask::TYPE_SEND_FIRST_CHATBOT_MESSAGE);
         }
 
+        $takenPhonesToday = ChatbotAccounts::getTakenPhones($chatbot, true);
+        $takenPhonesAllTime = ChatbotAccounts::getTakenPhones($chatbot, false);
+        $takenPhonesTodayCount = count($takenPhonesToday);
+        $takenPhonesAllTimeCount = count($takenPhonesAllTime);
+
+        $takenPhonesToday = \json_encode($takenPhonesToday);
+        $takenPhonesAllTime = \json_encode($takenPhonesAllTime);
+
         $res = [
             'title' => 'Чат бот'
             , 'activePage' => 'chatbot'
@@ -542,7 +550,13 @@ class ChatbotController extends Controller
             , 'chatBotAccountsTotal' => $allAccounts['total']
             , 'start' => 0
             , 'limit' => 50
+            , 'takenPhonesToday' => $takenPhonesToday
+            , 'takenPhonesAllTime' => $takenPhonesAllTime
+            , 'takenPhonesTodayCount' => $takenPhonesTodayCount
+            , 'takenPhonesAllTimeCount' => $takenPhonesAllTimeCount
         ];
+
+
 
 
         return view('chatbot.main', $res);
