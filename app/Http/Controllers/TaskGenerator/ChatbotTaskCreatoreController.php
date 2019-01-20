@@ -29,7 +29,9 @@ class ChatbotTaskCreatoreController
                     $directTasks = DirectTask::getDirectTasksByForAccount($account, true);
 
                     if (is_null($directTasks) or count($directTasks) == 0) {
-                        self::generateFirstMessageTask($chatBot, $account);
+                        if (Chatbot::getInQueueChats($chatBot) > 0) {
+                            self::generateFirstMessageTask($chatBot, $account);
+                        }
                     }
                 }
 

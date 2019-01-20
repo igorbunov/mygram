@@ -25,20 +25,14 @@ class AllTasksGenerator
     {
         $users = User::getActiveAndConrifmed();
 
-//        Log::debug('found users: ' . count($users));
-
         foreach ($users as $user) {
             $tariff = Tariff::getUserCurrentTariff($user->id);
 
             if (is_null($tariff)) {
-//                Log::debug('bad tariff');
                 continue;
             }
 
-//            Log::debug('good tariff');
-
             $accounts = account::getActiveAccountsByUser($user->id);
-//            Log::debug('found accounts: ' . count($accounts));
 
             if (count($accounts) == 0) {
                 continue;

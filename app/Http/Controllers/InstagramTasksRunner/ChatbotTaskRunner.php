@@ -88,7 +88,7 @@ class ChatbotTaskRunner
                 }
 
                 foreach($manNames as $manNickname) {
-                    if (strpos($userRow['username'], $manNickname) !== false) {
+                    if (strpos(strtolower($userRow['username']), strtolower($manNickname)) !== false) {
                         $isBad = true;
                         break;
                     }

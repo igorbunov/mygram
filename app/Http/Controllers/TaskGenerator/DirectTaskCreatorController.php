@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\TaskGenerator;
 
+use App\AccountSubscribers;
 use App\DirectTask;
 use App\DirectTaskReport;
 use App\FastTask;
@@ -32,7 +33,11 @@ class DirectTaskCreatorController
                 GetNewSubsTaskCreatorController::generateGetSubsTask($directTask);
 
                 if ($directTask->status == DirectTask::STATUS_ACTIVE) {
-                    self::generateDirectTask($directTask);
+                    $count = AccountSubscribers::getUnsendedFollowers($account->id);
+
+                    if ($count > 0) {
+                        self::generateDirectTask($directTask);
+                    }
                 }
             }
         } catch (\Exception $err) {
