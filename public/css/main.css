@@ -490,7 +490,7 @@ ul, li {
 }
 .modal{
     padding: 5px 10px;
-    width: 98%;
+    width: 90%;
     background-color: forestgreen;
     border: 1px solid white;
     color: black;
@@ -508,6 +508,7 @@ ul, li {
     color: blue;
     cursor: pointer;
     font-weight: bold;
+    font-size: 20px;
 }
 .sidenav{
     position: fixed;

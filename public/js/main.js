@@ -10,7 +10,7 @@ $(document).ready(function() {
                 res.push('<div style="border-bottom: 1px solid white;">');
             }
             res.push('<div class="chatbot-taken-phones-header">');
-            res.push('<div>@' + r.nickname + '</div>');
+            res.push('<div>@' + r.n + '</div>');
 
             if (isToday) {
                 res.push('<div>' + r.tm + '</div>');
@@ -20,8 +20,8 @@ $(document).ready(function() {
 
             res.push('</div>');
             res.push('<div class="chatbot-taken-phones">');
-            res.push('<i><div>' + r.thread_title + ':</div></i>');
-            res.push('<div>' + r.taken_phone + '</div>');
+            res.push('<i><div>' + r.t + ':</div></i>');
+            res.push('<div>' + r.p + '</div>');
             res.push('</div>');
             res.push('</div>');
         });

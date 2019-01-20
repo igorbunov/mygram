@@ -16,9 +16,9 @@ class ChatbotAccounts extends Model
         }
 
         $res = DB::select("SELECT DISTINCT
-                a.nickname,
-                h.thread_title,
-                h.taken_phone,
+                a.nickname as n,
+                h.thread_title as t,
+                h.taken_phone as p,
                 DATE_FORMAT(h.updated_at, '%H:%i %d.%m.%Y') AS dt,
                 DATE_FORMAT(h.updated_at, '%H:%i') AS tm,
                 h.updated_at
@@ -32,7 +32,7 @@ class ChatbotAccounts extends Model
         }
 
         foreach($res as $i => $row) {
-//            unset($res[$i]->updated_at);
+            unset($res[$i]->updated_at);
 //            unset($res[$i]->dt);
         }
 

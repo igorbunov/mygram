@@ -92,8 +92,8 @@
                     <div>Всего: {{ $chatbotStats->total }}</div>
                 </div><br/>
                 <div class="chatbot-stats-block">
-                    <div>Номеров сегодня: <span data-numbers="{{ $takenPhonesToday }}" class="chatbot-numbers-today">{{ $takenPhonesTodayCount }}</span></div>
-                    <div>Номеров всего: <span data-numbers="{{ $takenPhonesAllTime }}" class="chatbot-numbers-all">{{ $takenPhonesAllTimeCount }}</span></div>
+                    <div>Взято номеров: (сегодня): <span data-numbers="{{ $takenPhonesToday }}" class="chatbot-numbers-today">{{ $takenPhonesTodayCount }}</span></div>
+                    <div>(всего): <span data-numbers="{{ $takenPhonesAllTime }}" class="chatbot-numbers-all">{{ $takenPhonesAllTimeCount }}</span></div>
                 </div>
             </div>
         </section>
