@@ -6,6 +6,7 @@ use App\Chatbot;
 use App\ChatbotAccounts;
 use App\FastTask;
 use App\Tariff;
+use App\TariffList;
 use App\User;
 use const Grpc\CHANNEL_CONNECTING;
 use Illuminate\Http\Request;
@@ -486,6 +487,16 @@ class ChatbotController extends Controller
         if ($userId == 0) {
             return redirect('login');
 //            return view('main_not_logined');
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return redirect('/');
+        }
+
+        if (!TariffList::isAvaliable($tariff, TariffList::TYPE_CHATBOT)) {
+            return redirect('/');
         }
 
         $accounts = User::getAccountsByUser($userId, true);

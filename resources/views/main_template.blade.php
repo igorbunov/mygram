@@ -109,9 +109,11 @@
                     <li class="menu__item">
                         <a href="{{ url('safelist') }}" @if($activePage == 'safelist') class="active_link" @endif>Белый список</a>
                     </li>
-                    <li class="menu__item">
-                        <a href="{{ url('chatbot') }}" @if($activePage == 'chatbot') class="active_link" @endif>Чат бот</a>
-                    </li>
+                    @if($currentTariff != null and $currentTariff['tariff_list_id'] == 2)
+                        <li class="menu__item">
+                            <a href="{{ url('chatbot') }}" @if($activePage == 'chatbot') class="active_link" @endif>Чат бот</a>
+                        </li>
+                    @endif
                     {{--<li style="margin-top: 100px;">--}}
                         {{--<a href="{{ url('logout') }}" class="btn btn-dark btn-sm active" role="button" aria-pressed="true">Выйти</a>--}}
                     {{--</li>--}}

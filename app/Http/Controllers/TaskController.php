@@ -35,7 +35,10 @@ class TaskController extends Controller
 
         if ($userId == 0) {
             return redirect('login');
-//            return view('main_not_logined');
+        }
+
+        if (!account::isAccountBelongsToUser($userId, $accountId)) {
+            return redirect('/');
         }
 
         $tariff = Tariff::getUserCurrentTariff($userId);
@@ -45,7 +48,7 @@ class TaskController extends Controller
         }
 
         $account = account::getAccountById($accountId, false);
-
+//dd($account->toArray());
         if (is_null($account)) {
             throw new \Exception('Не найден аккаунт');
         }
