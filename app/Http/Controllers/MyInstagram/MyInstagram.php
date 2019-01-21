@@ -205,9 +205,9 @@ class MyInstagram
                 'check_api_path' => '',
                 'is_confirmed' => 0,
                 'is_active' => 0,
-                'response' => 'В приложении инстаграм, укажите что это вы сделали попытку входа'
+                'response' => 'В приложении инстаграм, укажите что это вы сделали попытку входа. Потом повторите вход здесь'
             ]);
-        } catch (ChallengeRequiredException $err0) {
+        } catch (ChallengeRequiredException /*| CheckpointRequiredException */ $err0) {
             $errorMessage = $err0->getMessage();
             Log::error('ChallengeRequiredException error when login: ' . $this->account->nickname . ' ' . $errorMessage);
 

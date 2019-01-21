@@ -47,7 +47,7 @@ class AccountSubscribersRunner
 
         $followersCountInDB = AccountSubscribers::getCurrentFollowersCount($accountId);
 
-        Log::debug('followers count in DB: ' . $followersCountInDB);
+        Log::debug('['.$account->nickname.'] followers count in DB: ' . $followersCountInDB);
 
         if ($followersCountInDB == 0) {
             foreach($followersAsArray as $i => $follower) {
@@ -61,11 +61,11 @@ class AccountSubscribersRunner
 
         $followersDiff = AccountSubscribers::getNewFollowers($accountId, $followersAsArray);
 
-        Log::debug('new followers count: ' . count($followersDiff));
+        Log::debug('['.$account->nickname.'] new followers count: ' . count($followersDiff));
 
         if (count($followersDiff) > 0) {
             AccountSubscribers::addUniqueArray($followersDiff);
-            Log::debug('re-added followers: ' . count($followersDiff));
+            Log::debug('['.$account->nickname.'] re-added followers: ' . count($followersDiff));
         }
 
 //        Log::debug('=== done ===');
