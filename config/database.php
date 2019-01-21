@@ -53,7 +53,10 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'timezone'  => '+02:00'
+            'timezone'  => '+02:00',
+            'options'   => array(
+                PDO::ATTR_PERSISTENT => true,
+            )
         ],
 
         'pgsql' => [
