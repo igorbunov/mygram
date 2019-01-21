@@ -23,7 +23,7 @@ class GetNewSubsTaskCreatorController
             return false;
         }
 
-        $randomDelayMinutes = (FastTask::isNight()) ? rand(30, 50) : rand(10, 30);
+        $randomDelayMinutes = (FastTask::isNight()) ? rand(30, 50) : rand(10, 25);
 
         FastTask::addTask($directTask->account_id,
             FastTask::TYPE_GET_NEW_SUBSCRIBERS,
