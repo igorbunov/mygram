@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\AccountController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -49,5 +50,32 @@ class Tariff extends Model
     public static function tariffTick()
     {
         DB::update("UPDATE tariffs SET is_active = 0 WHERE is_active = 1 AND DATE(dt_end) < CURDATE()");
+    }
+
+    public static function notifyEndingTariffs()
+    {
+        sleep(5);
+
+        $res = DB::select("SELECT DISTINCT
+                t.user_id
+                , DATE_FORMAT(t.dt_end, '%d.%m.%Y') AS end_dt
+                , u.email
+            FROM tariffs t
+            INNER JOIN users u ON u.id = t.user_id AND u.is_confirmed = 1
+            INNER JOIN accounts a ON a.user_id = u.id AND a.is_confirmed = 1 AND a.is_active = 1
+            WHERE t.is_active = 1 AND DATE(t.dt_end) = CURDATE() + INTERVAL 5 DAY");
+
+        if (is_null($res)) {
+            return;
+        }
+
+        foreach ($res as $row) {
+            AccountController::mailToUser($row->user_id,
+                'Уведомление об окончании тарифа',
+                'Срок действия вашего тарифа закончится в ' . $row->end_dt);
+
+            FastTask::mailToDeveloper('Уведомление об окончании тарифа',
+                '[' . $row->email . '] Срок действия вашего тарифа закончится через 5 дней (' . $row->end_dt . ')');
+        }
     }
 }

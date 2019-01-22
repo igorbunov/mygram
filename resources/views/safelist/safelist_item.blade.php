@@ -14,7 +14,7 @@
                     <img style="width: 80px; height: 80px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />
                 </div>
             </a>
-            <div onclick="onSafelistClick(this);">
+            <div onclick="onSafelistClick(this);" style="height: 80px; line-height: 76px;">
                 <div class="safelist-nickname">
                     {{ $listUser['username'] }}
                 </div>
@@ -29,24 +29,6 @@
                 @endif
             </div>
         </div>
-
-        {{--<div onclick="onSafelistClick(this);">--}}
-            {{--<div>--}}
-                {{--<img style="width: 50px; height: 50px;" class="rounded-circle" src="{{ $listUser['picture'] }}" />--}}
-            {{--</div>--}}
-            {{--<div class="safelist-nickname">--}}
-                {{--{{ $listUser['username'] }}--}}
-            {{--</div>--}}
-            {{--@if($listUser['is_in_safelist'] == 1)--}}
-                {{--<div class="my-checkbox checkbox-checked">--}}
-                    {{--<i class="fa fa-check"></i>--}}
-                {{--</div>--}}
-            {{--@else--}}
-                {{--<div class="my-checkbox checkbox-unchecked">--}}
-                    {{--<i class="fa fa-check"></i>--}}
-                {{--</div>--}}
-            {{--@endif--}}
-        {{--</div>--}}
     @endforeach
 </section>
 

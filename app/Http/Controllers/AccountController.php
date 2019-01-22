@@ -39,6 +39,23 @@ class AccountController extends Controller
         \mail($user->email, $subject, $message, $headers);
     }
 
+    public static function mailToUser(int $userId, $subject, $message)
+    {
+        if (!env('ENABLE_EMAIL')) {
+            return;
+        }
+
+        $user = User::getUserById($userId);
+
+        if (is_null($user)) {
+            return;
+        }
+
+        $headers = "From: mygram.in.ua\nReply-To: {$user->email}\nMIME-Version: 1.\nContent-Type: text/html; charset=UTF-8";
+
+        \mail($user->email, $subject, $message, $headers);
+    }
+
     public function indexAll()
     {
         return $this->index('', false);

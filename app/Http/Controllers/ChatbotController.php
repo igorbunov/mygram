@@ -8,7 +8,6 @@ use App\FastTask;
 use App\Tariff;
 use App\TariffList;
 use App\User;
-use const Grpc\CHANNEL_CONNECTING;
 use Illuminate\Http\Request;
 
 class ChatbotController extends Controller

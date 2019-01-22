@@ -14,7 +14,7 @@
                     <img style="width: 80px; height: 80px;" class="rounded-circle" src="{{ $listUser->picture }}" />
                 </div>
             </a>
-            <div onclick="onChatbotAccountClick(this);">
+            <div onclick="onChatbotAccountClick(this);" style="height: 80px; line-height: 76px;">
                 <div class="safelist-nickname">
                     {{ $listUser->username }}
                 </div>

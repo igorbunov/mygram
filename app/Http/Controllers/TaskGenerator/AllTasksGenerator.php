@@ -78,6 +78,8 @@ class AllTasksGenerator
         Tariff::tariffTick();
         TaskController::disableAccountsAndTasksByEndTariff();
         DatabaseCleaner::clearFastTasks();
+
+        Tariff::notifyEndingTariffs();
     }
 
     public static function everyMinuteLocalGenerator()

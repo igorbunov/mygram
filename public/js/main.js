@@ -115,6 +115,8 @@ $(document).ready(function() {
 
 
     var loadChatbotAccountsWithPagination = function (start) {
+        $('#preloader').show();
+
         $.ajax({
             url: '/get_chatbot',
             headers: {
@@ -126,6 +128,7 @@ $(document).ready(function() {
                 start: start
             },
             success: function(data) {
+                $('#preloader').hide();
                 $("#chatbot-accounts-container").empty();
                 $("#chatbot-accounts-container").html(data);
             }
@@ -133,6 +136,8 @@ $(document).ready(function() {
     };
 
     var loadWithPagination = function (accountId, isAll, start) {
+        $('#preloader').show();
+
         $.ajax({
             url: '/get_safelist',
             headers: {
@@ -146,6 +151,7 @@ $(document).ready(function() {
                 start: start
             },
             success: function(data) {
+                $('#preloader').hide();
                 $("#safelist-container").empty();
                 $("#safelist-container").html(data);
             }
@@ -259,6 +265,12 @@ $(document).ready(function() {
     });
 
     onChatbotAccountClick = function (el) {
+        if (typeof el.loading != 'undefined' && el.loading) {
+            return;
+        }
+
+        el.loading = true;
+
         var nickname = $(el).children('.safelist-nickname').text().trim(),
             isChecked = 0,
             checkbox = $(el).children('.my-checkbox');
@@ -266,6 +278,8 @@ $(document).ready(function() {
         if (checkbox.hasClass('checkbox-unchecked')) {
             isChecked = 1;
         }
+
+        checkbox.hide();
 
         $.ajax({
             url: '/chatbot_account_toggle',
@@ -279,20 +293,31 @@ $(document).ready(function() {
                 isChecked: isChecked
             },
             success: function(data) {
-                if (data.success) {
-                    if (data.is_checked == 1) {
-                        checkbox.removeClass('checkbox-unchecked').addClass('checkbox-checked');
+                try {
+                    checkbox.show();
+                    el.loading = false;
+
+                    if (data.success) {
+                        if (data.is_checked == 1) {
+                            checkbox.removeClass('checkbox-unchecked').addClass('checkbox-checked');
+                        } else {
+                            checkbox.removeClass('checkbox-checked').addClass('checkbox-unchecked');
+                        }
                     } else {
-                        checkbox.removeClass('checkbox-checked').addClass('checkbox-unchecked');
+                        alert(data.message);
                     }
-                } else {
-                    alert(data.message);
-                }
+                } catch (e){}
             }
         });
     };
 
     onSafelistClick = function (el) {
+        if (typeof el.loading != 'undefined' && el.loading) {
+            return;
+        }
+
+        el.loading = true;
+
         var accountId = $("#safelist").data("accountId"),
             nickname = $(el).children('.safelist-nickname').text().trim(),
             isChecked = 0,
@@ -301,6 +326,8 @@ $(document).ready(function() {
         if (checkbox.hasClass('checkbox-unchecked')) {
             isChecked = 1;
         }
+
+        checkbox.hide();
 
         $.ajax({
             url: '/safelist_toggle_user',
@@ -315,15 +342,20 @@ $(document).ready(function() {
                 isChecked: isChecked
             },
             success: function(data) {
-                if (data.success) {
-                    if (data.is_checked == 1) {
-                        checkbox.removeClass('checkbox-unchecked').addClass('checkbox-checked');
+                try {
+                    checkbox.show();
+                    el.loading = false;
+
+                    if (data.success) {
+                        if (data.is_checked == 1) {
+                            checkbox.removeClass('checkbox-unchecked').addClass('checkbox-checked');
+                        } else {
+                            checkbox.removeClass('checkbox-checked').addClass('checkbox-unchecked');
+                        }
                     } else {
-                        checkbox.removeClass('checkbox-checked').addClass('checkbox-unchecked');
+                        alert(data.message);
                     }
-                } else {
-                    alert(data.message);
-                }
+                } catch (e) {}
             }
         });
     };
