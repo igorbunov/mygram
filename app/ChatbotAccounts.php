@@ -7,13 +7,15 @@ use Illuminate\Support\Facades\DB;
 
 class ChatbotAccounts extends Model
 {
-    public static function getTakenPhones(Chatbot $chatBot, $onlyToday = true)
+    public static function getTakenPhones(Chatbot $chatBot, $onlyToday = true, string $query = '')
     {
-        $filter = '';
+        $filter = [];
 
         if ($onlyToday) {
-            $filter = ' AND DATE(h.updated_at) = CURDATE() ';
+            $filter[]= ' DATE(h.updated_at) = CURDATE() ';
         }
+
+        $filter = (count($filter) > 0) ? ' AND ' . implode(' AND ', $filter) : '';
 
         $res = DB::select("SELECT DISTINCT
                 a.nickname as n,
@@ -24,16 +26,29 @@ class ChatbotAccounts extends Model
                 h.updated_at
             FROM chat_headers h
             INNER JOIN accounts a ON a.id = h.account_id
-            WHERE h.chatbot_id = :id AND h.status = 'dialog_finished' AND h.taken_phone <> '' {$filter}
+            WHERE h.chatbot_id = :id AND h.status = 'dialog_finished' AND h.taken_phone <> '' 
+          {$filter}
             ORDER BY h.updated_at DESC", [':id' => $chatBot->id]);
 
         if (is_null($res)) {
             return [];
         }
 
+        $result = [];
+
         foreach($res as $i => $row) {
             unset($res[$i]->updated_at);
-//            unset($res[$i]->dt);
+
+            $res[$i]->p = str_replace(['+','-','_',')','(', ' ', '!', '.', ',', ':', ';'], "", $row->p);
+            $res[$i]->p = filter_var($res[$i]->p, FILTER_SANITIZE_NUMBER_INT);
+
+            if (!empty($query) and strpos($res[$i]->p, $query) !== false) {
+                $result[] = $res[$i];
+            }
+        }
+
+        if (!empty($query)) {
+            return $result;
         }
 
         return $res;
@@ -72,7 +87,6 @@ class ChatbotAccounts extends Model
             return false;
         }
 
-//dd($res);
         $item = self::find($res->id);
 
         if (is_null($item)) {

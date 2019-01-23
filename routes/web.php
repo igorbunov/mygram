@@ -26,6 +26,7 @@ Route::group(['middleware' => 'myauth'], function () {
     Route::post('add_account', 'AccountController@create');
     Route::get('accounts', 'AccountController@index');
     Route::get('chatbot', 'ChatbotController@index');
+    Route::post('get_chatbot_phones', 'ChatbotController@getPhones');
     Route::post('get_chatbot', 'ChatbotController@getChatbotAccountsAjax');
     Route::post('chatbot_update_list', 'ChatbotController@updateList');
     Route::post('chatbot_account_toggle', 'ChatbotController@toggleAccount');

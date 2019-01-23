@@ -1,44 +1,50 @@
 $(document).ready(function() {
+    searchPhoneByEnter = function (e) {
+        if(e.keyCode == 13) { searchPhone(); }
+    };
 
-    var showModalChatbotNumbers = function(numbers, isToday) {
-        var res = [], len = numbers.length-1, counter = 0;
+    searchPhone = function () {
+        var query= $("#search-by-phone").val(),
+            isToday= ($("#search-by-phone").data("isToday") == "") ? 0 : 1;
 
-        numbers.forEach(function (r) {
-            if (counter++ == len) {
-                res.push('<div>');
-            } else {
-                res.push('<div style="border-bottom: 1px solid white;">');
+        $.modal.close();
+
+        showModalChatbotNumbers(isToday, query);
+    };
+
+
+    var showModalChatbotNumbers = function(isToday, query) {
+        $('#preloader').show();
+
+        $.ajax({
+            url: '/get_chatbot_phones',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                is_today: isToday,
+                query: query
+            },
+            success: function(data) {
+                $('#preloader').hide();
+
+                if (data.success) {
+                    $("#chatbot-taken-numbers").html(data.html);
+                    $('#chatbot-taken-numbers').modal({closeExisting: false,showClose: false});
+                } else {
+                    alert(data.message);
+                }
             }
-            res.push('<div class="chatbot-taken-phones-header">');
-            res.push('<div>@' + r.n + '</div>');
-
-            if (isToday) {
-                res.push('<div>' + r.tm + '</div>');
-            } else {
-                res.push('<div>' + r.dt + '</div>');
-            }
-
-            res.push('</div>');
-            res.push('<div class="chatbot-taken-phones">');
-            res.push('<i><div>' + r.t + ':</div></i>');
-            res.push('<div>' + r.p + '</div>');
-            res.push('</div>');
-            res.push('</div>');
         });
-
-        $("#chatbot-taken-numbers").html(res.join(''));
-        $('#chatbot-taken-numbers').modal({closeExisting: false,showClose: false});
     };
 
     $('.chatbot-numbers-today').click(function () {
-        var numbers = $(this).data('numbers');
-
-        showModalChatbotNumbers(numbers, true);
+        showModalChatbotNumbers(true);
     });
     $('.chatbot-numbers-all').click(function () {
-        var numbers = $(this).data('numbers');
-
-        showModalChatbotNumbers(numbers, false);
+        showModalChatbotNumbers(false);
     });
 
 

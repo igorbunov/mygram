@@ -479,13 +479,49 @@ class ChatbotController extends Controller
         ]);
     }
 
+    public function getPhones(Request $req)
+    {
+        $userId = (int) session('user_id', 0);
+
+        if ($userId == 0) {
+            return response()->json(['success' => false, 'message' => 'Потеряна сессия авторизации']);
+        }
+
+        $tariff = Tariff::getUserCurrentTariff($userId);
+
+        if (is_null($tariff)) {
+            return response()->json(['success' => false, 'message' => 'Не удалось получить тариф']);
+        }
+
+        $chatBot = Chatbot::getByUserId($userId);
+
+        if (is_null($chatBot)) {
+            return response()->json(['success' => false, 'message' => 'Ошибка получения чатбота']);
+        }
+        $isToday = $req->post('is_today', false);
+        $isToday = filter_var($isToday, FILTER_VALIDATE_BOOLEAN);
+
+        $query = (string) $req->post('query', '');
+
+        $phones = ChatbotAccounts::getTakenPhones($chatBot, $isToday, $query);
+
+        return response()->json([
+            'success' => true,
+            'html' => view('chatbot.phone_numbers', [
+                'phones' => $phones,
+                'isToday' => $isToday,
+                'total' => count($phones)-1,
+                'query' => $query
+            ])->render()
+        ]);
+    }
+
     public function index()
     {
         $userId = (int) session('user_id', 0);
 
         if ($userId == 0) {
             return redirect('login');
-//            return view('main_not_logined');
         }
 
         $tariff = Tariff::getUserCurrentTariff($userId);
@@ -544,8 +580,10 @@ class ChatbotController extends Controller
         $takenPhonesTodayCount = count($takenPhonesToday);
         $takenPhonesAllTimeCount = count($takenPhonesAllTime);
 
-        $takenPhonesToday = \json_encode($takenPhonesToday);
-        $takenPhonesAllTime = \json_encode($takenPhonesAllTime);
+        unset($takenPhonesToday);
+        unset($takenPhonesAllTime);
+//        $takenPhonesToday = \json_encode($takenPhonesToday);
+//        $takenPhonesAllTime = \json_encode($takenPhonesAllTime);
 
         $res = [
             'title' => 'Чат бот'
@@ -560,8 +598,8 @@ class ChatbotController extends Controller
             , 'chatBotAccountsTotal' => $allAccounts['total']
             , 'start' => 0
             , 'limit' => 50
-            , 'takenPhonesToday' => $takenPhonesToday
-            , 'takenPhonesAllTime' => $takenPhonesAllTime
+//            , 'takenPhonesToday' => $takenPhonesToday
+//            , 'takenPhonesAllTime' => $takenPhonesAllTime
             , 'takenPhonesTodayCount' => $takenPhonesTodayCount
             , 'takenPhonesAllTimeCount' => $takenPhonesAllTimeCount
         ];
