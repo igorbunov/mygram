@@ -59,7 +59,7 @@ class AllTasksGenerator
 
                     if (!is_null($chatBot)) {
                         if ($chatBot->status != Chatbot::STATUS_IN_PROGRESS) {
-                            return;
+                            continue;
                         }
 
                         ChatbotTaskCreatoreController::tasksGenerator($chatBot, $accounts);
