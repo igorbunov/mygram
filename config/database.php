@@ -53,7 +53,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'timezone'  => '+02:00',
+            'timezone'  => '+03:00',
             'options'   => array(
                 PDO::ATTR_PERSISTENT => true,
             )

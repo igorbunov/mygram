@@ -139,29 +139,29 @@ class MyInstagram
             ]);
 
             return $this->instagram;
-        } catch (CheckpointRequiredException $err0) {
-            $errorMessage = $err0->getMessage();
-            Log::error('CheckpointRequiredException error when login: ' . $this->account->nickname . ' ' . $errorMessage);
-
-            $response = $err0->getResponse();
-            $checkApiPath = substr($response->getChallenge()->getApiPath(), 1);
-            Log::debug('checkApiPath: '. $checkApiPath);
-            $usrPK = str_replace('challenge/' , '', $checkApiPath);
-            $pos = strpos($usrPK, '/');
-            $usrPK = substr($usrPK, 0, $pos);
-
-            $this->instagram->account_id = $usrPK;
-            $this->account->pk = $usrPK;
-            Log::debug('set account id ' . $this->instagram->account_id . ' ' .$usrPK);
-
-            account::setInfo($account->id, [
-                'verify_code' => '',
-                'pk' => $this->account->pk,
-                'check_api_path' => '',
-                'is_confirmed' => 0,
-                'is_active' => 0,
-                'response' => 'В приложении инстаграм, укажите что это вы сделали попытку входа. Потом повторите вход здесь'
-            ]);
+//        } catch (CheckpointRequiredException $err0) {
+//            $errorMessage = $err0->getMessage();
+//            Log::error('CheckpointRequiredException error when login: ' . $this->account->nickname . ' ' . $errorMessage);
+//
+//            $response = $err0->getResponse();
+//            $checkApiPath = substr($response->getChallenge()->getApiPath(), 1);
+//            Log::debug('checkApiPath: '. $checkApiPath);
+//            $usrPK = str_replace('challenge/' , '', $checkApiPath);
+//            $pos = strpos($usrPK, '/');
+//            $usrPK = substr($usrPK, 0, $pos);
+//
+//            $this->instagram->account_id = $usrPK;
+//            $this->account->pk = $usrPK;
+//            Log::debug('set account id ' . $this->instagram->account_id . ' ' .$usrPK);
+//
+//            account::setInfo($account->id, [
+//                'verify_code' => '',
+//                'pk' => $this->account->pk,
+//                'check_api_path' => '',
+//                'is_confirmed' => 0,
+//                'is_active' => 0,
+//                'response' => 'В приложении инстаграм, укажите что это вы сделали попытку входа. Потом повторите вход здесь'
+//            ]);
         } catch (ChallengeRequiredException $err0) {
             $errorMessage = $err0->getMessage();
             Log::error('ChallengeRequiredException error when login: ' . $this->account->nickname . ' ' . $errorMessage);
