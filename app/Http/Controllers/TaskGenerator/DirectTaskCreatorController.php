@@ -24,9 +24,12 @@ class DirectTaskCreatorController
     {
         try {
             foreach ($accounts as $account) {
+                Log::debug('tasksGenerator ' . $account->id);
+
                 $directTasks = DirectTask::getDirectTasksByForAccount($account, true);
 
                 if (is_null($directTasks) or count($directTasks) == 0) { continue; }
+                Log::debug('direct tasks ' . count($directTasks));
 
                 $directTask = $directTasks[0];
 

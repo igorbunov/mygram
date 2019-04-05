@@ -390,6 +390,17 @@ class FastTask extends Model
         return $res->status;
     }
 
+    public static function testTimezone()
+    {
+        date_default_timezone_set('Europe/Kiev');
+        Log::debug("php timezone: " . date("H:i:s"));
+
+        $time = DB::selectOne("SELECT NOW() as t");
+
+
+        Log::debug("mysql timezone: " . $time->t);
+    }
+
     public static function isNight()
     {
         date_default_timezone_set('Europe/Kiev');

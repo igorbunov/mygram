@@ -47,6 +47,8 @@ class Kernel extends ConsoleKernel
         })->everyTenMinutes();
 
         $schedule->call(function() {
+            FastTask::testTimezone();
+
             if (env('PROJECT_PATH') != '/home/pata/projects/myinst/') {
                 AllTasksGenerator::everyMinuteGenerator();
             } else {
