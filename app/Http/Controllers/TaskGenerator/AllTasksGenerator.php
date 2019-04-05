@@ -26,6 +26,7 @@ class AllTasksGenerator
         $users = User::getActiveAndConrifmed();
 
         foreach ($users as $user) {
+            Log::debug('user ' . $user->id);
             $tariff = Tariff::getUserCurrentTariff($user->id);
 
             if (is_null($tariff)) {
@@ -37,6 +38,8 @@ class AllTasksGenerator
             if (count($accounts) == 0) {
                 continue;
             }
+
+            Log::debug('user accounts ' . count($accounts));
 
             if (env('IS_DIRECT_WORKS', false)) {
                 if (TariffList::isAvaliable($tariff, TariffList::TYPE_DIRECT)) {
