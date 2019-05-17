@@ -129,12 +129,8 @@ class AccountController extends Controller
             $proxyIP = ProxyIps::getFreeIp($accountId);
         }
 
-        $proxyString = '';
-
         if (is_null($proxyIP) or empty($proxyIP->proxy_string)) {
-//            return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
-        } else {
-            $proxyString = $proxyIP->proxy_string;
+            return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
         }
 
         if ($accountId == 0) {
@@ -142,7 +138,7 @@ class AccountController extends Controller
                 'user_id' => $userId,
                 'nickname' => $nickname,
                 'password' => Crypt::encryptString($password),
-                'proxy_ip' => $proxyString
+                'proxy_ip' => $proxyIP->proxy_string
             ]);
         } else {
             $accountId = account::editById([
@@ -150,7 +146,7 @@ class AccountController extends Controller
                 'user_id' => $userId,
                 'nickname' => $nickname,
                 'password' => Crypt::encryptString($password),
-                'proxy_ip' => $proxyString
+                'proxy_ip' => $proxyIP->proxy_string
             ]);
         }
 
