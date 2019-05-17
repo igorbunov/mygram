@@ -139,7 +139,7 @@ class AccountController extends Controller
                 'user_id' => $userId,
                 'nickname' => $nickname,
                 'password' => Crypt::encryptString($password),
-                'proxy_ip' => $proxyIP->proxy_string
+                'proxy_ip' => isset($proxyIP->proxy_string) ? $proxyIP->proxy_string : ''
             ]);
         } else {
             $accountId = account::editById([
@@ -147,7 +147,7 @@ class AccountController extends Controller
                 'user_id' => $userId,
                 'nickname' => $nickname,
                 'password' => Crypt::encryptString($password),
-                'proxy_ip' => $proxyIP->proxy_string
+                'proxy_ip' => isset($proxyIP->proxy_string) ? $proxyIP->proxy_string : ''
             ]);
         }
 
