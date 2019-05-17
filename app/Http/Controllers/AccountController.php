@@ -130,9 +130,9 @@ class AccountController extends Controller
         }
 
 
-        if (is_null($proxyIP) or empty($proxyIP->proxy_string)) {
-            return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
-        }
+//        if (is_null($proxyIP) or empty($proxyIP->proxy_string)) {
+//            return response()->json(['success' => false, 'message' => 'Добавление не возможно. Нет свободных айпи адресов! Обратитесь в поддержку']);
+//        }
 
         if ($accountId == 0) {
             $accountId = account::addNew([
